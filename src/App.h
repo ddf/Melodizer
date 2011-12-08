@@ -4,7 +4,6 @@
 #include "ofxiPhone.h"
 
 // forward declares
-class  Screen;
 @class UIActionHandler;
 @class UIActionSheet;
 
@@ -20,6 +19,9 @@ namespace Minim
 	class SampleRecorder;
 	class Pan;
 }
+
+#include "Summer.h"
+#include "Instruments.h"
 
 class App : public ofxiPhoneApp 
 {
@@ -39,6 +41,8 @@ public:
 	void touchCancelled(ofTouchEventArgs &touch);
 	
 	Minim::AudioOutput & Out() { return *mOutput; }
+    Minim::Summer&       Melody() { return mMelodyBus; }
+    Minim::Summer&       Bass()   { return mBassBus; }
 	
 	void pauseAudio();
 	void resumeAudio();
@@ -56,6 +60,9 @@ private:
 	// SOUND
 	Minim::AudioSystem *	  mAudioSystem;
 	Minim::AudioOutput *	  mOutput;
+    Minim::Summer             mMelodyBus;
+    Minim::Summer             mBassBus;
+    Looper                    mLooper;
 	
 	// UI
 	UIActionHandler				 * mActionHandler;

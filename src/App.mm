@@ -73,6 +73,11 @@ void App::setup()
 		Minim::Wavetable::s_opt = false;
 		
 		mOutput = mAudioSystem->getAudioOutput( TouchAudioFormat(2), kOutputBufferSize );
+        
+        mOutput->pauseNotes();
+        mOutput->setTempo( 120 );
+        mOutput->playNote(0.001f, 4, mLooper);
+        mOutput->resumeNotes();
 	}
 	
 	//-- UI ---------------------------
