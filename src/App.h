@@ -69,6 +69,10 @@ private:
 	UIActionSheet			     * mActionSheet; // so we can ask things
 	
 	bool						   m_bWasPlaying; // keep track of whether we were playing or not when audio got paused.
+    
+    // VISUAL
+    float       mXOff;
+    float       mYOff;
 	
 };
 

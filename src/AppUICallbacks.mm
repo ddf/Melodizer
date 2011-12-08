@@ -18,7 +18,12 @@ void App::touchDown(ofTouchEventArgs &touch)
 
 //--------------------------------------------------------------
 void App::touchMoved(ofTouchEventArgs &touch)
-{	
+{
+	if ( touch.id == 0 )
+    {
+        mXOff = ofMap(touch.x, 0, ofGetWidth(), 55, 75);
+        mYOff = ofMap(touch.y, 0, ofGetHeight(), 25, 45);
+    }
 }
 
 //--------------------------------------------------------------

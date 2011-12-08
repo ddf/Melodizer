@@ -101,6 +101,12 @@ void App::setup()
 			[ofxiPhoneGetUIWindow() addGestureRecognizer:mPinchGestureRecognizer];
 		}
 	}
+    
+    //-- VIS ----------------------------
+    {
+        mXOff = 65;
+        mYOff = 35;
+    }
 	
 	//-- DONE ---------------------------
 	m_bWasPlaying			= false;
@@ -109,13 +115,36 @@ void App::setup()
 //--------------------------------------------------------------
 void App::update() 
 {
-	const float dt  = 1.0f / ofGetFrameRate();
+//	const float dt  = 1.0f / ofGetFrameRate();
 }
 
 //--------------------------------------------------------------
 void App::draw() 
 {	
-
+    //ofBackground(20, 20, 20);
+    
+    ofSetColor(20, 20, 20, 40);
+    ofFill();
+    ofRect(0, 0, ofGetWidth(), ofGetHeight());
+    
+    ofSetColor(200, 0, 128);
+    ofNoFill();
+    
+    const int bufferSize = mOutput->buffer().getBufferSize();
+    for( int i = 0; i < bufferSize; ++i )
+    {
+        int x = 15 + mXOff * (i % 20);
+        int y = 15 + mYOff * (i / 20);
+        const float sampleL = mOutput->buffer().getSample(0, i);
+        const float sampleR = fabs( mOutput->buffer().getSample(1, i ) );
+        ofPushMatrix();
+        {
+            ofTranslate(x, y);
+            ofRotate( 90 * sampleL );
+            ofTriangle( 0, -20*sampleR, -30*sampleR, 30*sampleR, 30*sampleR, 30*sampleR );
+        }
+        ofPopMatrix();
+    }
 }
 
 //--------------------------------------------------------------

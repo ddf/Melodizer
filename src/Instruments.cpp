@@ -105,10 +105,10 @@ void Looper::noteOn(float dur)
     // TODO get Shuffle from settings
     float Shuffle = 0.08f * 0.5f;
     
-    kick( 0.f, 0.5f );
-    kick( 1.f, 0.5f );
-    kick( 2.f, 0.5f );
-    kick( 3.f, 0.5f );
+    kick( 0.f, 0.75f );
+    kick( 1.f, 0.75f );
+    kick( 2.f, 0.75f );
+    kick( 3.f, 0.75f );
     
     snare( 1.f, 1.f );
     snare( 2.75f + Shuffle, 1.5f );
