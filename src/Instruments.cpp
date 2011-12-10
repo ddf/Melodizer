@@ -19,7 +19,7 @@
 
 enum WaveformType
 {
-    WT_Sine,
+    WT_Sine = 0,
     WT_Triangle,
     WT_Saw,
     WT_Square,
@@ -28,69 +28,138 @@ enum WaveformType
     WT_Sine8,
     WT_Sine16,
     WT_Sine32,
+    WT_Count,
 };
 
-struct WaveformGenerator
+static Minim::Waveform* generate( WaveformType type )
 {
-    WaveformType type;
-    
-    WaveformGenerator( WaveformType wt ) : type( wt ) {}
-    
-    Minim::Waveform* generate()
+    switch( type )
     {
-        switch( type )
+        case WT_Sine:           return Minim::Waves::SINE();
+        case WT_Triangle:       return Minim::Waves::TRIANGLE();
+        case WT_Saw:            return Minim::Waves::SAW();
+        case WT_Square:         return Minim::Waves::SQUARE();
+        case WT_Quarterpulse:   return Minim::Waves::QUARTERPULSE();
+        case WT_Sine4:          return Minim::Waves::randomNHarms(4);
+        case WT_Sine8:          return Minim::Waves::randomNHarms(8);
+        case WT_Sine16:         return Minim::Waves::randomNHarms(16);
+        case WT_Sine32:         return Minim::Waves::randomNHarms(32);
+            
+        default: return Minim::Waves::SINE();
+    }
+}
+
+// our instrument pools.
+static std::list<Kick*>        kicks;
+static std::list<Snare*>       snares;
+static std::list<Hat*>         hats;
+static std::list<Tone*>        tones[WT_Count];
+
+void SetupInstruments()
+{
+    kicks.push_back( new Kick );
+    kicks.push_back( new Kick );
+    kicks.push_back( new Kick );
+    
+    snares.push_back( new Snare );
+    snares.push_back( new Snare );
+    snares.push_back( new Snare );
+    
+    hats.push_back( new Hat );
+    hats.push_back( new Hat );
+    hats.push_back( new Hat );
+    
+    // make 4 of each kind of tone
+    for( int i = 0; i < WT_Count; ++i )
+    {
+        for( int c = 0; c < 32; ++c )
         {
-            case WT_Sine:           return Minim::Waves::SINE();
-            case WT_Triangle:       return Minim::Waves::TRIANGLE();
-            case WT_Saw:            return Minim::Waves::SAW();
-            case WT_Square:         return Minim::Waves::SQUARE();
-            case WT_Quarterpulse:   return Minim::Waves::QUARTERPULSE();
-            case WT_Sine4:          return Minim::Waves::randomNHarms(4);
-            case WT_Sine8:          return Minim::Waves::randomNHarms(8);
-            case WT_Sine16:         return Minim::Waves::randomNHarms(16);
-            case WT_Sine32:         return Minim::Waves::randomNHarms(32);
-                
-            default: return Minim::Waves::SINE();
+            Minim::Waveform* wave = generate( (WaveformType)i );
+            tones[i].push_back( new Tone( wave ) );
         }
     }
-};
+}
 
-WaveformGenerator   generators[] = { WaveformGenerator(WT_Sine),
-                                     WaveformGenerator(WT_Triangle),
-                                     WaveformGenerator(WT_Saw),
-                                     WaveformGenerator(WT_Square),
-                                     WaveformGenerator(WT_Quarterpulse),
-                                     WaveformGenerator(WT_Sine4),
-                                     WaveformGenerator(WT_Sine8),
-                                     WaveformGenerator(WT_Sine16),
-                                     WaveformGenerator(WT_Sine32)
-};
+void ClearInstruments()
+{
+    for( std::list<Kick*>::iterator iter = kicks.begin(), end = kicks.end(); iter != end; ++iter )
+    {
+        delete *iter;
+    }
+    kicks.clear();
+    
+    for( std::list<Snare*>::iterator iter = snares.begin(), end = snares.end(); iter != end; ++iter )
+    {
+        delete *iter;
+    }
+    snares.clear();
+    
+    for( std::list<Hat*>::iterator iter = hats.begin(), end = hats.end(); iter != end; ++iter )
+    {
+        delete *iter;
+    }
+    hats.clear();
+    
+    for( int i = 0; i < WT_Count; ++i )
+    {
+        std::list<Tone*> & list = tones[ i ];
+        for( std::list<Tone*>::iterator iter = list.begin(), end = list.end(); iter != end; ++iter )
+        {
+            delete *iter;
+        }
+        list.clear();
+    }
+}
 
 static void kick( float time, float amp )
 {
-    Kick* k = new Kick(amp);
+    Kick* k = kicks.front();
+    k->init( amp );
+    
     Out().playNote( time, 0.3f, *k );
+    
+    kicks.pop_front();
+    kicks.push_back( k );
 }
 
 static void snare( float time, float amp )
 {
-    Out().playNote( time, 0.3f, *(new Snare(amp)) );
+    Snare* s = snares.front();
+    s->init( amp );
+    
+    Out().playNote( time, 0.3f, *s );
+    
+    snares.pop_front();
+    snares.push_back(s);
 }
 
 static void hat( float time, float amp )
 {
-    Out().playNote( time, 0.5f, *(new Hat(amp)) );
+    Hat* h = hats.front();
+    h->init( amp );
+    
+    Out().playNote( time, 0.5f, *h );
+    
+    hats.pop_front();
+    hats.push_back(h);
 }
 
-static void tone( Minim::Summer& bus, float time, Minim::Waveform* wave, float freq, float amp, float dur, float pan )
+static void tone( Minim::Summer* bus, float time, WaveformType type, float freq, float amp, float dur, float pan )
 {
-    Out().playNote( time, dur, *(new Tone(bus, wave, freq, amp, pan)) );
+    std::list<Tone*> & list = tones[ type ];
+    Tone* t = list.front();
+    t->init( bus, freq, amp, pan );
+    
+    Out().playNote( time, dur, *t );
+    
+    list.pop_front();
+    list.push_back( t );
 }
 
 
 static int prevNoteIndex = 0;
 
-static void generateMeasure( Minim::Summer& bus, WaveformGenerator& generator, float* probs, const Scale* notes, int lowOctave, int hiOctave, float panRange )
+static void generateMeasure( Minim::Summer& bus, WaveformType type, float* probs, const Scale* notes, int lowOctave, int hiOctave, float panRange )
 {
     int scaleKey = 0; // TODO Get from settings
     
@@ -126,7 +195,7 @@ static void generateMeasure( Minim::Summer& bus, WaveformGenerator& generator, f
                 time += 0.08f * Shuffle;
             }
             
-            tone( bus, time, generator.generate(), freq, amp, dur, ofRandom(-pan, pan) );
+            tone( &bus, time, type, freq, amp, dur, ofRandom(-pan, pan) );
             
             prevNoteIndex = nextNoteIndex;
         }
@@ -142,27 +211,35 @@ void Looper::noteOn(float dur)
     float noteProb[] = { 1.0f, 0.3f, 0.1f, 0.f,  0.8f, 0.34f, 0.6f, 0.11f,  0.7f, 0.24f, 0.6f, 0.7f,  0.12f, 0.3f, 0.23f, 0.9f };
     float bassProb[] = { 1.0f, 0.3f, 0.1f, 0.f,  0.8f, 0.34f, 0.6f, 0.11f,  0.7f, 0.24f, 0.6f, 0.7f,  0.12f, 0.3f, 0.23f, 0.9f };
     // int scaleIndex = // get from settings
-    generateMeasure( Melody(), generators[ 0 ], noteProb, Scales[0], 5, 7, 0.8f );
-    generateMeasure( Bass(),   generators[ 0 ], bassProb, Scales[0], 2, 5, 0.0f );
+    generateMeasure( Melody(), WT_Saw, noteProb, Scales[2], 5, 7, 0.8f );
+    generateMeasure( Bass(),   WT_Square, bassProb, Scales[2], 2, 5, 0.0f );
     
     // TODO get Shuffle from settings
-//    float Shuffle = 0.08f * 0.f;
-//    
-//    kick( 0.f, 0.75f );
-//    kick( 1.f, 0.75f );
-//    kick( 2.f, 0.75f );
-//    kick( 3.f, 0.75f );
-//    
-//    snare( 1.f, 1.f );
-//    snare( 2.75f + Shuffle, 1.5f );
-//    snare( 3.5f, 1.0f );
-//    
-//    hat( 0.5f, 0.5f );
-//    hat( 1.5f, 0.5f );
-//    hat( 1.75f + Shuffle, 0.25f );
-//    hat( 2.5f, 0.5f );
-//    hat( 3.25f + Shuffle, 0.25f );
-//    hat( 3.75f + Shuffle, 0.5f );
+    float Shuffle = 0.08f * 0.f;
+    
+    kick( 0.f, 0.75f );
+    if ( ofRandom(1) < 0.3f )
+    {
+        kick( 0.5f, 0.5f );
+    }
+    kick( 1.f, 0.75f );
+    kick( 2.f, 0.75f );
+    kick( 3.f, 0.75f );
+    if ( ofRandom(1) < 0.2f )
+    {
+        kick( 3.75f, 0.3f );
+    }
+    
+    snare( 1.f, 1.f );
+    snare( 2.75f + Shuffle, 1.5f );
+    snare( 3.5f, 1.0f );
+    
+    hat( 0.5f, 0.5f );
+    hat( 1.5f, 0.5f );
+    hat( 1.75f + Shuffle, 0.25f );
+    hat( 2.5f, 0.5f );
+    hat( 3.25f + Shuffle, 0.25f );
+    hat( 3.75f + Shuffle, 0.5f );
 }
 
 void Looper::noteOff()
@@ -175,100 +252,129 @@ void Looper::noteOff()
 //--------------------------------------
 //-- KICK
 //--------------------------------------
-Kick::Kick( float amp )
+Kick::Kick()
 : osc( 80.f, 0.f, Minim::Waves::SINE() )
-, freqSweep( 0.1f, 120.f, 20.f )
-, ampSweep( 0.1f, amp, 0 )
+, freqSweep()
+, ampSweep()
 {
     freqSweep.patch( osc.frequency );
     ampSweep.patch( osc.amplitude );
 }
 
+void Kick::init( float amp )
+{
+    amplitudes.push_back(amp);
+}
+
 void Kick::noteOn(float dur)
 {
-    ampSweep.activate();
-    freqSweep.activate();
+    ampSweep.activate( 0.1f, amplitudes.front(), 0 );
+    freqSweep.activate( 0.1f, 120.f, 20.f );
     osc.patch( Out() );
+    
+    amplitudes.pop_front();
 }
 
 void Kick::noteOff()
 {
     osc.unpatch( Out() );
-    delete this;
 }
 
 //--------------------------------------
 //-- SNARE
 //--------------------------------------
-Snare::Snare( float amp )
-: noize( amp, Minim::Noise::eTintPink )
-, ampSweep( 0.05f, amp, 0 )
+Snare::Snare()
+: noize( 1, Minim::Noise::eTintPink )
+, ampSweep()
 , filter( 200.f, 0.5f, Minim::MoogFilter::HP )
 {
     noize.patch( filter );
     ampSweep.patch( noize.amplitude );
 }
 
+void Snare::init( float amp )
+{
+    amplitudes.push_back(amp);
+}
+
 void Snare::noteOn(float dur)
 {
-    ampSweep.activate();
+    ampSweep.activate( 0.05f, amplitudes.front(), 0 );
     filter.patch( Out() );
+    
+    amplitudes.pop_front();
 }
 
 void Snare::noteOff()
 {
     filter.unpatch( Out() );
-    delete this;
 }
 
 //--------------------------------------
 //-- HAT
 //--------------------------------------
-Hat::Hat( float amp )
-: noize( amp, Minim::Noise::eTintWhite )
-, ampSweep( 0.05f, amp * 0.8f, 0 )
+Hat::Hat()
+: noize( 1, Minim::Noise::eTintWhite )
+, ampSweep()
 , filter( 10000.0f, 0.1f, Minim::MoogFilter::HP )
 {
     noize.patch( filter );
     ampSweep.patch( noize.amplitude );
 }
 
+void Hat::init( float amp )
+{
+    amplitudes.push_back( amp );
+}
+
 void Hat::noteOn(float dur)
 {
-    ampSweep.activate();
+    ampSweep.activate( 0.05f, amplitudes.front() * 0.8f, 0 );
     filter.patch( Out() );
+    
+    amplitudes.pop_front();
 }
 
 void Hat::noteOff()
 {
     filter.unpatch( Out() );
-    delete this;
 }
 
 //---------------------------------------
 //-- TONE
 //---------------------------------------
-Tone::Tone( Minim::Summer& bus, Minim::Waveform* waveform, float freq, float amp, float pan )
-: out( bus )
-, wave( freq, amp, waveform )
-, panner( pan )
-, adsr( amp, 0.01f, 0.01f, amp * 0.7f, 0.2f )
+Tone::Tone( Minim::Waveform* waveform )
+: out( NULL )
+, wave( 0, 1, waveform )
+, panner( 0 )
+, adsr()
 {
     adsr.setAudioChannelCount( 2 );
     wave.patch( panner ).patch ( adsr );
 }
 
+void Tone::init( Minim::Summer* out, float freq, float amp, float pan )
+{
+    params.push_back( ToneParams( out, freq, amp, pan ) );
+}
+
 void Tone::noteOn( float dur )
 {
-    adsr.patch( out );
+    ToneParams& param = params.front();
+    wave.frequency.setLastValue( param.freq );
+    adsr.setParameters( param.amp, 0.01f, 0.01f, param.amp * 0.7f, 0.2f, param.amp, 0 );
+    panner.pan.setLastValue( param.pan );
+    out = param.out;
+    
     adsr.noteOn();
+    adsr.patch( *out );
+    
+    params.pop_front();
 }
 
 void Tone::noteOff()
 {
-    // TODO how to handle this? just sweep amplitude instead??
     adsr.noteOff();
-    adsr.unpatch( out );
-    //adsr.unpatchAfterRelease( &out );
-    delete this;
+    adsr.unpatchAfterRelease( out );
+    out = NULL;
 }

@@ -77,6 +77,8 @@ void App::setup()
         mMelodyBus.patch( *mOutput );
         mBassBus.patch( *mOutput );
         
+        SetupInstruments();
+        
         mOutput->pauseNotes();
         mOutput->setTempo( 120 );
         mOutput->playNote(0.001f, 4, mLooper);
@@ -160,6 +162,8 @@ void App::exit()
 		mOutput->close();
 		delete mOutput;
 	}
+    
+    ClearInstruments();
 	
 	if ( mAudioSystem )
 	{

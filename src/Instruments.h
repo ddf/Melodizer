@@ -19,6 +19,11 @@
 #include "Pan.h"
 #include "ADSR.h"
 
+#include <list>
+
+void SetupInstruments();
+void ClearInstruments();
+
 class Looper : public Minim::Instrument
 {
 public:
@@ -31,29 +36,33 @@ class Kick : public Minim::Instrument
 {
 public:
     
-    Kick( float amp );
+    Kick();
     
+    void init( float amp );
     void noteOn( float dur );
     void noteOff();
     
 private:
     
-    Minim::Line     freqSweep;
-    Minim::Line     ampSweep;
-    Minim::Oscil    osc;
+    std::list<float>  amplitudes;
+    Minim::Line         freqSweep;
+    Minim::Line         ampSweep;
+    Minim::Oscil        osc;
 };
 
 class Snare : public Minim::Instrument
 {
 public:
     
-    Snare( float amp );
+    Snare();
     
+    void init( float amp );
     void noteOn( float dur );
     void noteOff();
     
 private:
     
+    std::list<float>  amplitudes;
     Minim::Noise        noize;
     Minim::Line         ampSweep;
     Minim::MoogFilter   filter;
@@ -62,13 +71,15 @@ private:
 class Hat : public Minim::Instrument
 {
 public:
-    Hat( float amp );
+    Hat();
     
+    void init( float amp );
     void noteOn( float dur );
     void noteOff();
     
 private:
-    
+
+    std::list<float>  amplitudes;
     Minim::Noise        noize;
     Minim::Line         ampSweep;
     Minim::MoogFilter   filter;
@@ -77,14 +88,25 @@ private:
 class Tone : public Minim::Instrument
 {
 public:
-    Tone( Minim::Summer& bus, Minim::Waveform* waveform, float freq, float amp, float pan );
+    Tone( Minim::Waveform* waveform );
     
+    void init( Minim::Summer* out, float freq, float amp, float pan );
     void noteOn( float dur );
     void noteOff();
     
 private:
     
-    Minim::Summer&  out;
+    struct ToneParams
+    {
+        ToneParams( Minim::Summer* o, float f, float a, float p ) : out(o), freq(f), amp(a), pan(p) {}
+        
+        Minim::Summer* out;
+        float freq, amp, pan;
+    };
+    
+    std::list< ToneParams > params;
+    
+    Minim::Summer*  out;
     Minim::Oscil    wave;
     Minim::ADSR     adsr;
     Minim::Pan      panner;

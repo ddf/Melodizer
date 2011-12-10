@@ -3,7 +3,7 @@
 //  melodizer
 //
 //  Created by Damien Di Fede on 12/9/11.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2011 Damien Di Fede. All rights reserved.
 //
 
 #ifndef melodizer_Scales_h
@@ -57,7 +57,7 @@ int mj3[] = { 4, 0, 3, 4, -1 };          // E
 int mj4[] = { 5, 1, 2, 5, -1 };          // F
 int mj5[] = { 7, 2, 3, 5, 6, -1 };       // G
 int mj6[] = { 9, 3, 4, 6, -1 };          // A
-int mj7[] = { 11, 1, 4, 5 -1 };          // B
+int mj7[] = { 11, 1, 4, 5, -1 };          // B
 int* mjlist[] = { mj1, mj2, mj3, mj4, mj5, mj6, mj7 };
 
 DEFINE_SCALE( Major, mjlist );
@@ -75,8 +75,8 @@ int nm1[] = { 0, 1, 2, 3, 4, 5, 6, -1 }; // C
 int nm2[] = { 2, 3, 4, 6, -1 };          // D
 int nm3[] = { 3, 0, 3, 4, 6, -1 };       // Eb
 int nm4[] = { 5, 1, 2, 5, 6, -1 };       // F
-int nm5[] = { 7, 3, 5, 6 -1 };           // G
-int nm6[] = { 8, 3, 4, 5 -1 };           // Ab
+int nm5[] = { 7, 3, 5, 6, -1 };           // G
+int nm6[] = { 8, 3, 4, 5, -1 };           // Ab
 int nm7[] = { 10, 0, 1, 4, 5, -1 };      // Bb
 int* nmlist[] = { nm1, nm2, nm3, nm4, nm5, nm6, nm7 };
 
