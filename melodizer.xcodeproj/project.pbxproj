@@ -80,6 +80,7 @@
 		6DEA8D8A1323534800744BC8 /* UIActionHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIActionHandler.mm; sourceTree = "<group>"; };
 		7741E31114904E7300F660A7 /* Audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Audio.h; sourceTree = "<group>"; };
 		7741E31214904ECA00F660A7 /* Audio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Audio.mm; sourceTree = "<group>"; };
+		7741E3611492EF5F00F660A7 /* Scales.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scales.h; sourceTree = "<group>"; };
 		77DEB7E51490444F00C9FB09 /* Instruments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instruments.h; sourceTree = "<group>"; };
 		77DEB7E61490477600C9FB09 /* Instruments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Instruments.cpp; sourceTree = "<group>"; };
 		77F12D7614698EF900F8C32F /* iPhone+OF Lib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "iPhone+OF Lib.xcodeproj"; path = "Frameworks/openFrameworks_iOS/libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj"; sourceTree = DEVELOPER_DIR; };
@@ -218,6 +219,7 @@
 				77DEB7E61490477600C9FB09 /* Instruments.cpp */,
 				7741E31114904E7300F660A7 /* Audio.h */,
 				7741E31214904ECA00F660A7 /* Audio.mm */,
+				7741E3611492EF5F00F660A7 /* Scales.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -275,6 +277,9 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "melodizer" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;

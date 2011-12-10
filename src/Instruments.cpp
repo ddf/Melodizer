@@ -15,6 +15,8 @@
 #include "Wavetable.h"
 #include "Waves.h"
 
+#include "Scales.h"
+
 enum WaveformType
 {
     WT_Sine,
@@ -88,38 +90,79 @@ static void tone( Minim::Summer& bus, float time, Minim::Waveform* wave, float f
 
 static int prevNoteIndex = 0;
 
-//static void generateMeasure( Minim::Summer& bus, Minim::Waveform* wave, float* probs, Scale& notes, int lowOctave, int hiOctave, float panRange )
-//{
-//    
-//}
+static void generateMeasure( Minim::Summer& bus, WaveformGenerator& generator, float* probs, const Scale* notes, int lowOctave, int hiOctave, float panRange )
+{
+    int scaleKey = 0; // TODO Get from settings
+    
+    for ( int i = 0; i < 16; ++i )
+    {
+        if ( ofRandom(1) < probs[i] )
+        {
+            int nextNoteIndex = notes->nextNoteIndex( prevNoteIndex );
+            int baseNote      = notes->scale[nextNoteIndex][0] + scaleKey;
+            int octave        = (int)ofRandom(lowOctave, hiOctave);
+            int note          = baseNote + octave * 12;
+            float freq        = Minim::Frequency::ofMidiNote( note ).asHz();
+            float amp         = ofRandom(0.6f, 0.8f);
+            float dur         = ofRandom(0.15f, 0.25f);
+            float pan         = 0.f;
+            
+            if ( panRange != 0 )
+            {
+                pan = ofRandom(panRange) + 0.2f;
+                if ( ofRandom(1) < 0.5f )
+                {
+                    pan *= -1;
+                }
+            }
+            
+            float time = i * 0.25f;
+            
+            // shuffle odd notes
+            if ( i % 2 == 0 )
+            {
+                // TODO get shuffle from settings
+                float Shuffle = 0.f; 
+                time += 0.08f * Shuffle;
+            }
+            
+            tone( bus, time, generator.generate(), freq, amp, dur, ofRandom(-pan, pan) );
+            
+            prevNoteIndex = nextNoteIndex;
+        }
+    }
+    
+}
 
 //-----------------------------------------
 //-- LOOPER
 //-----------------------------------------
 void Looper::noteOn(float dur)
 {
+    float noteProb[] = { 1.0f, 0.3f, 0.1f, 0.f,  0.8f, 0.34f, 0.6f, 0.11f,  0.7f, 0.24f, 0.6f, 0.7f,  0.12f, 0.3f, 0.23f, 0.9f };
+    float bassProb[] = { 1.0f, 0.3f, 0.1f, 0.f,  0.8f, 0.34f, 0.6f, 0.11f,  0.7f, 0.24f, 0.6f, 0.7f,  0.12f, 0.3f, 0.23f, 0.9f };
     // int scaleIndex = // get from settings
-    // generateMeasure( Melody(), generators[ melodyWave ].generate(), noteProb, Scales[scaleIndex], 5, 7, 0.8f );
-    // generateMeasure( Bass(),   generators[ bassWave   ].generate(), bassProb, Scales[scaleIndex], 2, 5, 0.0f );
+    generateMeasure( Melody(), generators[ 0 ], noteProb, Scales[0], 5, 7, 0.8f );
+    generateMeasure( Bass(),   generators[ 0 ], bassProb, Scales[0], 2, 5, 0.0f );
     
     // TODO get Shuffle from settings
-    float Shuffle = 0.08f * 0.5f;
-    
-    kick( 0.f, 0.75f );
-    kick( 1.f, 0.75f );
-    kick( 2.f, 0.75f );
-    kick( 3.f, 0.75f );
-    
-    snare( 1.f, 1.f );
-    snare( 2.75f + Shuffle, 1.5f );
-    snare( 3.5f, 1.0f );
-    
-    hat( 0.5f, 0.5f );
-    hat( 1.5f, 0.5f );
-    hat( 1.75f + Shuffle, 0.25f );
-    hat( 2.5f, 0.5f );
-    hat( 3.25f + Shuffle, 0.25f );
-    hat( 3.75f + Shuffle, 0.5f );
+//    float Shuffle = 0.08f * 0.f;
+//    
+//    kick( 0.f, 0.75f );
+//    kick( 1.f, 0.75f );
+//    kick( 2.f, 0.75f );
+//    kick( 3.f, 0.75f );
+//    
+//    snare( 1.f, 1.f );
+//    snare( 2.75f + Shuffle, 1.5f );
+//    snare( 3.5f, 1.0f );
+//    
+//    hat( 0.5f, 0.5f );
+//    hat( 1.5f, 0.5f );
+//    hat( 1.75f + Shuffle, 0.25f );
+//    hat( 2.5f, 0.5f );
+//    hat( 3.25f + Shuffle, 0.25f );
+//    hat( 3.75f + Shuffle, 0.5f );
 }
 
 void Looper::noteOff()
@@ -209,21 +252,23 @@ Tone::Tone( Minim::Summer& bus, Minim::Waveform* waveform, float freq, float amp
 : out( bus )
 , wave( freq, amp, waveform )
 , panner( pan )
-// , adsr( amp, 0.01f, 0.01f, amp * 0.7f, 0.2f )
+, adsr( amp, 0.01f, 0.01f, amp * 0.7f, 0.2f )
 {
-    // adsr.setAudioChannelCount( 2 );
-    // wave.patch( panner ).patch ( adsr );
+    adsr.setAudioChannelCount( 2 );
+    wave.patch( panner ).patch ( adsr );
 }
 
 void Tone::noteOn( float dur )
 {
-    // adsr.patch( out );
-    // adsr.noteOn();
+    adsr.patch( out );
+    adsr.noteOn();
 }
 
 void Tone::noteOff()
 {
     // TODO how to handle this? just sweep amplitude instead??
-    // adsr.noteOff();
-    // adsr.unpatchAfterRelease( out );
+    adsr.noteOff();
+    adsr.unpatch( out );
+    //adsr.unpatchAfterRelease( &out );
+    delete this;
 }

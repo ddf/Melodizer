@@ -74,6 +74,9 @@ void App::setup()
 		
 		mOutput = mAudioSystem->getAudioOutput( TouchAudioFormat(2), kOutputBufferSize );
         
+        mMelodyBus.patch( *mOutput );
+        mBassBus.patch( *mOutput );
+        
         mOutput->pauseNotes();
         mOutput->setTempo( 120 );
         mOutput->playNote(0.001f, 4, mLooper);

@@ -17,7 +17,7 @@
 #include "MoogFilter.h"
 #include "Summer.h"
 #include "Pan.h"
-//#include "ADSR.h"
+#include "ADSR.h"
 
 class Looper : public Minim::Instrument
 {
@@ -86,7 +86,7 @@ private:
     
     Minim::Summer&  out;
     Minim::Oscil    wave;
-//    Minim::ADSR     adsr;
+    Minim::ADSR     adsr;
     Minim::Pan      panner;
 };
 
