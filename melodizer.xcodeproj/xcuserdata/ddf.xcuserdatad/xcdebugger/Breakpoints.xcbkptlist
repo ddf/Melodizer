@@ -9,25 +9,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "src/Instruments.cpp"
-         timestampString = "345234801.978541"
+         timestampString = "345421627.656273"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "211"
-         endingLineNumber = "211"
-         landmarkName = "Looper::noteOn(float dur)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         isPathRelative = "1"
-         filePath = "src/Instruments.cpp"
-         timestampString = "345234801.978541"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "248"
-         endingLineNumber = "248"
+         startingLineNumber = "225"
+         endingLineNumber = "225"
          landmarkName = "Looper::noteOff()"
          landmarkType = "5">
       </FileBreakpoint>
@@ -37,11 +23,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "src/Instruments.cpp"
-         timestampString = "345234801.978541"
+         timestampString = "345421627.656273"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "358"
-         endingLineNumber = "358"
+         startingLineNumber = "362"
+         endingLineNumber = "362"
          landmarkName = "Tone::init( Minim::Summer* out, float freq, float amp, float pan )"
          landmarkType = "5">
       </FileBreakpoint>
@@ -51,11 +37,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "src/Instruments.cpp"
-         timestampString = "345234801.978541"
+         timestampString = "345421627.656273"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "377"
-         endingLineNumber = "377"
+         startingLineNumber = "381"
+         endingLineNumber = "381"
          landmarkName = "Tone::noteOff()"
          landmarkType = "5">
       </FileBreakpoint>
@@ -65,11 +51,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "src/Instruments.cpp"
-         timestampString = "345234801.978541"
+         timestampString = "345421627.656273"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "364"
-         endingLineNumber = "364"
+         startingLineNumber = "368"
+         endingLineNumber = "368"
          landmarkName = "Tone::noteOn( float dur )"
          landmarkType = "5">
       </FileBreakpoint>
@@ -135,11 +121,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "src/Instruments.cpp"
-         timestampString = "345234546.305876"
+         timestampString = "345421627.656273"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "73"
-         endingLineNumber = "73"
+         startingLineNumber = "60"
+         endingLineNumber = "60"
          landmarkName = "SetupInstruments()"
          landmarkType = "7">
       </FileBreakpoint>
@@ -149,11 +135,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "src/Instruments.cpp"
-         timestampString = "345234840.712949"
+         timestampString = "345421627.656273"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "151"
-         endingLineNumber = "151"
+         startingLineNumber = "138"
+         endingLineNumber = "138"
          landmarkName = "tone( Minim::Summer* bus, float time, WaveformType type, float freq, float amp, float dur, float pan )"
          landmarkType = "7">
       </FileBreakpoint>

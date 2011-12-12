@@ -16,20 +16,7 @@
 #include "Waves.h"
 
 #include "Scales.h"
-
-enum WaveformType
-{
-    WT_Sine = 0,
-    WT_Triangle,
-    WT_Saw,
-    WT_Square,
-    WT_Quarterpulse,
-    WT_Sine4,
-    WT_Sine8,
-    WT_Sine16,
-    WT_Sine32,
-    WT_Count,
-};
+#include "Settings.h"
 
 static Minim::Waveform* generate( WaveformType type )
 {
@@ -157,18 +144,16 @@ static void tone( Minim::Summer* bus, float time, WaveformType type, float freq,
 }
 
 
-static int prevNoteIndex = 0;
+
 
 static void generateMeasure( Minim::Summer& bus, WaveformType type, float* probs, const Scale* notes, int lowOctave, int hiOctave, float panRange )
 {
-    int scaleKey = 0; // TODO Get from settings
-    
     for ( int i = 0; i < 16; ++i )
     {
         if ( ofRandom(1) < probs[i] )
         {
-            int nextNoteIndex = notes->nextNoteIndex( prevNoteIndex );
-            int baseNote      = notes->scale[nextNoteIndex][0] + scaleKey;
+            int nextNoteIndex = notes->nextNoteIndex( Settings::PreviousNoteIndex );
+            int baseNote      = notes->scale[nextNoteIndex][0] + Settings::Key;
             int octave        = (int)ofRandom(lowOctave, hiOctave);
             int note          = baseNote + octave * 12;
             float freq        = Minim::Frequency::ofMidiNote( note ).asHz();
@@ -190,14 +175,12 @@ static void generateMeasure( Minim::Summer& bus, WaveformType type, float* probs
             // shuffle odd notes
             if ( i % 2 == 0 )
             {
-                // TODO get shuffle from settings
-                float Shuffle = 0.f; 
-                time += 0.08f * Shuffle;
+                time += Settings::Shuffle;
             }
             
             tone( &bus, time, type, freq, amp, dur, ofRandom(-pan, pan) );
             
-            prevNoteIndex = nextNoteIndex;
+            Settings::PreviousNoteIndex = nextNoteIndex;
         }
     }
     
@@ -208,14 +191,8 @@ static void generateMeasure( Minim::Summer& bus, WaveformType type, float* probs
 //-----------------------------------------
 void Looper::noteOn(float dur)
 {
-    float noteProb[] = { 1.0f, 0.3f, 0.1f, 0.f,  0.8f, 0.34f, 0.6f, 0.11f,  0.7f, 0.24f, 0.6f, 0.7f,  0.12f, 0.3f, 0.23f, 0.9f };
-    float bassProb[] = { 1.0f, 0.3f, 0.1f, 0.f,  0.8f, 0.34f, 0.6f, 0.11f,  0.7f, 0.24f, 0.6f, 0.7f,  0.12f, 0.3f, 0.23f, 0.9f };
-    // int scaleIndex = // get from settings
-    generateMeasure( Melody(), WT_Saw, noteProb, Scales[2], 5, 7, 0.8f );
-    generateMeasure( Bass(),   WT_Square, bassProb, Scales[2], 2, 5, 0.0f );
-    
-    // TODO get Shuffle from settings
-    float Shuffle = 0.08f * 0.f;
+    generateMeasure( Melody(), Settings::MelodyWave, Settings::MelodyProbablities, Scales[ Settings::Scale ], 5, 7, 0.8f );
+    generateMeasure( Bass(),   Settings::BassWave,   Settings::BassProbabilities,  Scales[ Settings::Scale ], 2, 5, 0.0f );
     
     kick( 0.f, 0.75f );
     if ( ofRandom(1) < 0.3f )
@@ -231,15 +208,15 @@ void Looper::noteOn(float dur)
     }
     
     snare( 1.f, 1.f );
-    snare( 2.75f + Shuffle, 1.5f );
+    snare( 2.75f + Settings::Shuffle, 1.5f );
     snare( 3.5f, 1.0f );
     
     hat( 0.5f, 0.5f );
     hat( 1.5f, 0.5f );
-    hat( 1.75f + Shuffle, 0.25f );
+    hat( 1.75f + Settings::Shuffle, 0.25f );
     hat( 2.5f, 0.5f );
-    hat( 3.25f + Shuffle, 0.25f );
-    hat( 3.75f + Shuffle, 0.5f );
+    hat( 3.25f + Settings::Shuffle, 0.25f );
+    hat( 3.75f + Settings::Shuffle, 0.5f );
 }
 
 void Looper::noteOff()
@@ -256,6 +233,7 @@ Kick::Kick()
 : osc( 80.f, 0.f, Minim::Waves::SINE() )
 , freqSweep()
 , ampSweep()
+, bPatched(false)
 {
     freqSweep.patch( osc.frequency );
     ampSweep.patch( osc.amplitude );
@@ -268,16 +246,24 @@ void Kick::init( float amp )
 
 void Kick::noteOn(float dur)
 {
-    ampSweep.activate( 0.1f, amplitudes.front(), 0 );
-    freqSweep.activate( 0.1f, 120.f, 20.f );
-    osc.patch( Out() );
+    if ( Settings::PlayKick && !bPatched )
+    {
+        ampSweep.activate( 0.1f, amplitudes.front(), 0 );
+        freqSweep.activate( 0.1f, 120.f, 20.f );
+        osc.patch( Out() );
+        bPatched = true;
+    }
     
     amplitudes.pop_front();
 }
 
 void Kick::noteOff()
 {
-    osc.unpatch( Out() );
+    if ( bPatched )
+    {
+        osc.unpatch( Out() );
+        bPatched = false;
+    }
 }
 
 //--------------------------------------
@@ -287,6 +273,7 @@ Snare::Snare()
 : noize( 1, Minim::Noise::eTintPink )
 , ampSweep()
 , filter( 200.f, 0.5f, Minim::MoogFilter::HP )
+, bPatched(false)
 {
     noize.patch( filter );
     ampSweep.patch( noize.amplitude );
@@ -299,15 +286,23 @@ void Snare::init( float amp )
 
 void Snare::noteOn(float dur)
 {
-    ampSweep.activate( 0.05f, amplitudes.front(), 0 );
-    filter.patch( Out() );
+    if ( Settings::PlaySnare && !bPatched )
+    {
+        ampSweep.activate( 0.05f, amplitudes.front(), 0 );
+        filter.patch( Out() );
+        bPatched = true;
+    }
     
     amplitudes.pop_front();
 }
 
 void Snare::noteOff()
 {
-    filter.unpatch( Out() );
+    if ( bPatched )
+    {
+        filter.unpatch( Out() );
+        bPatched = false;
+    }
 }
 
 //--------------------------------------
@@ -317,6 +312,7 @@ Hat::Hat()
 : noize( 1, Minim::Noise::eTintWhite )
 , ampSweep()
 , filter( 10000.0f, 0.1f, Minim::MoogFilter::HP )
+, bPatched(false)
 {
     noize.patch( filter );
     ampSweep.patch( noize.amplitude );
@@ -329,15 +325,23 @@ void Hat::init( float amp )
 
 void Hat::noteOn(float dur)
 {
-    ampSweep.activate( 0.05f, amplitudes.front() * 0.8f, 0 );
-    filter.patch( Out() );
+    if ( Settings::PlayHat && !bPatched )
+    {
+        ampSweep.activate( 0.05f, amplitudes.front() * 0.8f, 0 );
+        filter.patch( Out() );
+        bPatched = true;
+    }
     
     amplitudes.pop_front();
 }
 
 void Hat::noteOff()
 {
-    filter.unpatch( Out() );
+    if ( bPatched )
+    {
+        filter.unpatch( Out() );
+        bPatched = false;
+    }
 }
 
 //---------------------------------------

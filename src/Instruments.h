@@ -44,10 +44,11 @@ public:
     
 private:
     
-    std::list<float>  amplitudes;
+    std::list<float>    amplitudes;
     Minim::Line         freqSweep;
     Minim::Line         ampSweep;
     Minim::Oscil        osc;
+    bool                bPatched;
 };
 
 class Snare : public Minim::Instrument
@@ -62,10 +63,11 @@ public:
     
 private:
     
-    std::list<float>  amplitudes;
+    std::list<float>    amplitudes;
     Minim::Noise        noize;
     Minim::Line         ampSweep;
     Minim::MoogFilter   filter;
+    bool                bPatched;
 };
 
 class Hat : public Minim::Instrument
@@ -79,10 +81,11 @@ public:
     
 private:
 
-    std::list<float>  amplitudes;
+    std::list<float>    amplitudes;
     Minim::Noise        noize;
     Minim::Line         ampSweep;
     Minim::MoogFilter   filter;
+    bool                bPatched;
 };
 
 class Tone : public Minim::Instrument
