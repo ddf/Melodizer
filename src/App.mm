@@ -111,6 +111,8 @@ void App::setup()
     {
         mXOff = 65;
         mYOff = 35;
+        
+        mSettingsScreen.setup();
     }
 	
 	//-- DONE ---------------------------
@@ -120,17 +122,27 @@ void App::setup()
 //--------------------------------------------------------------
 void App::update() 
 {
-//	const float dt  = 1.0f / ofGetFrameRate();
+    const float dt  = 1.0f / ofGetFrameRate();
+    
+    if ( mSettingsScreen.active() )
+    {
+        mSettingsScreen.update( dt );
+        
+        if ( !mSettingsScreen.active() )
+        {
+            ofRegisterTouchEvents( this );
+        }
+    }
 }
 
 //--------------------------------------------------------------
 void App::draw() 
 {	
-    //ofBackground(20, 20, 20);
+    ofBackground(20, 20, 20);
     
-    ofSetColor(20, 20, 20, 40);
-    ofFill();
-    ofRect(0, 0, ofGetWidth(), ofGetHeight());
+//    ofSetColor(20, 20, 20, 40);
+//    ofFill();
+//    ofRect(0, 0, ofGetWidth(), ofGetHeight());
     
     ofSetColor(200, 0, 128);
     ofNoFill();
@@ -149,6 +161,12 @@ void App::draw()
             ofTriangle( 0, -20*sampleR, -30*sampleR, 30*sampleR, 30*sampleR, 30*sampleR );
         }
         ofPopMatrix();
+    }
+    
+    // SETTINGS
+    if ( mSettingsScreen.active() )
+    {
+        mSettingsScreen.draw();
     }
 }
 

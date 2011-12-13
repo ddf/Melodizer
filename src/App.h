@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxiPhone.h"
+#include "SettingsScreen.h"
 
 // forward declares
 @class UIActionHandler;
@@ -67,6 +68,7 @@ private:
 	// UI
 	UIActionHandler				 * mActionHandler;
 	UIActionSheet			     * mActionSheet; // so we can ask things
+    SettingsScreen                 mSettingsScreen;
 	
 	bool						   m_bWasPlaying; // keep track of whether we were playing or not when audio got paused.
     

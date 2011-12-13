@@ -34,6 +34,8 @@ void App::touchUp(ofTouchEventArgs &touch)
 //--------------------------------------------------------------
 void App::touchDoubleTap(ofTouchEventArgs &touch)
 {
+    mSettingsScreen.show();
+    ofUnregisterTouchEvents( this );
 }
 
 //--------------------------------------------------------------
