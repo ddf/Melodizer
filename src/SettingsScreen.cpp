@@ -176,26 +176,26 @@ void SettingsScreen::setup()
     
     const float w  = mMaxX - mMinX;
     const float h  = mMaxY - mMinY;
+    const float melY = h * 0.23f;
+    const float basY = h * 0.78f;
+    const float sw = 35.f;
+    const float sh = 75.f;
     
     // sliders
     {
-        const float sw = 35.f;
-        const float sh = 75.f;
         
         float x  = (w - (sw*1.5f*17)) / 2 + sw*0.5f;
-        float my = h * 0.23f;
-        float by = h * 0.58f;
         
         // -1 for hue means white for me
-        mSliders.push_back( ValueSlider( x, my, sw, sh, -1, &Settings::MelodyVolume ) );
-        mSliders.push_back( ValueSlider( x, by, sw, sh, -1, &Settings::BassVolume ) );
+        mSliders.push_back( ValueSlider( x, melY, sw, sh, -1, &Settings::MelodyVolume ) );
+        mSliders.push_back( ValueSlider( x, basY, sw, sh, -1, &Settings::BassVolume ) );
         
         x += sw * 1.75f;
         
         for ( int i = 0; i < 16; ++i )
         {
-            mSliders.push_back( ValueSlider( x, my, sw, sh, 200, &Settings::MelodyProbablities[i] ) );
-            mSliders.push_back( ValueSlider( x, by, sw, sh, 150, &Settings::BassProbabilities[i] ) );
+            mSliders.push_back( ValueSlider( x, melY, sw, sh, 200, &Settings::MelodyProbablities[i] ) );
+            mSliders.push_back( ValueSlider( x, basY, sw, sh, 150, &Settings::BassProbabilities[i] ) );
             x += sw*1.5f;
         }
     }
@@ -217,10 +217,10 @@ void SettingsScreen::setup()
     {
         const float bw = 60.f;
         const float bh = 60.f;
+        const float my = melY - sh/2 - bh/2 - 10;
+        const float by = basY - sh/2 - bh/2 - 10;
         
         float x = (w - (bw*1.5f*WT_Count)) / 2 + bw*0.75f;
-        float my = h * 0.08f;
-        float by = h * 0.43f;
         
         for( int i = 0; i < WT_Count; ++i )
         {
@@ -229,6 +229,9 @@ void SettingsScreen::setup()
             x += bw * 1.5f;
         }
     }
+    
+    mTrebleClef.loadImage( "treble_clef.png" );
+    mBassClef.loadImage( "bass_clef.png" );
 }
 
 //----------------------------------
@@ -324,6 +327,11 @@ void SettingsScreen::draw()
             
             // translate to top corner so elements can render in the correct space
             ofTranslate( -w/2, -h/2 );
+            
+            const int tint = 50;
+            ofSetColor(tint, tint, tint);
+            mTrebleClef.draw( mSliders[2].box().mX - mSliders[2].box().mW, mSliders[2].box().mY );
+            mBassClef.draw  ( mSliders[3].box().mX, mSliders[3].box().mY );
             
             // sliders
             for( int i = 0; i < mSliders.size(); ++i )

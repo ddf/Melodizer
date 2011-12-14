@@ -56,6 +56,8 @@ public:
     
     void draw();
     
+    Box& box() { return mBox; }
+    
     // returns true if handled
     bool handleTouch( const int id, const float x, const float y );
     bool handleTouchUp( const int id, const float x, const float y );
@@ -135,6 +137,9 @@ private:
     
     Minim::Waveform* mWaveforms[WT_Count];
     float            mWaveformAnim;
+    
+    ofImage          mTrebleClef;
+    ofImage          mBassClef;
 };
 
 
