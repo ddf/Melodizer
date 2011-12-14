@@ -101,6 +101,7 @@ void App::setup()
 		}
 		
 		// pinch gesture mostly for zooming in and out
+        if ( 0 )
 		{
 			mPinchGestureRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:mActionHandler action:@selector(handlePinchGesture:)];
 			[ofxiPhoneGetUIWindow() addGestureRecognizer:mPinchGestureRecognizer];

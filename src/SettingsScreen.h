@@ -11,35 +11,89 @@
 
 #include "ofMain.h"
 #include <vector>
+#include "Settings.h"
 
-class ValueSlider
+// forward declair.
+namespace Minim 
 {
-public:
-    ValueSlider( float x, float y, float w, float h, ofColor c, float* v ) 
-    : mX(x)
-    , mY(y)
+    class Waveform;
+}
+
+struct Box
+{
+    Box( float cx, float cy, float w, float h )
+    : mX(cx)
+    , mY(cy)
     , mW(w)
     , mH(h)
     , mMinX( mX - mW/2 )
     , mMaxX( mX + mW/2 )
     , mMinY( mY - mH/2 )
     , mMaxY( mY + mH/2 )
-    , mColor(c)
-    , mValue(v) 
+    {
+        
+    }
+    
+    float   mX, mY, mW, mH;
+    float   mMinX, mMaxX, mMinY, mMaxY;
+    
+    bool contains( float x, float y )
+    {
+        return (x > mMinX && x < mMaxX && y > mMinY && y < mMaxY);
+    }
+};
+
+class ValueSlider
+{
+public:
+    ValueSlider( float x, float y, float w, float h, int hue, float* v ) 
+    : mBox( x, y, w, h )
+    , mHue(hue)
+    , mValue(v)
+    , mTouch(-1)
     {
     }
     
     void draw();
     
     // returns true if handled
-    bool handleTouch( const float x, const float y );
+    bool handleTouch( const int id, const float x, const float y );
+    bool handleTouchUp( const int id, const float x, const float y );
     
 private:
     
-    ofColor mColor;
-    float   mX, mY, mW, mH;
-    float   mMinX, mMaxX, mMinY, mMaxY;
+    int     mHue;
+    Box     mBox;
     float*  mValue;
+    int     mTouch; // the touch we are currently tracking
+};
+
+class WaveformButton
+{
+public:
+    WaveformButton( float x, float y, float w, float h, WaveformType myType, WaveformType* refType, Minim::Waveform* wave )
+    : mBox( x, y, w, h )
+    , mWave(wave)
+    , mTouch(-1)
+    , mType( myType )
+    , mRefType( refType )
+    {
+        
+    }
+    
+    void draw( float anim );
+    
+    bool handleTouch( const int id, const float x, const float y );
+    bool handleTouchUp( const int id, const float x, const float y );
+    
+private:
+    
+    int                 mTouch;
+    Box                 mBox;
+    WaveformType        mType;
+    WaveformType*       mRefType;
+    Minim::Waveform*    mWave;
+    
 };
 
 // modal, non-apple UI for futzing with settings
@@ -47,6 +101,7 @@ class SettingsScreen
 {
 public:
     SettingsScreen();
+    ~SettingsScreen();
     
     void setup();
     void update( const float dt );
@@ -75,7 +130,11 @@ private:
     float mAnimTimer;
     float mMinX, mMaxX, mMinY, mMaxY;
     
-    std::vector<ValueSlider> mSliders;
+    std::vector<ValueSlider>    mSliders;
+    std::vector<WaveformButton> mWaveformButtons;
+    
+    Minim::Waveform* mWaveforms[WT_Count];
+    float            mWaveformAnim;
 };
 
 
