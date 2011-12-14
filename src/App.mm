@@ -125,6 +125,9 @@ void App::update()
 {
     const float dt  = 1.0f / ofGetFrameRate();
     
+    mMelodyBus.volume.setLastValue( Settings::MelodyVolume );
+    mBassBus.volume.setLastValue( Settings::BassVolume );
+    
     if ( mSettingsScreen.active() )
     {
         mSettingsScreen.update( dt );

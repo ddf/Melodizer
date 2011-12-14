@@ -28,8 +28,18 @@ void ValueSlider::draw()
     if ( mValue > 0 )
     {        
         // adjust brightness based on amt of fill
+        float bright = ( 64 + 190 * (*mValue) );
         ofColor color;
-        color.setHsb( mHue, 255, ( 64 + 190 * (*mValue) ) );
+        
+        if ( mHue >= 0 )
+        {
+            color.setHsb( mHue, 255, bright );
+        }
+        else
+        {
+            color.set( bright, bright, bright );
+        }
+        
         ofSetColor(color);
         
         float fH = mBox.mH * (*mValue);
@@ -172,9 +182,15 @@ void SettingsScreen::setup()
         const float sw = 35.f;
         const float sh = 75.f;
         
-        float x  = (w - (sw*1.5f*16)) / 2 + sw*0.75f;
+        float x  = (w - (sw*1.5f*17)) / 2 + sw*0.5f;
         float my = h * 0.23f;
         float by = h * 0.58f;
+        
+        // -1 for hue means white for me
+        mSliders.push_back( ValueSlider( x, my, sw, sh, -1, &Settings::MelodyVolume ) );
+        mSliders.push_back( ValueSlider( x, by, sw, sh, -1, &Settings::BassVolume ) );
+        
+        x += sw * 1.75f;
         
         for ( int i = 0; i < 16; ++i )
         {
