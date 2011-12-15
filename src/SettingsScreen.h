@@ -12,36 +12,14 @@
 #include "ofMain.h"
 #include <vector>
 #include "Settings.h"
+#include "Box.h"
+#include "KeyChooser.h"
 
 // forward declair.
 namespace Minim 
 {
     class Waveform;
 }
-
-struct Box
-{
-    Box( float cx, float cy, float w, float h )
-    : mX(cx)
-    , mY(cy)
-    , mW(w)
-    , mH(h)
-    , mMinX( mX - mW/2 )
-    , mMaxX( mX + mW/2 )
-    , mMinY( mY - mH/2 )
-    , mMaxY( mY + mH/2 )
-    {
-        
-    }
-    
-    float   mX, mY, mW, mH;
-    float   mMinX, mMaxX, mMinY, mMaxY;
-    
-    bool contains( float x, float y )
-    {
-        return (x > mMinX && x < mMaxX && y > mMinY && y < mMaxY);
-    }
-};
 
 class ValueSlider
 {
@@ -133,13 +111,16 @@ private:
     float mMinX, mMaxX, mMinY, mMaxY;
     
     std::vector<ValueSlider>    mSliders;
-    std::vector<WaveformButton> mWaveformButtons;
     
+    std::vector<WaveformButton> mWaveformButtons;
     Minim::Waveform* mWaveforms[WT_Count];
     float            mWaveformAnim;
     
+    KeyChooser       mKeyChooser;
+    
     ofImage          mTrebleClef;
     ofImage          mBassClef;
+    
 };
 
 

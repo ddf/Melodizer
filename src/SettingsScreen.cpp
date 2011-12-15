@@ -232,6 +232,9 @@ void SettingsScreen::setup()
     
     mTrebleClef.loadImage( "treble_clef.png" );
     mBassClef.loadImage( "bass_clef.png" );
+    
+    // key chooser
+    mKeyChooser.setup( w/2, h/2 - 30, 200 );
 }
 
 //----------------------------------
@@ -281,6 +284,8 @@ void SettingsScreen::update( const float dt )
     {
         mWaveformAnim -= 1;
     }
+    
+    mKeyChooser.update( dt );
 }
 
 //----------------------------------
@@ -344,6 +349,8 @@ void SettingsScreen::draw()
             {
                 mWaveformButtons[i].draw( mWaveformAnim );
             }
+            
+            mKeyChooser.draw();
         }
         ofPopMatrix();
     }
@@ -361,6 +368,11 @@ void SettingsScreen::show()
 void SettingsScreen::hide()
 {
     ofUnregisterTouchEvents(this);
+    
+    if ( mKeyChooser.active() )
+    {
+        mKeyChooser.close();
+    }
     
     mAnimTimer = sk_AnimLength;
     mState = ST_HIDING;
@@ -380,6 +392,11 @@ void SettingsScreen::touchDown( ofTouchEventArgs& touch )
     {
         const float x = ofMap(touch.x, mMinX, mMaxX, 0, mMaxX-mMinX);
         const float y = ofMap(touch.y, mMinY, mMaxY, 0, mMaxY-mMinY);
+        
+        if ( mKeyChooser.handleTouch(x, y) )
+        {
+            return;
+        }
         
         for( int i = 0; i < mSliders.size(); ++i )
         {
@@ -402,6 +419,11 @@ void SettingsScreen::touchDown( ofTouchEventArgs& touch )
 //----------------------------------
 void SettingsScreen::touchMoved( ofTouchEventArgs& touch )
 {
+    if ( mKeyChooser.active() )
+    {
+        return;
+    }
+    
 //    printf( "Touch Moved: %d, %f, %f\n", touch.id, touch.x, touch.y );
     // transform to local space and hand to our elements
     {
@@ -427,6 +449,11 @@ void SettingsScreen::touchDoubleTap( ofTouchEventArgs& touch )
 //----------------------------------
 void SettingsScreen::touchUp( ofTouchEventArgs& touch )
 {
+    if ( mKeyChooser.active() )
+    {
+        return;
+    }
+    
 //    printf( "Touch Up: %d, %f, %f\n", touch.id, touch.x, touch.y );
     // transform to local space and hand to our elements
     {
