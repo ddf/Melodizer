@@ -84,9 +84,10 @@ bool KeyChooser::handleTouch( const float x, const float y )
             {
                 // set the new key and close
                 Settings::Key = (i*7) % 12;
-                close();
+                break;
             }
         }
+        close();
     }
     else if ( mState == ST_CLOSED && ofDist(x, y, mX, mY) < 40 )
     {
@@ -125,7 +126,14 @@ void KeyChooser::drawButton( KeyButton* button, float alpha )
  
     ofFill();
     
-    ofSetColor(80, 80, 80, alpha*0.75f);
+    if ( keys[Settings::Key] == button->mName )
+    {
+        ofSetColor(255, 128, 0, alpha*0.75f);
+    }
+    else
+    {
+        ofSetColor(80, 80, 80, alpha*0.75f);
+    }
     ofRect( b.mX, b.mY, b.mW, b.mH );
     
     ofSetColor(200, 200, 200, alpha);
