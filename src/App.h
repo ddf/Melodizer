@@ -22,6 +22,7 @@ namespace Minim
 }
 
 #include "Summer.h"
+#include "TickRate.h"
 #include "Instruments.h"
 
 class App : public ofxiPhoneApp 
@@ -44,6 +45,7 @@ public:
 	Minim::AudioOutput & Out() { return *mOutput; }
     Minim::Summer&       Melody() { return mMelodyBus; }
     Minim::Summer&       Bass()   { return mBassBus; }
+    Minim::Summer&       Drums()  { return mDrumBus; }
 	
 	void pauseAudio();
 	void resumeAudio();
@@ -61,8 +63,11 @@ private:
 	// SOUND
 	Minim::AudioSystem *	  mAudioSystem;
 	Minim::AudioOutput *	  mOutput;
+    Minim::Summer             mMixBus;
     Minim::Summer             mMelodyBus;
     Minim::Summer             mBassBus;
+    Minim::Summer             mDrumBus;
+    Minim::TickRate           mRate;
     Looper                    mLooper;
 	
 	// UI

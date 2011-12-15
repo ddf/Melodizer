@@ -9,11 +9,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "src/Instruments.cpp"
-         timestampString = "345421627.656273"
+         timestampString = "345612497.880134"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "225"
-         endingLineNumber = "225"
+         startingLineNumber = "224"
+         endingLineNumber = "224"
          landmarkName = "Looper::noteOff()"
          landmarkType = "5">
       </FileBreakpoint>
@@ -72,34 +72,6 @@
          endingLineNumber = "204"
          landmarkName = "Summer::uGenerate(float * channels, int numChannels)"
          landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         isPathRelative = "1"
-         filePath = "src/Instruments.cpp"
-         timestampString = "345421627.656273"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "60"
-         endingLineNumber = "60"
-         landmarkName = "SetupInstruments()"
-         landmarkType = "7">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         isPathRelative = "1"
-         filePath = "src/Instruments.cpp"
-         timestampString = "345421627.656273"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "138"
-         endingLineNumber = "138"
-         landmarkName = "tone( Minim::Summer* bus, float time, WaveformType type, float freq, float amp, float dur, float pan )"
-         landmarkType = "7">
       </FileBreakpoint>
    </FileBreakpoints>
 </Bucket>

@@ -18,5 +18,6 @@ namespace Minim
 Minim::AudioOutput& Out();
 Minim::Summer&      Melody();
 Minim::Summer&      Bass();
+Minim::Summer&      Drums();
 
 #endif

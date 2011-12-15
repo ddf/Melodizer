@@ -221,8 +221,7 @@ void Looper::noteOn(float dur)
 
 void Looper::noteOff()
 {
-    // TODO get tempo from settings
-    Out().setTempo( 120 );
+    Out().setTempo( Settings::Tempo );
     Out().playNote( 0.f, 4.0f, *this );
 }
 
@@ -250,7 +249,7 @@ void Kick::noteOn(float dur)
     {
         ampSweep.activate( 0.1f, amplitudes.front(), 0 );
         freqSweep.activate( 0.1f, 120.f, 20.f );
-        osc.patch( Out() );
+        osc.patch( Drums() );
         bPatched = true;
     }
     
@@ -261,7 +260,7 @@ void Kick::noteOff()
 {
     if ( bPatched )
     {
-        osc.unpatch( Out() );
+        osc.unpatch( Drums() );
         bPatched = false;
     }
 }
@@ -289,7 +288,7 @@ void Snare::noteOn(float dur)
     if ( Settings::PlaySnare && !bPatched )
     {
         ampSweep.activate( 0.05f, amplitudes.front(), 0 );
-        filter.patch( Out() );
+        filter.patch( Drums() );
         bPatched = true;
     }
     
@@ -300,7 +299,7 @@ void Snare::noteOff()
 {
     if ( bPatched )
     {
-        filter.unpatch( Out() );
+        filter.unpatch( Drums() );
         bPatched = false;
     }
 }
@@ -328,7 +327,7 @@ void Hat::noteOn(float dur)
     if ( Settings::PlayHat && !bPatched )
     {
         ampSweep.activate( 0.05f, amplitudes.front() * 0.8f, 0 );
-        filter.patch( Out() );
+        filter.patch( Drums() );
         bPatched = true;
     }
     
@@ -339,7 +338,7 @@ void Hat::noteOff()
 {
     if ( bPatched )
     {
-        filter.unpatch( Out() );
+        filter.unpatch( Drums() );
         bPatched = false;
     }
 }

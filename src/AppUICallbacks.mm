@@ -23,6 +23,9 @@ void App::touchMoved(ofTouchEventArgs &touch)
     {
         mXOff = ofMap(touch.x, 0, ofGetWidth(), 55, 75);
         mYOff = ofMap(touch.y, 0, ofGetHeight(), 25, 45);
+        
+        mRate.value.setLastValue( ofMap(touch.x, 0, ofGetWidth(), 1.0f, 0.2f) );
+        Settings::Tempo = ofMap( touch.y, 0, ofGetHeight(), 240, 40 );
     }
 }
 

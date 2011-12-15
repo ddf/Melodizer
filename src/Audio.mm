@@ -25,3 +25,8 @@ Minim::Summer& Bass()
 {
     return gApp->Bass();
 }
+
+Minim::Summer& Drums()
+{
+    return gApp->Drums();
+}

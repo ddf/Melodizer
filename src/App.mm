@@ -74,8 +74,12 @@ void App::setup()
 		
 		mOutput = mAudioSystem->getAudioOutput( TouchAudioFormat(2), kOutputBufferSize );
         
-        mMelodyBus.patch( *mOutput );
-        mBassBus.patch( *mOutput );
+        mMelodyBus.patch( mMixBus );
+        mBassBus.patch( mMixBus );
+        mDrumBus.patch( mMixBus );
+        
+        mRate.setInterpolation(true);
+        mMixBus.patch( mRate ).patch( *mOutput );
         
         SetupInstruments();
         
