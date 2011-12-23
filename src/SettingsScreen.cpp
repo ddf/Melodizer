@@ -55,7 +55,7 @@ bool ValueSlider::handleTouch(const int id, const float x, const float y)
     const bool bInside = mBox.contains( x, y ); 
     if ( bInside && mTouch == -1 )
     {
-        printf( "Value Slider started tracking %d.\n", id );
+        //printf( "Value Slider started tracking %d.\n", id );
         mTouch = id;
     }
     
@@ -80,7 +80,7 @@ bool ValueSlider::handleTouchUp( const int id, const float x, const float y )
 {
     if ( id == mTouch )
     {
-        printf( "Value Slider stopped tracking %d.\n", id );
+        //printf( "Value Slider stopped tracking %d.\n", id );
         mTouch = -1;
         return true;
     }
@@ -108,14 +108,15 @@ void WaveformButton::draw( float anim )
     
     // first draw the waveform in our box (x,y) is center
     {
-        for( int x = 0; x < mBox.mW-1; ++x )
+        const int res = 1;
+        for( int x = 0; x < mBox.mW-res; x+=res )
         {
             const float animX = (int)(x + mBox.mW*anim) % (int)(mBox.mW);
             const float lu1   = animX / mBox.mW;
-            const float lu2   = (animX+1) / mBox.mW;
+            const float lu2   = (animX+res) / mBox.mW;
             const float y1    = mBox.mY - mWave->value( lu1 )*mBox.mH*0.3f;
             const float y2    = mBox.mY - mWave->value( lu2 )*mBox.mH*0.3f;
-            ofLine( mBox.mMinX + x, y1, mBox.mMinX + x+1, y2);
+            ofLine( mBox.mMinX + x, y1, mBox.mMinX + x+res, y2);
         }
     }
     

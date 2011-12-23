@@ -176,6 +176,11 @@ void App::draw()
     {
         mSettingsScreen.draw();
     }
+    
+    ofSetColor(255, 255, 255);
+    string fps("FPS: ");
+    fps += ofToString( ofGetFrameRate() );
+    ofDrawBitmapString(fps, 5, 15);
 }
 
 //--------------------------------------------------------------
