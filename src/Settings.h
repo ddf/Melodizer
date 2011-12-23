@@ -32,7 +32,8 @@ public:
     static int          Scale;
     static int          Key;
     static float        Shuffle;
-    static int          PreviousNoteIndex; // used to determine what next melody or bass note is. need it here because it needs to be reset when scale is changed.
+    static int          PreviousMelodyNoteIndex;
+    static int          PreviousBassNoteIndex;
     
     // melody
     static float        MelodyProbablities[16];

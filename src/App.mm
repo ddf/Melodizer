@@ -85,7 +85,7 @@ void App::setup()
         
         mOutput->pauseNotes();
         mOutput->setTempo( 120 );
-        mOutput->playNote(0.001f, 4, mLooper);
+        mOutput->playNote(0.001f, 0.25f, mLooper);
         mOutput->resumeNotes();
 	}
 	

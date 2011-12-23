@@ -42,6 +42,35 @@ static std::list<Snare*>       snares;
 static std::list<Hat*>         hats;
 static std::list<Tone*>        tones[WT_Count];
 
+// our drum beat
+struct DrumNote
+{
+    float prob;
+    float amp;
+};
+
+DrumNote hatNotes[] = {
+    {0.0f, 0.0f}, {0.0f, 0.00f}, {1.0f, 0.5f}, {0.0f, 0.0f},
+    {0.0f, 0.0f}, {0.0f, 0.00f}, {1.0f, 0.5f}, {1.0f, 0.25f},
+    {0.0f, 0.0f}, {0.0f, 0.00f}, {1.0f, 0.5f}, {0.0f, 0.0f},
+    {0.0f, 0.0f}, {1.0f, 0.25f}, {0.0f, 0.0f}, {1.0f, 0.5f}
+};
+
+DrumNote snareNotes[] = {
+    {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f},
+    {1.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f},
+    {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {1.0f, 1.5f},
+    {0.0f, 0.0f}, {0.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 0.0f}
+};
+
+DrumNote kickNotes[] = { 
+    {1.0f, 0.75f}, {0.0f, 0.0f}, {0.3f, 0.5f}, {0.0f, 0.0f},
+    {1.0f, 0.75f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f},
+    {1.0f, 0.75f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f},
+    {1.0f, 0.75f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {0.2f, 0.3f}
+};
+    
+
 void SetupInstruments()
 {
     kicks.push_back( new Kick );
@@ -109,6 +138,11 @@ static void kick( float time, float amp )
     kicks.push_back( k );
 }
 
+static void kick( float amp )
+{
+    kick( 0, amp );
+}
+
 static void snare( float time, float amp )
 {
     Snare* s = snares.front();
@@ -143,86 +177,87 @@ static void tone( Minim::Summer* bus, float time, WaveformType type, float freq,
     list.push_back( t );
 }
 
-
-
-
-static void generateMeasure( Minim::Summer& bus, WaveformType type, float* probs, const Scale* notes, int lowOctave, int hiOctave, float panRange )
+static void generateNote( Minim::Summer& bus,
+                          float time,
+                          WaveformType type, 
+                          const Scale* notes, 
+                          int lowOctave, 
+                          int hiOctave, 
+                          float panRange, 
+                          int& previousNoteIndex
+                         )
 {
-    for ( int i = 0; i < 16; ++i )
+    int nextNoteIndex = notes->nextNoteIndex( previousNoteIndex );
+    int baseNote      = notes->scale[nextNoteIndex][0] + Settings::Key;
+    int octave        = (int)ofRandom(lowOctave, hiOctave);
+    int note          = baseNote + octave * 12;
+    float freq        = Minim::Frequency::ofMidiNote( note ).asHz();
+    float amp         = ofRandom(0.6f, 0.8f);
+    float dur         = ofRandom(0.15f, 0.25f);
+    float pan         = 0.f;
+    
+    if ( panRange != 0 )
     {
-        if ( ofRandom(1) < probs[i] )
+        pan = ofRandom(panRange) + 0.2f;
+        if ( ofRandom(1) < 0.5f )
         {
-            int nextNoteIndex = notes->nextNoteIndex( Settings::PreviousNoteIndex );
-            int baseNote      = notes->scale[nextNoteIndex][0] + Settings::Key;
-            int octave        = (int)ofRandom(lowOctave, hiOctave);
-            int note          = baseNote + octave * 12;
-            float freq        = Minim::Frequency::ofMidiNote( note ).asHz();
-            float amp         = ofRandom(0.6f, 0.8f);
-            float dur         = ofRandom(0.15f, 0.25f);
-            float pan         = 0.f;
-            
-            if ( panRange != 0 )
-            {
-                pan = ofRandom(panRange) + 0.2f;
-                if ( ofRandom(1) < 0.5f )
-                {
-                    pan *= -1;
-                }
-            }
-            
-            float time = i * 0.25f;
-            
-            // shuffle odd notes
-            if ( i % 2 == 0 )
-            {
-                time += Settings::Shuffle;
-            }
-            
-            tone( &bus, time, type, freq, amp, dur, ofRandom(-pan, pan) );
-            
-            Settings::PreviousNoteIndex = nextNoteIndex;
+            pan *= -1;
         }
     }
     
+    tone( &bus, time, type, freq, amp, dur, ofRandom(-pan, pan) );
+    
+    previousNoteIndex = nextNoteIndex;    
 }
 
 //-----------------------------------------
 //-- LOOPER
 //-----------------------------------------
+Looper::Looper()
+: tick(0)
+{
+    
+}
+
 void Looper::noteOn(float dur)
 {
-    generateMeasure( Melody(), Settings::MelodyWave, Settings::MelodyProbablities, Scales[ Settings::Scale ], 5, 7, 0.8f );
-    generateMeasure( Bass(),   Settings::BassWave,   Settings::BassProbabilities,  Scales[ Settings::Scale ], 2, 5, 0.0f );
+    float time = (tick%2) * Settings::Shuffle;
     
-    kick( 0.f, 0.75f );
-    if ( ofRandom(1) < 0.3f )
+    // first melody and bass
+    if ( ofRandom(1) < Settings::MelodyProbablities[tick] )
     {
-        kick( 0.5f, 0.5f );
-    }
-    kick( 1.f, 0.75f );
-    kick( 2.f, 0.75f );
-    kick( 3.f, 0.75f );
-    if ( ofRandom(1) < 0.2f )
-    {
-        kick( 3.75f, 0.3f );
+        generateNote(Melody(), time, Settings::MelodyWave, Scales[ Settings::Scale ], 5, 7, 0.8f, Settings::PreviousMelodyNoteIndex );
     }
     
-    snare( 1.f, 1.f );
-    snare( 2.75f + Settings::Shuffle, 1.5f );
-    snare( 3.5f, 1.0f );
+    if ( ofRandom(1) < Settings::BassProbabilities[tick] )
+    {
+        generateNote(Bass(), time, Settings::BassWave, Scales[ Settings::Scale ], 2, 5, 0, Settings::PreviousBassNoteIndex );
+    }
     
-    hat( 0.5f, 0.5f );
-    hat( 1.5f, 0.5f );
-    hat( 1.75f + Settings::Shuffle, 0.25f );
-    hat( 2.5f, 0.5f );
-    hat( 3.25f + Settings::Shuffle, 0.25f );
-    hat( 3.75f + Settings::Shuffle, 0.5f );
+    // hat
+    if ( ofRandom(1) < hatNotes[tick].prob )
+    {
+        hat( time, hatNotes[tick].amp );
+    }
+    
+    // snare
+    if ( ofRandom(1) < snareNotes[tick].prob )
+    {
+        snare( time, snareNotes[tick].amp );
+    }
+    
+    // kick
+    if ( ofRandom(1) < kickNotes[tick].prob )
+    {
+        kick( time, kickNotes[tick].amp );
+    }
 }
 
 void Looper::noteOff()
 {
     Out().setTempo( Settings::Tempo );
-    Out().playNote( 0.f, 4.0f, *this );
+    Out().playNote( 0.f, 0.25f, *this );
+    tick = (tick+1)%16;
 }
 
 //--------------------------------------

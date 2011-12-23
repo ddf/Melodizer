@@ -27,9 +27,13 @@ void ClearInstruments();
 class Looper : public Minim::Instrument
 {
 public:
+    Looper();
     
     void noteOn( float dur );
     void noteOff();
+    
+private:
+    int  tick;
 };
 
 class Kick : public Minim::Instrument
