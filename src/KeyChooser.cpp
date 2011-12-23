@@ -89,7 +89,7 @@ bool KeyChooser::handleTouch( const float x, const float y )
         }
         close();
     }
-    else if ( mState == ST_CLOSED && ofDist(x, y, mX, mY) < 40 )
+    else if ( mState == ST_CLOSED && mKeys[0]->mBox.contains( x, y ) )
     {
         open();
     }
@@ -128,11 +128,11 @@ void KeyChooser::drawButton( KeyButton* button, float alpha )
     
     if ( keys[Settings::Key] == button->mName )
     {
-        ofSetColor(255, 128, 0, alpha*0.75f);
+        ofSetColor(255, 128, 0, alpha*0.95f);
     }
     else
     {
-        ofSetColor(80, 80, 80, alpha*0.75f);
+        ofSetColor(80, 80, 80, alpha*0.95f);
     }
     ofRect( b.mX, b.mY, b.mW, b.mH );
     
@@ -152,7 +152,7 @@ void KeyChooser::draw()
             const float posScale = 1.f - mAnim/sk_AnimLength;
             for( int i = 0; i < 12; ++i )
             {
-                mKeys[i]->mBox.setPos(mX + posScale*mKeys[i]->mOpenX, mY + posScale*mKeys[i]->mOpenY);
+                mKeys[i]->mBox.setCenter(mX + posScale*mKeys[i]->mOpenX, mY + posScale*mKeys[i]->mOpenY);
                 drawButton( mKeys[i], 255 * posScale );
             }
         }
@@ -162,7 +162,7 @@ void KeyChooser::draw()
         {
             for( int i = 0; i < 12; ++i )
             {
-                mKeys[i]->mBox.setPos(mX + mKeys[i]->mOpenX, mY + mKeys[i]->mOpenY);
+                mKeys[i]->mBox.setCenter(mX + mKeys[i]->mOpenX, mY + mKeys[i]->mOpenY);
                 drawButton( mKeys[i], 255 );
             }
         }
@@ -173,7 +173,7 @@ void KeyChooser::draw()
             const float posScale = mAnim/sk_AnimLength;
             for( int i = 0; i < 12; ++i )
             {
-                mKeys[i]->mBox.setPos(mX + posScale*mKeys[i]->mOpenX, mY + posScale*mKeys[i]->mOpenY);
+                mKeys[i]->mBox.setCenter(mX + posScale*mKeys[i]->mOpenX, mY + posScale*mKeys[i]->mOpenY);
                 drawButton( mKeys[i], 255 * (1 - posScale) );
             }
         }
@@ -182,7 +182,7 @@ void KeyChooser::draw()
         case ST_CLOSED:
         {
             const int k = (Settings::Key*7) % 12;
-            mKeys[k]->mBox.setPos( mX, mY );
+            mKeys[k]->mBox.setCenter( mX, mY );
             drawButton( mKeys[k], 255 );
         }
         break;

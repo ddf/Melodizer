@@ -27,7 +27,19 @@ struct Box
     float   mX, mY, mW, mH;
     float   mMinX, mMaxX, mMinY, mMaxY;
     
-    inline void setPos( const float cx, const float cy )
+    // position the box using the top left corner
+    inline void setCorner( const float x, const float y )
+    {
+        mX = x + mW/2;
+        mY = y + mH/2;
+        mMinX = x;
+        mMaxX = x + mW;
+        mMinY = y;
+        mMaxY = y + mH;
+    }
+    
+    // position the box using the center point
+    inline void setCenter( const float cx, const float cy )
     {
         mX = cx;
         mY = cy;

@@ -11,23 +11,20 @@
 
 #include "ofMain.h"
 #include "Box.h"
+#include "Button.h"
 
 // one letter in the key chooser, just a container for positions
-struct KeyButton
+struct KeyButton : public Button
 {
     KeyButton( const char * name, const float ox, const float oy )
-    : mName(name)
+    : Button( name, 0, 0, 70, 70 )
     , mOpenX(ox)
     , mOpenY(oy)
-    , mBox( 0, 0, 70, 70 )
     {
         
     }
     
-    const char * mName;
     const float  mOpenX, mOpenY;
-    Box          mBox;
-    
 };
 
 // UI for setting the key the app generates music in

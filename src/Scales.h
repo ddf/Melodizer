@@ -25,6 +25,8 @@ struct Scale
     int**         scale;
     int           scaleLength;  
     
+    const char * name() const { return scaleName; }
+    
     int length() const { return scaleLength; }
     
     int nextNoteIndex( int fromNote ) const

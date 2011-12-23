@@ -14,6 +14,7 @@
 #include "Settings.h"
 #include "Box.h"
 #include "KeyChooser.h"
+#include "ScaleChooser.h"
 
 // forward declair.
 namespace Minim 
@@ -117,6 +118,7 @@ private:
     float            mWaveformAnim;
     
     KeyChooser       mKeyChooser;
+    ScaleChooser     mScaleChooser;
     
     ofImage          mTrebleClef;
     ofImage          mBassClef;

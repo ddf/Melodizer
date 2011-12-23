@@ -235,7 +235,10 @@ void SettingsScreen::setup()
     mBassClef.loadImage( "bass_clef.png" );
     
     // key chooser
-    mKeyChooser.setup( w/2, h/2 - 30, 200 );
+    mKeyChooser.setup( w/2, h/2 - 60, 200 );
+    
+    // scale chooser
+    mScaleChooser.setup( w/2, h/2 + 20 );
 }
 
 //----------------------------------
@@ -287,6 +290,7 @@ void SettingsScreen::update( const float dt )
     }
     
     mKeyChooser.update( dt );
+    mScaleChooser.update( dt );
 }
 
 //----------------------------------
@@ -351,7 +355,16 @@ void SettingsScreen::draw()
                 mWaveformButtons[i].draw( mWaveformAnim );
             }
             
-            mKeyChooser.draw();
+            if ( mScaleChooser.active() )
+            {
+                mKeyChooser.draw();
+                mScaleChooser.draw();
+            }
+            else
+            {
+                mScaleChooser.draw();
+                mKeyChooser.draw();
+            }
         }
         ofPopMatrix();
     }
@@ -373,6 +386,11 @@ void SettingsScreen::hide()
     if ( mKeyChooser.active() )
     {
         mKeyChooser.close();
+    }
+    
+    if ( mScaleChooser.active() )
+    {
+        mScaleChooser.close();
     }
     
     mAnimTimer = sk_AnimLength;
@@ -399,6 +417,11 @@ void SettingsScreen::touchDown( ofTouchEventArgs& touch )
             return;
         }
         
+        if ( mScaleChooser.handleTouch(x, y) )
+        {
+            return;
+        }
+        
         for( int i = 0; i < mSliders.size(); ++i )
         {
             if ( mSliders[i].handleTouch(touch.id, x, y) )
@@ -420,7 +443,7 @@ void SettingsScreen::touchDown( ofTouchEventArgs& touch )
 //----------------------------------
 void SettingsScreen::touchMoved( ofTouchEventArgs& touch )
 {
-    if ( mKeyChooser.active() )
+    if ( mKeyChooser.active() || mScaleChooser.active() )
     {
         return;
     }
@@ -450,7 +473,7 @@ void SettingsScreen::touchDoubleTap( ofTouchEventArgs& touch )
 //----------------------------------
 void SettingsScreen::touchUp( ofTouchEventArgs& touch )
 {
-    if ( mKeyChooser.active() )
+    if ( mKeyChooser.active() || mScaleChooser.active() )
     {
         return;
     }
