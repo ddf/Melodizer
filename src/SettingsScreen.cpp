@@ -190,6 +190,7 @@ void SettingsScreen::setup()
         // -1 for hue means white for me
         mSliders.push_back( ValueSlider( x, melY, sw, sh, -1, &Settings::MelodyVolume ) );
         mSliders.push_back( ValueSlider( x, basY, sw, sh, -1, &Settings::BassVolume ) );
+        mSliders.push_back( ValueSlider( x, (melY+basY)/2, sw, sh, -1, &Settings::Shuffle ) );
         
         x += sw * 1.75f;
         
@@ -199,6 +200,7 @@ void SettingsScreen::setup()
             mSliders.push_back( ValueSlider( x, basY, sw, sh, 150, &Settings::BassProbabilities[i] ) );
             x += sw*1.5f;
         }
+        
     }
     
     // generate waveforms so we can drawr them
@@ -340,8 +342,8 @@ void SettingsScreen::draw()
             
             const int tint = 50;
             ofSetColor(tint, tint, tint);
-            mTrebleClef.draw( mSliders[2].box().mX - mSliders[2].box().mW, mSliders[2].box().mY );
-            mBassClef.draw  ( mSliders[3].box().mX, mSliders[3].box().mY );
+            mTrebleClef.draw( mSliders[3].box().mX - mSliders[3].box().mW, mSliders[3].box().mY );
+            mBassClef.draw  ( mSliders[4].box().mX, mSliders[4].box().mY );
             
             // sliders
             for( int i = 0; i < mSliders.size(); ++i )

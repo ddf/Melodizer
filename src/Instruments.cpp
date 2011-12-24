@@ -221,7 +221,7 @@ Looper::Looper()
 
 void Looper::noteOn(float dur)
 {
-    float time = (tick%2) * Settings::Shuffle;
+    float time = (tick%2) * Settings::Shuffle * 0.08f;
     
     // first melody and bass
     if ( ofRandom(1) < Settings::MelodyProbablities[tick] )
