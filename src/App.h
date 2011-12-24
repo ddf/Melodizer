@@ -23,6 +23,8 @@ namespace Minim
 
 #include "Summer.h"
 #include "TickRate.h"
+#include "Delay.h"
+#include "MoogFilter.h"
 #include "Instruments.h"
 
 class App : public ofxiPhoneApp 
@@ -64,10 +66,13 @@ private:
 	Minim::AudioSystem *	  mAudioSystem;
 	Minim::AudioOutput *	  mOutput;
     Minim::Summer             mMixBus;
+    Minim::Summer             mNoteBus;
     Minim::Summer             mMelodyBus;
     Minim::Summer             mBassBus;
     Minim::Summer             mDrumBus;
     Minim::TickRate           mRate;
+    Minim::Delay              mDelay;
+    Minim::MoogFilter         mFilter;
     Looper                    mLooper;
 	
 	// UI

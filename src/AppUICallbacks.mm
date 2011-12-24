@@ -27,6 +27,16 @@ void App::touchMoved(ofTouchEventArgs &touch)
         mRate.value.setLastValue( ofMap(touch.x, 0, ofGetWidth(), 1.0f, 0.2f) );
         Settings::Tempo = ofMap( touch.y, 0, ofGetHeight(), 240, 40 );
     }
+    else if ( touch.id == 1 )
+    {
+        mDelay.delTime.setLastValue( ofMap(touch.x, 0, ofGetWidth(), 0.001f, 0.625f) );
+        mDelay.delAmp.setLastValue( ofMap(touch.y, 0, ofGetHeight(), 0.8f, 0.f) );
+    }
+    else if ( touch.id == 2 )
+    {
+        mFilter.frequency.setLastValue( ofMap(touch.x, 0, ofGetWidth(), 20, 14400) );
+        mFilter.resonance.setLastValue( ofMap(touch.y, 0, ofGetHeight(), 0.8f, 0.f) );
+    }
 }
 
 //--------------------------------------------------------------

@@ -29,6 +29,8 @@ const int kStreamBufferSize = 512;
 //--------------------------------------------------------------
 App::App()
 : ofxiPhoneApp()
+, mDelay( 1.0f, 0.5f, true, true )
+, mFilter( 14400, 0, Minim::MoogFilter::LP )
 {
 	gApp = this;
 }
@@ -76,10 +78,12 @@ void App::setup()
         
         mMelodyBus.patch( mMixBus );
         mBassBus.patch( mMixBus );
+        
+        //mNoteBus.patch( mMixBus );
         mDrumBus.patch( mMixBus );
         
         mRate.setInterpolation(true);
-        mMixBus.patch( mRate ).patch( *mOutput );
+        mMixBus.patch( mRate ).patch( mDelay ).patch( mFilter ).patch( *mOutput );
         
         SetupInstruments();
         

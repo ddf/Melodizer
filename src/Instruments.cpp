@@ -76,11 +76,14 @@ void SetupInstruments()
     kicks.push_back( new Kick );
     kicks.push_back( new Kick );
     kicks.push_back( new Kick );
+    kicks.push_back( new Kick );
     
     snares.push_back( new Snare );
     snares.push_back( new Snare );
     snares.push_back( new Snare );
+    snares.push_back( new Snare );
     
+    hats.push_back( new Hat );
     hats.push_back( new Hat );
     hats.push_back( new Hat );
     hats.push_back( new Hat );
@@ -192,7 +195,7 @@ static void generateNote( Minim::Summer& bus,
     int octave        = (int)ofRandom(lowOctave, hiOctave);
     int note          = baseNote + octave * 12;
     float freq        = Minim::Frequency::ofMidiNote( note ).asHz();
-    float amp         = ofRandom(0.6f, 0.8f);
+    float amp         = ofRandom(0.41f, 0.61f);
     float dur         = ofRandom(0.15f, 0.25f);
     float pan         = 0.f;
     

@@ -22,7 +22,14 @@ ScaleChooser::ScaleChooser()
 //--------------------------------
 ScaleChooser::~ScaleChooser()
 {
-    
+    for( int i = 0; i < mButtons.size(); ++i )
+    {
+        Button* b = mButtons[i];
+        if ( b )
+        {
+            delete b;
+        }
+    }
 }
 
 //--------------------------------
