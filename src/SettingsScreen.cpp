@@ -170,6 +170,8 @@ SettingsScreen::~SettingsScreen()
 //----------------------------------
 void SettingsScreen::setup()
 {
+    mToggleFont.loadFont("HelveticaBold.ttf", 24);
+    
     mMinX = ofGetWidth() * 0.05f;
     mMaxX = ofGetWidth() - mMinX;
     mMinY = ofGetHeight() * 0.1f;
@@ -241,6 +243,16 @@ void SettingsScreen::setup()
     
     // scale chooser
     mScaleChooser.setup( w/2, h/2 + 20 );
+    
+    // toggles for drum parts
+    {
+        const int   dimX = 100;
+        const int   dimY = 60;
+        const float th  = h - dimY*0.75f;
+        mToggles.push_back( Toggle(&Settings::PlayKick,  "Kick",  w/2 - 120, th, dimX, dimY) );
+        mToggles.push_back( Toggle(&Settings::PlaySnare, "Snare", w/2,       th, dimX, dimY) );
+        mToggles.push_back( Toggle(&Settings::PlayHat,   "Hat",   w/2 + 120, th, dimX, dimY) );
+    }
 }
 
 //----------------------------------
@@ -357,6 +369,29 @@ void SettingsScreen::draw()
                 mWaveformButtons[i].draw( mWaveformAnim );
             }
             
+            // toggles
+            for( int i = 0; i < mToggles.size(); ++i )
+            {
+                Toggle& t = mToggles[i];
+                if ( t.on() )
+                {
+                    ofSetColor(0, 92, 200);
+                }
+                else
+                {
+                    ofSetColor( 60, 60, 60 );
+                }
+                
+                ofFill();
+                ofRect( t.mBox.mX, t.mBox.mY, t.mBox.mW, t.mBox.mH );
+                
+                ofSetColor(200, 200, 200);
+                const string    name = t.mName;
+                const float     yoff = mToggleFont.getLineHeight() * 0.35f;
+                const float     xoff = mToggleFont.stringWidth( name ) * -0.5f;
+                mToggleFont.drawString( name, t.mBox.mX + xoff, t.mBox.mY + yoff );
+            }
+            
             if ( mScaleChooser.active() )
             {
                 mKeyChooser.draw();
@@ -422,6 +457,14 @@ void SettingsScreen::touchDown( ofTouchEventArgs& touch )
         if ( mScaleChooser.handleTouch(x, y) )
         {
             return;
+        }
+        
+        for( int i = 0; i < mToggles.size(); ++i )
+        {
+            if ( mToggles[i].handleTouch(x, y) )
+            {
+                return;
+            }
         }
         
         for( int i = 0; i < mSliders.size(); ++i )

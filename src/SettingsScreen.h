@@ -15,6 +15,7 @@
 #include "Box.h"
 #include "KeyChooser.h"
 #include "ScaleChooser.h"
+#include "ofTrueTypeFont.h"
 
 // forward declair.
 namespace Minim 
@@ -116,6 +117,9 @@ private:
     std::vector<WaveformButton> mWaveformButtons;
     Minim::Waveform* mWaveforms[WT_Count];
     float            mWaveformAnim;
+    
+    ofTrueTypeFont              mToggleFont;
+    std::vector<Toggle>         mToggles;
     
     KeyChooser       mKeyChooser;
     ScaleChooser     mScaleChooser;

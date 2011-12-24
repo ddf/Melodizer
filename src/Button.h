@@ -25,4 +25,31 @@ struct Button
     Box          mBox;
 };
 
+struct Toggle : public Button
+{
+    Toggle( bool* bValue, const char * name, const float x, const float y, const float w, const float h ) 
+    : Button( name, x, y, w, h )
+    , mbValue( bValue )
+    {
+        
+    }
+    
+    bool on() const { return *mbValue; }
+    
+    bool handleTouch( const float x, const float y )
+    {
+        if ( mBox.contains( x, y ) )
+        {
+            *mbValue = !(*mbValue);
+            return true;
+        }
+        
+        return false;
+    }
+
+private:
+    
+    bool* mbValue;
+};
+
 #endif
