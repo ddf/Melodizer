@@ -19,6 +19,7 @@
 // ui stuff
 #include "ofxiPhoneExtras.h"
 #include "UIActionHandler.h"
+#include <math.h>
 
 App* gApp = NULL;
 
@@ -29,8 +30,8 @@ const int kStreamBufferSize = 512;
 //--------------------------------------------------------------
 App::App()
 : ofxiPhoneApp()
-, mDelay( 1.0f, 0.5f, true, true )
-, mFilter( 14400, 0, Minim::MoogFilter::LP )
+, mRepeater(1.0f) // repeater that can repeat a max of one second
+, mSampleRepeatControl( mRepeater )
 {
 	gApp = this;
 }
@@ -83,7 +84,7 @@ void App::setup()
         mDrumBus.patch( mMixBus );
         
         mRate.setInterpolation(true);
-        mMixBus.patch( mRate ).patch( mDelay ).patch( mFilter ).patch( *mOutput );
+        mMixBus.patch( mRate ).patch( mRepeater ).patch( *mOutput );
         
         SetupInstruments();
         
@@ -122,6 +123,10 @@ void App::setup()
         mYOff = 35;
         
         mSettingsScreen.setup();
+        
+        mXYControl.setXControl( ValueMapper(mRate.value.getLastValues(), 0, ofGetWidth(), 1.0f, 0.2f) );
+        mXYControl.setYControl( ValueMapper(&Settings::Tempo, 0, ofGetHeight(), 240, 40) );
+        mXYControl.setPosition( 0, ofGetHeight()/2 );
     }
 	
 	//-- DONE ---------------------------
@@ -156,6 +161,12 @@ void App::draw()
 //    ofFill();
 //    ofRect(0, 0, ofGetWidth(), ofGetHeight());
     
+    const ofPoint& xyPos = mXYControl.position();
+    
+    ofSetColor(21, 21, 21);
+    ofFill();
+    ofCircle(xyPos.x, xyPos.y, mXYControl.radius());
+    
     ofSetColor(200, 0, 128);
     ofNoFill();
     
@@ -164,6 +175,14 @@ void App::draw()
     {
         int x = 15 + mXOff * (i % 20);
         int y = 15 + mYOff * (i / 20);
+        
+        // offset triangle based on how close it is to the xy control position
+        ofVec2f offDir( x - xyPos.x, y - xyPos.y );
+        const float offset = mXYControl.radius() * fminf( mXYControl.radius() / offDir.length(), 1 );
+        offDir.scale( offset );
+        x += offDir.x;
+        y += offDir.y;
+        
         const float sampleL = mOutput->buffer().getSample(0, i);
         const float sampleR = fabs( mOutput->buffer().getSample(1, i ) );
         ofPushMatrix();
@@ -173,6 +192,17 @@ void App::draw()
             ofTriangle( 0, -20*sampleR, -30*sampleR, 30*sampleR, 30*sampleR, 30*sampleR );
         }
         ofPopMatrix();
+    }
+    
+    // sample repeater control viz
+    if ( mSampleRepeatControl.active() )
+    {
+        ofSetRectMode( OF_RECTMODE_CENTER );
+        ofSetColor(128, 200, 0, 128);
+        ofFill();
+        
+        ofRect( mSampleRepeatControl.touchPosition1().x, ofGetHeight()/2, 40, ofGetHeight() );
+        ofRect( mSampleRepeatControl.touchPosition2().x, ofGetHeight()/2, 40, ofGetHeight() );
     }
     
     // SETTINGS

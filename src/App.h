@@ -3,6 +3,8 @@
 #include "ofMain.h"
 #include "ofxiPhone.h"
 #include "SettingsScreen.h"
+#include "XYControl.h"
+#include "SampleRepeatControl.h"
 
 // forward declares
 @class UIActionHandler;
@@ -25,7 +27,9 @@ namespace Minim
 #include "TickRate.h"
 #include "Delay.h"
 #include "MoogFilter.h"
+#include "SampleRepeat.h"
 #include "Instruments.h"
+
 
 class App : public ofxiPhoneApp 
 {
@@ -71,8 +75,7 @@ private:
     Minim::Summer             mBassBus;
     Minim::Summer             mDrumBus;
     Minim::TickRate           mRate;
-    Minim::Delay              mDelay;
-    Minim::MoogFilter         mFilter;
+    SampleRepeat              mRepeater;
     Looper                    mLooper;
 	
 	// UI
@@ -85,6 +88,9 @@ private:
     // VISUAL
     float       mXOff;
     float       mYOff;
-	
+    
+    // AUDIO CONTROL
+    XYControl                   mXYControl;
+	SampleRepeatControl         mSampleRepeatControl;
 };
 

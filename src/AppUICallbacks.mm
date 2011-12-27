@@ -14,34 +14,36 @@
 //--------------------------------------------------------------
 void App::touchDown(ofTouchEventArgs &touch)
 {
+    if ( mXYControl.touchDown(touch) )
+        return;
+ 
+    if ( mSampleRepeatControl.touchDown(touch) )
+        return;
 }
 
 //--------------------------------------------------------------
 void App::touchMoved(ofTouchEventArgs &touch)
 {
-	if ( touch.id == 0 )
+	if ( mXYControl.touchMoved(touch) )
     {
         mXOff = ofMap(touch.x, 0, ofGetWidth(), 55, 75);
         mYOff = ofMap(touch.y, 0, ofGetHeight(), 25, 45);
         
-        mRate.value.setLastValue( ofMap(touch.x, 0, ofGetWidth(), 1.0f, 0.2f) );
-        Settings::Tempo = ofMap( touch.y, 0, ofGetHeight(), 240, 40 );
+        return;
     }
-    else if ( touch.id == 1 )
-    {
-        mDelay.delTime.setLastValue( ofMap(touch.x, 0, ofGetWidth(), 0.001f, 0.625f) );
-        mDelay.delAmp.setLastValue( ofMap(touch.y, 0, ofGetHeight(), 0.8f, 0.f) );
-    }
-    else if ( touch.id == 2 )
-    {
-        mFilter.frequency.setLastValue( ofMap(touch.x, 0, ofGetWidth(), 20, 14400) );
-        mFilter.resonance.setLastValue( ofMap(touch.y, 0, ofGetHeight(), 0.8f, 0.f) );
-    }
+    
+    if ( mSampleRepeatControl.touchMoved(touch) )
+        return;
 }
 
 //--------------------------------------------------------------
 void App::touchUp(ofTouchEventArgs &touch)
 {
+    if ( mXYControl.touchUp(touch) )
+        return;
+    
+    if ( mSampleRepeatControl.touchUp(touch) )
+        return;
 }
 
 //--------------------------------------------------------------
@@ -54,6 +56,11 @@ void App::touchDoubleTap(ofTouchEventArgs &touch)
 //--------------------------------------------------------------
 void App::touchCancelled(ofTouchEventArgs &touch)
 {
+    if ( mXYControl.touchUp(touch) )
+        return;
+    
+    if ( mSampleRepeatControl.touchUp(touch) )
+        return;
 }
 
 //--------------------------------------------------------------
