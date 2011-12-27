@@ -27,6 +27,7 @@
 		7741E37614995B2300F660A7 /* KeyChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7741E37514995B2300F660A7 /* KeyChooser.cpp */; };
 		7741E37814996C1500F660A7 /* HelveticaBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7741E37714996C1500F660A7 /* HelveticaBold.ttf */; };
 		77AC9BE214A52D2A0085028B /* ScaleChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77AC9BE114A52D2A0085028B /* ScaleChooser.cpp */; };
+		77AC9C2814A952590085028B /* XYControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77AC9C2714A952590085028B /* XYControl.cpp */; };
 		77DEB7E71490477600C9FB09 /* Instruments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77DEB7E61490477600C9FB09 /* Instruments.cpp */; };
 		77F12D9D14698F3C00F8C32F /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 77F12D9C14698F3C00F8C32F /* Config.xcconfig */; };
 		77F12DB01469926700F8C32F /* libMinimTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77F12D8714698F0A00F8C32F /* libMinimTouch.a */; };
@@ -103,6 +104,8 @@
 		77AC9BE014A52CAE0085028B /* ScaleChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScaleChooser.h; sourceTree = "<group>"; };
 		77AC9BE114A52D2A0085028B /* ScaleChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScaleChooser.cpp; sourceTree = "<group>"; };
 		77AC9BE314A53CEE0085028B /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Button.h; sourceTree = "<group>"; };
+		77AC9C2614A94FF10085028B /* XYControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYControl.h; sourceTree = "<group>"; };
+		77AC9C2714A952590085028B /* XYControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XYControl.cpp; sourceTree = "<group>"; };
 		77DEB7E51490444F00C9FB09 /* Instruments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instruments.h; sourceTree = "<group>"; };
 		77DEB7E61490477600C9FB09 /* Instruments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Instruments.cpp; sourceTree = "<group>"; };
 		77F12D7614698EF900F8C32F /* iPhone+OF Lib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "iPhone+OF Lib.xcodeproj"; path = "Frameworks/openFrameworks_iOS/libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj"; sourceTree = DEVELOPER_DIR; };
@@ -253,6 +256,8 @@
 				77AC9BE014A52CAE0085028B /* ScaleChooser.h */,
 				77AC9BE114A52D2A0085028B /* ScaleChooser.cpp */,
 				77AC9BE314A53CEE0085028B /* Button.h */,
+				77AC9C2614A94FF10085028B /* XYControl.h */,
+				77AC9C2714A952590085028B /* XYControl.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -395,6 +400,7 @@
 				7741E3691496C07F00F660A7 /* SettingsScreen.cpp in Sources */,
 				7741E37614995B2300F660A7 /* KeyChooser.cpp in Sources */,
 				77AC9BE214A52D2A0085028B /* ScaleChooser.cpp in Sources */,
+				77AC9C2814A952590085028B /* XYControl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
