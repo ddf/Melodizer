@@ -25,12 +25,7 @@ void App::touchDown(ofTouchEventArgs &touch)
 void App::touchMoved(ofTouchEventArgs &touch)
 {
 	if ( mXYControl.touchMoved(touch) )
-    {
-        mXOff = ofMap(touch.x, 0, ofGetWidth(), 55, 75);
-        mYOff = ofMap(touch.y, 0, ofGetHeight(), 25, 45);
-        
         return;
-    }
     
     if ( mSampleRepeatControl.touchMoved(touch) )
         return;

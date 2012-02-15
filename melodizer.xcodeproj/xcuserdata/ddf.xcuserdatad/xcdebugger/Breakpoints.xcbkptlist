@@ -9,11 +9,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "src/Instruments.cpp"
-         timestampString = "346398637.500822"
+         timestampString = "350975148.936714"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "261"
-         endingLineNumber = "261"
+         startingLineNumber = "250"
+         endingLineNumber = "250"
          landmarkName = "Looper::noteOff()"
          landmarkType = "5">
       </FileBreakpoint>
@@ -37,12 +37,12 @@
          continueAfterRunningActions = "No"
          isPathRelative = "0"
          filePath = "/Developer/Frameworks/minim-cpp/src/ugens/Summer.cpp"
-         timestampString = "345233503.666919"
+         timestampString = "350979192.665361"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "157"
-         endingLineNumber = "157"
-         landmarkName = "Summer::removeInput( UGen * in )"
+         startingLineNumber = "159"
+         endingLineNumber = "159"
+         landmarkName = "Summer::uGenerate(float * channels, const int numChannels)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -51,13 +51,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "0"
          filePath = "/Developer/Frameworks/minim-cpp/src/ugens/Summer.cpp"
-         timestampString = "345233609.269852"
+         timestampString = "350979192.665361"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "185"
-         endingLineNumber = "185"
-         landmarkName = "Summer::uGenerate(float * channels, int numChannels)"
-         landmarkType = "5">
+         startingLineNumber = "187"
+         endingLineNumber = "187">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -65,13 +63,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "0"
          filePath = "/Developer/Frameworks/minim-cpp/src/ugens/Summer.cpp"
-         timestampString = "345234201.504139"
+         timestampString = "350979192.665361"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "204"
-         endingLineNumber = "204"
-         landmarkName = "Summer::uGenerate(float * channels, int numChannels)"
-         landmarkType = "5">
+         startingLineNumber = "206"
+         endingLineNumber = "206">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"

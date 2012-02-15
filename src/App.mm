@@ -30,6 +30,7 @@ const int kStreamBufferSize = 512;
 //--------------------------------------------------------------
 App::App()
 : ofxiPhoneApp()
+, mFlanger( 5, 0.1f, 2, 0.8f, 0.8f, 0.0f )
 , mRepeater(1.0f) // repeater that can repeat a max of one second
 , mSampleRepeatControl( mRepeater )
 {
@@ -84,7 +85,7 @@ void App::setup()
         mDrumBus.patch( mMixBus );
         
         mRate.setInterpolation(true);
-        mMixBus.patch( mRate ).patch( mRepeater ).patch( *mOutput );
+        mMixBus.patch( mRepeater ).patch( mRate ).patch( mFlanger ).patch( *mOutput );
         
         SetupInstruments();
         
@@ -124,9 +125,9 @@ void App::setup()
         
         mSettingsScreen.setup();
         
-        mXYControl.setXControl( ValueMapper(mRate.value.getLastValues(), 0, ofGetWidth(), 1.0f, 0.2f) );
-        mXYControl.setYControl( ValueMapper(&Settings::Tempo, 0, ofGetHeight(), 240, 40) );
-        mXYControl.setPosition( 0, ofGetHeight()/2 );
+        mXYControl.setXControl( ValueMapper(&Settings::Tempo, 0, ofGetWidth(), 40, 160) );
+        mXYControl.setYControl( ValueMapper(mRate.value.getLastValues(), 0, ofGetHeight(), 1.0f, 0.2f) );
+        mXYControl.setPosition( ofGetWidth()/2, ofGetHeight()/2 );
     }
 	
 	//-- DONE ---------------------------

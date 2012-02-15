@@ -27,6 +27,7 @@ namespace Minim
 #include "TickRate.h"
 #include "Delay.h"
 #include "MoogFilter.h"
+#include "Flanger.h"
 #include "SampleRepeat.h"
 #include "Instruments.h"
 
@@ -75,6 +76,7 @@ private:
     Minim::Summer             mBassBus;
     Minim::Summer             mDrumBus;
     Minim::TickRate           mRate;
+    Minim::Flanger            mFlanger;
     SampleRepeat              mRepeater;
     Looper                    mLooper;
 	

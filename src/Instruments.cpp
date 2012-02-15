@@ -74,18 +74,7 @@ DrumNote kickNotes[] = {
 void SetupInstruments()
 {
     kicks.push_back( new Kick );
-    kicks.push_back( new Kick );
-    kicks.push_back( new Kick );
-    kicks.push_back( new Kick );
-    
     snares.push_back( new Snare );
-    snares.push_back( new Snare );
-    snares.push_back( new Snare );
-    snares.push_back( new Snare );
-    
-    hats.push_back( new Hat );
-    hats.push_back( new Hat );
-    hats.push_back( new Hat );
     hats.push_back( new Hat );
     
     // make 4 of each kind of tone
@@ -196,7 +185,7 @@ static void generateNote( Minim::Summer& bus,
     int note          = baseNote + octave * 12;
     float freq        = Minim::Frequency::ofMidiNote( note ).asHz();
     float amp         = ofRandom(0.41f, 0.61f);
-    float dur         = ofRandom(0.15f, 0.25f);
+    float dur         = ofRandom(0.1f, 0.12f);
     float pan         = 0.f;
     
     if ( panRange != 0 )
@@ -269,11 +258,12 @@ void Looper::noteOff()
 Kick::Kick()
 : osc( 80.f, 0.f, Minim::Waves::SINE() )
 , freqSweep()
-, ampSweep()
+, ampSweep( 0, 0, 0 )
 , bPatched(false)
 {
     freqSweep.patch( osc.frequency );
     ampSweep.patch( osc.amplitude );
+    osc.patch( Drums() );
 }
 
 void Kick::init( float amp )
@@ -283,12 +273,10 @@ void Kick::init( float amp )
 
 void Kick::noteOn(float dur)
 {
-    if ( Settings::PlayKick && !bPatched )
+    if ( Settings::PlayKick )
     {
         ampSweep.activate( 0.1f, amplitudes.front(), 0 );
-        freqSweep.activate( 0.1f, 120.f, 20.f );
-        osc.patch( Drums() );
-        bPatched = true;
+        freqSweep.activate( 0.1f, 120.f, 40.f );
     }
     
     amplitudes.pop_front();
@@ -296,11 +284,6 @@ void Kick::noteOn(float dur)
 
 void Kick::noteOff()
 {
-    if ( bPatched )
-    {
-        osc.unpatch( Drums() );
-        bPatched = false;
-    }
 }
 
 //--------------------------------------
@@ -308,12 +291,13 @@ void Kick::noteOff()
 //--------------------------------------
 Snare::Snare()
 : noize( 1, Minim::Noise::eTintPink )
-, ampSweep()
+, ampSweep( 0, 0, 0 )
 , filter( 200.f, 0.5f, Minim::MoogFilter::HP )
 , bPatched(false)
 {
     noize.patch( filter );
     ampSweep.patch( noize.amplitude );
+    filter.patch( Drums() );
 }
 
 void Snare::init( float amp )
@@ -323,11 +307,9 @@ void Snare::init( float amp )
 
 void Snare::noteOn(float dur)
 {
-    if ( Settings::PlaySnare && !bPatched )
+    if ( Settings::PlaySnare )
     {
         ampSweep.activate( 0.05f, amplitudes.front(), 0 );
-        filter.patch( Drums() );
-        bPatched = true;
     }
     
     amplitudes.pop_front();
@@ -335,11 +317,6 @@ void Snare::noteOn(float dur)
 
 void Snare::noteOff()
 {
-    if ( bPatched )
-    {
-        filter.unpatch( Drums() );
-        bPatched = false;
-    }
 }
 
 //--------------------------------------
@@ -347,12 +324,13 @@ void Snare::noteOff()
 //--------------------------------------
 Hat::Hat()
 : noize( 1, Minim::Noise::eTintWhite )
-, ampSweep()
+, ampSweep( 0, 0, 0 )
 , filter( 10000.0f, 0.1f, Minim::MoogFilter::HP )
 , bPatched(false)
 {
     noize.patch( filter );
     ampSweep.patch( noize.amplitude );
+    filter.patch( Drums() );
 }
 
 void Hat::init( float amp )
@@ -362,11 +340,9 @@ void Hat::init( float amp )
 
 void Hat::noteOn(float dur)
 {
-    if ( Settings::PlayHat && !bPatched )
+    if ( Settings::PlayHat )
     {
         ampSweep.activate( 0.05f, amplitudes.front() * 0.8f, 0 );
-        filter.patch( Drums() );
-        bPatched = true;
     }
     
     amplitudes.pop_front();
@@ -374,11 +350,6 @@ void Hat::noteOn(float dur)
 
 void Hat::noteOff()
 {
-    if ( bPatched )
-    {
-        filter.unpatch( Drums() );
-        bPatched = false;
-    }
 }
 
 //---------------------------------------
@@ -403,7 +374,7 @@ void Tone::noteOn( float dur )
 {
     ToneParams& param = params.front();
     wave.frequency.setLastValue( param.freq );
-    adsr.setParameters( param.amp, 0.01f, 0.01f, param.amp * 0.7f, 0.2f, param.amp, 0 );
+    adsr.setParameters( param.amp, 0.01f, 0.01f, param.amp * 0.7f, dur*0.5f, param.amp, 0 );
     panner.pan.setLastValue( param.pan );
     out = param.out;
     

@@ -318,20 +318,19 @@ void SettingsScreen::draw()
 {
     //ofPushStyle();
     {
-        float scale = 1.0f;
+        float voff = 0.f;
         if ( mState == ST_SHOWING )
         {
-            scale -= mAnimTimer / sk_AnimLength;
+            voff = mAnimTimer / sk_AnimLength;
         }
         else if ( mState == ST_HIDING )
         {
-            scale = mAnimTimer / sk_AnimLength;
+            voff = 1 - mAnimTimer / sk_AnimLength;
         }
         
         ofPushMatrix();
         {
-            ofTranslate( ofGetWidth()/2, ofGetHeight()/2 );
-            ofScale( scale, scale );
+            ofTranslate( ofGetWidth()/2, ofGetHeight()/2 + voff*ofGetHeight() );
         
             const float w = mMaxX - mMinX;
             const float h = mMaxY - mMinY;
