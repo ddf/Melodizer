@@ -13,19 +13,19 @@
 float        Settings::Tempo( 120 );
 int          Settings::Scale( 0 );
 int          Settings::Key( 0 );
-float        Settings::Shuffle( 0.0f );
+float        Settings::Shuffle( 1.0f );
 int          Settings::PreviousMelodyNoteIndex( 0 );
 int          Settings::PreviousBassNoteIndex( 0 );
 
 // melody
-float        Settings::MelodyProbablities[16] = { 1.0f, 0.3f, 0.1f, 0.f,  0.8f, 0.34f, 0.6f, 0.11f,  0.7f, 0.24f, 0.6f, 0.7f,  0.12f, 0.3f, 0.23f, 0.9f };
+float        Settings::MelodyProbablities[16] = { 1.0f, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f };
 float        Settings::MelodyVolume( 0.8f );
 WaveformType Settings::MelodyWave( WT_Sine8 );
 
-float        Settings::BassProbabilities[16] = { 1.0f, 0.3f, 0.1f, 0.f,  0.8f, 0.34f, 0.6f, 0.11f,  0.7f, 0.24f, 0.6f, 0.7f,  0.12f, 0.3f, 0.23f, 0.9f };
+float        Settings::BassProbabilities[16] = { 1.0f, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f, 1.0f };
 float        Settings::BassVolume( 0.6f );
 WaveformType Settings::BassWave( WT_Square );
 
 bool         Settings::PlayKick( true );
-bool         Settings::PlaySnare( true );
-bool         Settings::PlayHat( true );
+bool         Settings::PlaySnare( false );
+bool         Settings::PlayHat( false );

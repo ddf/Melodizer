@@ -30,7 +30,7 @@ const int kStreamBufferSize = 512;
 //--------------------------------------------------------------
 App::App()
 : ofxiPhoneApp()
-, mFlanger( 5, 0.1f, 2, 0.8f, 0.8f, 0.0f )
+, mFlanger( 5, 0.1f, 2, 0.3f, 0.8f, 0.4f )
 , mRepeater(1.0f) // repeater that can repeat a max of one second
 , mSampleRepeatControl( mRepeater )
 {
@@ -86,12 +86,13 @@ void App::setup()
         
         mRate.setInterpolation(true);
         mMixBus.patch( mRepeater ).patch( mRate ).patch( mFlanger ).patch( *mOutput );
+        //mMixBus.patch( *mOutput );
         
         SetupInstruments();
         
         mOutput->pauseNotes();
         mOutput->setTempo( 120 );
-        mOutput->playNote(0.001f, 0.25f, mLooper);
+        mOutput->playNote(1.0f, 0.25f, mLooper);
         mOutput->resumeNotes();
 	}
 	

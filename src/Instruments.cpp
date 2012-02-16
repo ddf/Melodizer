@@ -185,7 +185,7 @@ static void generateNote( Minim::Summer& bus,
     int note          = baseNote + octave * 12;
     float freq        = Minim::Frequency::ofMidiNote( note ).asHz();
     float amp         = ofRandom(0.41f, 0.61f);
-    float dur         = ofRandom(0.1f, 0.12f);
+    float dur         = ofRandom(1) > 0.2f ? 0.04f : 0.25f;
     float pan         = 0.f;
     
     if ( panRange != 0 )
@@ -374,12 +374,21 @@ void Tone::noteOn( float dur )
 {
     ToneParams& param = params.front();
     wave.frequency.setLastValue( param.freq );
-    adsr.setParameters( param.amp, 0.01f, 0.01f, param.amp * 0.7f, dur*0.5f, param.amp, 0 );
+    adsr.setParameters( param.amp,          // max amp
+                        0.01f,              // attack time
+                        0.01f,              // decay time
+                        0.7f,               // sustain level
+                        dur*0.45f,          // release time
+                        0,                  // before amp
+                        0                   // after amp
+                       );
     panner.pan.setLastValue( param.pan );
     out = param.out;
     
     adsr.noteOn();
     adsr.patch( *out );
+    
+    out->printInputs();
     
     params.pop_front();
 }

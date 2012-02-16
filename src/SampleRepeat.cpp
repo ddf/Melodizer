@@ -13,7 +13,7 @@
 
 //----------------------------
 SampleRepeat::SampleRepeat( const float sampleDuration )
-: UGen(1)
+: UGen()
 , audio( *this, AUDIO )
 , mBuffer(NULL)
 , mBufferLength(0)
