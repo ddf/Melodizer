@@ -228,6 +228,8 @@ void App::draw()
         ofCircle( touch3.x, touch3.y, touchRadius );
         
         // connect dots with lines, somehow try to communicate that the lines are the control values
+        // idea: show pulsing circle in center of the dot to visualize the state of the
+        //       flanger's lfo. maybe adjust triangle fill color to represent feedback.
     }
     
     // SETTINGS
