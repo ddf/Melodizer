@@ -5,6 +5,7 @@
 #include "SettingsScreen.h"
 #include "XYControl.h"
 #include "SampleRepeatControl.h"
+#include "FlangerControl.h"
 
 // forward declares
 @class UIActionHandler;
@@ -94,5 +95,6 @@ private:
     // AUDIO CONTROL
     XYControl                   mXYControl;
 	SampleRepeatControl         mSampleRepeatControl;
+    FlangerControl              mFlangerControl;
 };
 

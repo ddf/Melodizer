@@ -30,9 +30,10 @@ const int kStreamBufferSize = 512;
 //--------------------------------------------------------------
 App::App()
 : ofxiPhoneApp()
-, mFlanger( 5, 0.1f, 2, 0.3f, 0.8f, 0.4f )
+, mFlanger( 5, 0.1f, 2, 0.3f, 0.8f, 0.0f )
 , mRepeater(1.0f) // repeater that can repeat a max of one second
 , mSampleRepeatControl( mRepeater )
+, mFlangerControl( mFlanger )
 {
 	gApp = this;
 }
@@ -143,6 +144,9 @@ void App::update()
     mMelodyBus.volume.setLastValue( Settings::MelodyVolume );
     mBassBus.volume.setLastValue( Settings::BassVolume );
     
+    mSampleRepeatControl.update( dt );
+    mFlangerControl.update( dt );
+    
     if ( mSettingsScreen.active() )
     {
         mSettingsScreen.update( dt );
@@ -203,8 +207,27 @@ void App::draw()
         ofSetColor(128, 200, 0, 128);
         ofFill();
         
-        ofRect( mSampleRepeatControl.touchPosition1().x, ofGetHeight()/2, 40, ofGetHeight() );
-        ofRect( mSampleRepeatControl.touchPosition2().x, ofGetHeight()/2, 40, ofGetHeight() );
+        ofRect( mSampleRepeatControl.getTouch(0).x, ofGetHeight()/2, 40, ofGetHeight() );
+        ofRect( mSampleRepeatControl.getTouch(1).x, ofGetHeight()/2, 40, ofGetHeight() );
+    }
+    
+    // flanger control viz
+    if ( mFlangerControl.active() )
+    {
+        // pale yellow
+        ofSetColor(255, 255, 0, 64);
+        ofFill();
+        
+        ofPoint touch1 = mFlangerControl.getTouch(0);
+        ofPoint touch2 = mFlangerControl.getTouch(1);
+        ofPoint touch3 = mFlangerControl.getTouch(2);
+        
+        const float touchRadius = 65;
+        ofCircle( touch1.x, touch1.y, touchRadius );
+        ofCircle( touch2.x, touch2.y, touchRadius );
+        ofCircle( touch3.x, touch3.y, touchRadius );
+        
+        // connect dots with lines, somehow try to communicate that the lines are the control values
     }
     
     // SETTINGS

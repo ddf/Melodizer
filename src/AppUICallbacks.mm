@@ -16,6 +16,9 @@ void App::touchDown(ofTouchEventArgs &touch)
 {
     if ( mXYControl.touchDown(touch) )
         return;
+    
+    if ( mFlangerControl.touchDown(touch) )
+        return;
  
     if ( mSampleRepeatControl.touchDown(touch) )
         return;
@@ -27,6 +30,9 @@ void App::touchMoved(ofTouchEventArgs &touch)
 	if ( mXYControl.touchMoved(touch) )
         return;
     
+    if ( mFlangerControl.touchMoved(touch) )
+        return;
+    
     if ( mSampleRepeatControl.touchMoved(touch) )
         return;
 }
@@ -35,6 +41,9 @@ void App::touchMoved(ofTouchEventArgs &touch)
 void App::touchUp(ofTouchEventArgs &touch)
 {
     if ( mXYControl.touchUp(touch) )
+        return;
+    
+    if ( mFlangerControl.touchUp(touch) )
         return;
     
     if ( mSampleRepeatControl.touchUp(touch) )
@@ -55,6 +64,9 @@ void App::touchCancelled(ofTouchEventArgs &touch)
         return;
     
     if ( mSampleRepeatControl.touchUp(touch) )
+        return;
+    
+    if ( mFlangerControl.touchUp(touch) )
         return;
 }
 

@@ -11,34 +11,24 @@
 
 #include "ofEvents.h"
 #include "SampleRepeat.h"
+#include "MultitouchControl.h"
 
-class SampleRepeatControl
+class SampleRepeatControl : public MultitouchControl
 {
 public:
     SampleRepeatControl( SampleRepeat& repeater )
-    : mRepeater( repeater )
+    : MultitouchControl( 2 )
+    , mRepeater( repeater )
     {
-        mTouch1.id = -1;
-        mTouch2.id = -1;
     }
-    
-    bool    active() const;
-    
-    ofPoint touchPosition1() const;
-    ofPoint touchPosition2() const;
-    
-    // all return true if the touch was handled.
-	bool touchDown(ofTouchEventArgs &touch);
-	bool touchMoved(ofTouchEventArgs &touch);
-	bool touchUp(ofTouchEventArgs &touch);
     
 private:
     
-    void setSection();
+    virtual void activate();
+    virtual void deactivate();
+    virtual void setParameters();
     
     SampleRepeat&       mRepeater;
-    ofTouchEventArgs    mTouch1;
-    ofTouchEventArgs    mTouch2;
     
     
 };

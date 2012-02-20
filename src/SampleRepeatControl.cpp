@@ -11,93 +11,25 @@
 #include "Settings.h"
 
 //-----------------------------------
-bool SampleRepeatControl::active() const
+void SampleRepeatControl::activate()
 {
-    return ( mTouch1.id != -1 && mTouch2.id != -1 );
+    mRepeater.activate();
 }
 
 //-----------------------------------
-ofPoint SampleRepeatControl::touchPosition1() const
+void SampleRepeatControl::deactivate()
 {
-    return ofPoint( mTouch1.x, mTouch1.y );
+    mRepeater.deactivate();
 }
 
 //-----------------------------------
-ofPoint SampleRepeatControl::touchPosition2() const
+void SampleRepeatControl::setParameters()
 {
-    return ofPoint( mTouch2.x, mTouch2.y );
-}
-
-//-----------------------------------
-void SampleRepeatControl::setSection()
-{
-    float s = ofClamp( -0.001f + mTouch1.x / ofGetWidth(), 0, 1 );
-    float e = ofClamp( 0.001f + mTouch2.x / ofGetWidth(), 0, 1 );
+    float s = ofClamp( -0.001f + getTouch(0).x / ofGetWidth(), 0, 1 );
+    float e = ofClamp(  0.001f + getTouch(1).x / ofGetWidth(), 0, 1 );
     if ( s > e ) std::swap(s,e);
     if ( e-s < 0.001f ) e = s+0.001f;
     
     
-    mRepeater.setRepeatSection( s, e );    
-}
-
-//-----------------------------------
-bool SampleRepeatControl::touchDown( ofTouchEventArgs& touch )
-{
-    if ( mTouch1.id == -1 )
-    {
-        mTouch1 = touch;
-    }
-    else if ( mTouch2.id == -1 )
-    {
-        mTouch2 = touch;
-    }
-    
-    if ( active() )
-    {
-        setSection();
-        
-        mRepeater.activate();
-    }
-    
-    return (mTouch1.id != -1 || mTouch2.id != -1);
-}
-
-//-----------------------------------
-bool SampleRepeatControl::touchMoved( ofTouchEventArgs& touch )
-{
-    if ( mTouch1.id == touch.id )
-    {
-        mTouch1 = touch;
-    }
-    else if ( mTouch2.id == touch.id )
-    {
-        mTouch2 = touch;
-    }
-    
-    if ( active() )
-    {
-        setSection();
-    }
-    
-    return active();
-}
-
-//-----------------------------------
-bool SampleRepeatControl::touchUp( ofTouchEventArgs& touch )
-{
-    if ( mTouch1.id == touch.id )
-    {
-        mTouch1.id = -1;
-    }
-    else if ( mTouch2.id == touch.id )
-    {
-        mTouch2.id = -1;
-    }
-    
-    if ( !active() )
-    {
-        mRepeater.deactivate();
-    }
-    
-    return active();
+    mRepeater.setRepeatSection( s, e );
 }
