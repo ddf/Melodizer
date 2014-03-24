@@ -26,6 +26,6 @@ float        Settings::BassProbabilities[16] = { 1.0f, 1.0f, 1.0f, 1.0f,  1.0f, 
 float        Settings::BassVolume( 0.6f );
 WaveformType Settings::BassWave( WT_Square );
 
-bool         Settings::PlayKick( true );
+bool         Settings::PlayKick( false );
 bool         Settings::PlaySnare( false );
 bool         Settings::PlayHat( false );

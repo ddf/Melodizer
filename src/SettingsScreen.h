@@ -30,8 +30,16 @@ public:
     : mBox( x, y, w, h )
     , mHue(hue)
     , mValue(v)
+    , mOutStart(0)
+    , mOutRange(1)
     , mTouch(-1)
     {
+    }
+    
+    void setRange( const float start, const float end )
+    {
+        mOutStart = start;
+        mOutRange = end - start;
     }
     
     void draw();
@@ -47,6 +55,8 @@ private:
     int     mHue;
     Box     mBox;
     float*  mValue;
+    float   mOutStart;
+    float   mOutRange;
     int     mTouch; // the touch we are currently tracking
 };
 
@@ -84,6 +94,8 @@ class SettingsScreen
 public:
     SettingsScreen();
     ~SettingsScreen();
+    
+    bool needsSetup() const { return mSliders.empty(); }
     
     void setup();
     void update( const float dt );

@@ -44,10 +44,16 @@ void ValueMapper::map( const float input )
 //--- XYControl ------------------------
 XYControl::XYControl()
 : mTouchID(-1)
-, mP(ofGetWidth()/2, ofGetHeight()/2)
+, mP(0,0)
 , mR(60)
 {
     
+}
+
+//--------------------------------------
+void XYControl::setup()
+{
+    mP.set(ofGetWidth()/2, ofGetHeight()/2);
 }
 
 //--------------------------------------

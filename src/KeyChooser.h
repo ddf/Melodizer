@@ -16,8 +16,8 @@
 // one letter in the key chooser, just a container for positions
 struct KeyButton : public Button
 {
-    KeyButton( const char * name, const float ox, const float oy )
-    : Button( name, 0, 0, 70, 70 )
+    KeyButton( const char * name, const float ox, const float oy, const float dim )
+    : Button( name, 0, 0, dim, dim )
     , mOpenX(ox)
     , mOpenY(oy)
     {
@@ -35,7 +35,7 @@ public:
     KeyChooser();
     ~KeyChooser();
     
-    void setup( const float cx, const float cy, const float radius );
+    void setup( const float cx, const float cy, const float buttonDim, const float radius );
     void update( const float dt );
     void draw();
     
@@ -49,7 +49,8 @@ private:
     
     void drawButton( KeyButton* button, float alpha );
     
-    float               mX, mY, mR;
+    Box                 mBox;
+    float               mRadius;
     KeyButton*          mKeys[12];
     ofTrueTypeFont      mFont;
     

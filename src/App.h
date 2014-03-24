@@ -33,7 +33,7 @@ namespace Minim
 #include "Instruments.h"
 
 
-class App : public ofxiPhoneApp 
+class App : public ofxiOSApp
 {
 	
 public:

@@ -9,6 +9,7 @@
 #include "KeyChooser.h"
 #include "Settings.h"
 #include <math.h>
+#include <cassert>
 
 // display text for keys
 static const char * keys[] = { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
@@ -18,9 +19,8 @@ static const float  sk_AnimLength = 0.15f;
 
 //--------------------------------
 KeyChooser::KeyChooser()
-: mX( 0 )
-, mY( 0 )
-, mR( 0 )
+: mBox(0,0,0,0)
+, mRadius( 0 )
 , mState(ST_CLOSED)
 , mAnim( 0 )
 {
@@ -36,20 +36,22 @@ KeyChooser::~KeyChooser()
 }
 
 //--------------------------------
-void KeyChooser::setup( const float cx, const float cy, const float radius )
+void KeyChooser::setup( const float cx, const float cy, const float buttonDim, const float radius )
 {
-    mX = cx;
-    mY = cy;
-    mR = radius;
+    mBox.mW = buttonDim;
+    mBox.mH = buttonDim;
+    mBox.setCenter(cx, cy);
+    mRadius = radius;
     for( int i = 0; i < 12; ++i )
     {
-        const float x = mR * sinf( i * 2*M_PI/12 );
-        const float y = mR * -cosf( i * 2*M_PI/12 );
-        const int   k = (i*7) % 12;
-        mKeys[i] = new KeyButton( keys[k], x, y );
+        const float r = (i%2)==0 ? mRadius : mRadius*0.75f;
+        const float x = r * sinf( i * M_PI_2/11 );
+        const float y = r * -cosf( i * M_PI_2/11 );
+        const int   k = i;
+        mKeys[i] = new KeyButton( keys[k], x, y, buttonDim );
     }
     
-    assert( mFont.loadFont("HelveticaBold.ttf", 32) && "Failed to load KeyChooser font!" );
+    assert( mFont.loadFont("HelveticaBold.ttf", 32 *(ofGetWidth()/1024.0f)) && "Failed to load KeyChooser font!" );
 }
 
 //--------------------------------
@@ -83,13 +85,13 @@ bool KeyChooser::handleTouch( const float x, const float y )
             if ( mKeys[i]->mBox.contains( x, y ) )
             {
                 // set the new key and close
-                Settings::Key = (i*7) % 12;
+                Settings::Key = i;
                 break;
             }
         }
         close();
     }
-    else if ( mState == ST_CLOSED && mKeys[0]->mBox.contains( x, y ) )
+    else if ( mState == ST_CLOSED && mBox.contains( x, y ) )
     {
         open();
     }
@@ -150,9 +152,13 @@ void KeyChooser::draw()
         case ST_OPENING:
         {
             const float posScale = 1.f - mAnim/sk_AnimLength;
+            
+            ofSetColor(0, 0, 0, 200.0f * posScale);
+            ofRect(ofGetWidth()/2, ofGetHeight()/2, ofGetWidth(), ofGetHeight());
+            
             for( int i = 0; i < 12; ++i )
             {
-                mKeys[i]->mBox.setCenter(mX + posScale*mKeys[i]->mOpenX, mY + posScale*mKeys[i]->mOpenY);
+                mKeys[i]->mBox.setCenter(mBox.mX + posScale*mKeys[i]->mOpenX, mBox.mY + posScale*mKeys[i]->mOpenY);
                 drawButton( mKeys[i], 255 * posScale );
             }
         }
@@ -160,9 +166,12 @@ void KeyChooser::draw()
             
         case ST_OPEN:
         {
+            ofSetColor(0, 0, 0, 200);
+            ofRect(ofGetWidth()/2, ofGetHeight()/2, ofGetWidth(), ofGetHeight());
+            
             for( int i = 0; i < 12; ++i )
             {
-                mKeys[i]->mBox.setCenter(mX + mKeys[i]->mOpenX, mY + mKeys[i]->mOpenY);
+                mKeys[i]->mBox.setCenter(mBox.mX + mKeys[i]->mOpenX, mBox.mY + mKeys[i]->mOpenY);
                 drawButton( mKeys[i], 255 );
             }
         }
@@ -171,9 +180,13 @@ void KeyChooser::draw()
         case ST_CLOSING:
         {
             const float posScale = mAnim/sk_AnimLength;
+            
+            ofSetColor(0, 0, 0, 200.0f * posScale);
+            ofRect(ofGetWidth()/2, ofGetHeight()/2, ofGetWidth(), ofGetHeight());
+            
             for( int i = 0; i < 12; ++i )
             {
-                mKeys[i]->mBox.setCenter(mX + posScale*mKeys[i]->mOpenX, mY + posScale*mKeys[i]->mOpenY);
+                mKeys[i]->mBox.setCenter(mBox.mX + posScale*mKeys[i]->mOpenX, mBox.mY + posScale*mKeys[i]->mOpenY);
                 drawButton( mKeys[i], 255 * (1 - posScale) );
             }
         }
@@ -181,8 +194,8 @@ void KeyChooser::draw()
             
         case ST_CLOSED:
         {
-            const int k = (Settings::Key*7) % 12;
-            mKeys[k]->mBox.setCenter( mX, mY );
+            const int k = Settings::Key;
+            mKeys[k]->mBox.setCenter( mBox.mX, mBox.mY );
             drawButton( mKeys[k], 255 );
         }
         break;

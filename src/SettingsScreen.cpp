@@ -25,26 +25,37 @@ void ValueSlider::draw()
     }
     
     // fill
-    if ( mValue > 0 )
-    {        
-        // adjust brightness based on amt of fill
-        float bright = ( 64 + 190 * (*mValue) );
-        ofColor color;
-        
-        if ( mHue >= 0 )
-        {
-            color.setHsb( mHue, 255, bright );
+    if ( mValue )
+    {
+        const float dval = ((*mValue) - mOutStart) / mOutRange;
+        if ( dval > 0 )
+        {        
+            // adjust brightness based on amt of fill
+            const float bright = ( 64 + 190 * dval );
+            ofColor color;
+            
+            if ( mHue >= 0 )
+            {
+                color.setHsb( mHue, 255, bright );
+            }
+            else
+            {
+                color.set( bright, bright, bright );
+            }
+            
+            ofSetColor(color);
+            
+            if ( mBox.mH > mBox.mW )
+            {
+                const float fH = mBox.mH * dval;
+                ofRect( mBox.mX, mBox.mMaxY - fH/2, mBox.mW, fH);
+            }
+            else
+            {
+                const float fW = mBox.mW * dval;
+                ofRect( mBox.mMinX + fW/2, mBox.mY, fW, mBox.mH );
+            }
         }
-        else
-        {
-            color.set( bright, bright, bright );
-        }
-        
-        ofSetColor(color);
-        
-        float fH = mBox.mH * (*mValue);
-        
-        ofRect( mBox.mX, mBox.mMaxY - fH/2, mBox.mW, fH);
     }
 }
 
@@ -63,7 +74,14 @@ bool ValueSlider::handleTouch(const int id, const float x, const float y)
     
     if ( bTracked )
     {
-        *mValue = ofClamp( ( mBox.mMaxY - y) / mBox.mH, 0, 1 );
+        if ( mBox.mH > mBox.mW )
+        {
+            *mValue = mOutStart + mOutRange * ofClamp( ( mBox.mMaxY - y) / mBox.mH, 0, 1 );
+        }
+        else
+        {
+            *mValue = mOutStart + mOutRange * ofClamp( (x - mBox.mMinX) / mBox.mW, 0, 1 );
+        }
         
         if ( !bInside )
         {
@@ -153,7 +171,7 @@ bool WaveformButton::handleTouchUp( const int id, const float x, const float y )
 ///////////////////////////////////
 
 SettingsScreen::SettingsScreen()
-: mState(ST_HIDDEN)
+: mState(ST_SHOWN)
 , mAnimTimer(0)
 , mWaveformAnim(0)
 {
@@ -172,19 +190,23 @@ void SettingsScreen::setup()
 {
     mToggleFont.loadFont("HelveticaBold.ttf", 24);
     
-    mMinX = ofGetWidth() * 0.05f;
-    mMaxX = ofGetWidth() - mMinX;
-    mMinY = ofGetHeight() * 0.1f;
-    mMaxY = ofGetHeight() - mMinY;
+    mMinX = 0;
+    mMaxX = ofGetWidth();
+    mMinY = 0;
+    mMaxY = ofGetHeight();
     
     const float w  = mMaxX - mMinX;
     const float h  = mMaxY - mMinY;
-    const float melY = h * 0.23f;
-    const float basY = h * 0.78f;
-    const float sw = 35.f;
-    const float sh = 75.f;
+    const float hs = h/768.0f;
+    const float ws = w/1024.0f;
+    const float sw = 35.f * ws;
+    const float sh = 150.f * hs;
+    const float waveformButtonDim = 75.0f * ws;
     
-    // sliders
+    const float melY = mMinY + sh/2 + waveformButtonDim + 40*hs;
+    const float basY = melY  + sh   + waveformButtonDim + 60*hs;
+    
+    // sliders for melody and bass control
     {
         
         float x  = (w - (sw*1.5f*17)) / 2 + sw*0.5f;
@@ -192,7 +214,6 @@ void SettingsScreen::setup()
         // -1 for hue means white for me
         mSliders.push_back( ValueSlider( x, melY, sw, sh, -1, &Settings::MelodyVolume ) );
         mSliders.push_back( ValueSlider( x, basY, sw, sh, -1, &Settings::BassVolume ) );
-        mSliders.push_back( ValueSlider( x, (melY+basY)/2, sw, sh, -1, &Settings::Shuffle ) );
         
         x += sw * 1.75f;
         
@@ -220,8 +241,8 @@ void SettingsScreen::setup()
     
     // make waveform buttons
     {
-        const float bw = 60.f;
-        const float bh = 60.f;
+        const float bw = waveformButtonDim;
+        const float bh = waveformButtonDim;
         const float my = melY - sh/2 - bh/2 - 10;
         const float by = basY - sh/2 - bh/2 - 10;
         
@@ -236,15 +257,44 @@ void SettingsScreen::setup()
     }
     
     mTrebleClef.loadImage( "treble_clef.png" );
+    mTrebleClef.setAnchorPercent(0.5f, 0.5f);
+    
     mBassClef.loadImage( "bass_clef.png" );
+    mBassClef.setAnchorPercent(0.5f, 0.5f);
     
-    // key chooser
-    mKeyChooser.setup( w/2, h/2 - 60, 200 );
-    
-    // scale chooser
-    mScaleChooser.setup( w/2, h/2 + 20 );
+    // key chooser and scale chooser
+    {
+        const float kcd = 100 * hs;
+        const float kcr = 600 * hs;
+        const float kcx = mMinX + kcd/2 + 15*hs;
+        const float kcy = mMaxY - kcd/2 - 15*hs;
+        mKeyChooser.setup( kcx, kcy, kcd, kcr );
+
+        const float scw = 400*ws;
+        const float sch = kcd;
+        const float scx = kcx + kcd/2 + 10*ws + scw/2;
+        const float scy = kcy;
+        mScaleChooser.setup( scx, scy, scw, sch );
+        
+        // shuffle control
+        const float shw = 200*ws;
+        const float shh = sch;
+        const float shx = scx + scw/2 + shw/2 + 10*ws;
+        const float shy = mMaxY - shh/2 - 15*hs;
+        
+        mSliders.push_back( ValueSlider( shx, shy, shw, shh, -1, &Settings::Shuffle ) );
+        
+        const float tw = 200*ws;
+        const float th = shh;
+        const float tx = shx + shw/2 + tw/2 + 20*ws;
+        const float ty = shy;
+        ValueSlider volSlider( tx, ty, tw, th, -1, &Settings::Tempo );
+        volSlider.setRange(40, 160);
+        mSliders.push_back(volSlider);
+    }
     
     // toggles for drum parts
+    if ( 0 )
     {
         const int   dimX = 100;
         const int   dimY = 60;
@@ -252,6 +302,11 @@ void SettingsScreen::setup()
         mToggles.push_back( Toggle(&Settings::PlayKick,  "Kick",  w/2 - 120, th, dimX, dimY) );
         mToggles.push_back( Toggle(&Settings::PlaySnare, "Snare", w/2,       th, dimX, dimY) );
         mToggles.push_back( Toggle(&Settings::PlayHat,   "Hat",   w/2 + 120, th, dimX, dimY) );
+    }
+    
+    if ( mState == ST_SHOWN )
+    {
+        ofRegisterTouchEvents(this);
     }
 }
 
@@ -351,15 +406,49 @@ void SettingsScreen::draw()
             // translate to top corner so elements can render in the correct space
             ofTranslate( -w/2, -h/2 );
             
-            const int tint = 50;
-            ofSetColor(tint, tint, tint);
-            mTrebleClef.draw( mSliders[3].box().mX - mSliders[3].box().mW, mSliders[3].box().mY );
-            mBassClef.draw  ( mSliders[4].box().mX, mSliders[4].box().mY );
+            // clefs
+            {
+                const int tint = 50;
+                ofSetColor(tint, tint, tint);
+                
+                ofSetRectMode( OF_RECTMODE_CORNER );
+                const float scale = (ofGetWidth()/1024.0f);
+                
+                const float tx = mSliders[0].box().mX - mSliders[0].box().mW;
+                const float ty = mSliders[0].box().mY;
+                mTrebleClef.draw( tx, ty, mTrebleClef.width*scale, mTrebleClef.height*scale );
+                
+                const float bx = mSliders[1].box().mX;
+                const float by = mSliders[1].box().mY;
+                mBassClef.draw  ( bx, by, mBassClef.width*scale, mBassClef.height*scale );
+            }
+            
+            ofSetRectMode( OF_RECTMODE_CENTER );
             
             // sliders
             for( int i = 0; i < mSliders.size(); ++i )
             {
                 mSliders[i].draw();
+            }
+            
+            // jenky label drawing for swing slider
+            {
+                Box& swingBox = mSliders[mSliders.size()-2].box();
+                ofTrueTypeFont& font = mScaleChooser.getFont();
+                
+                ofSetColor(0, 0, 0, 255);
+                const float th = font.getLineHeight();
+                font.drawString("Swing", swingBox.mMinX + 10.f*(ofGetHeight()/768.f), swingBox.mMinY + th);
+            }
+            
+            // jenky label drawing for tempo slider
+            {
+                Box& tempoBox = mSliders[mSliders.size()-1].box();
+                ofTrueTypeFont& font = mScaleChooser.getFont();
+                
+                ofSetColor(0, 0, 0, 255);
+                const float th = font.getLineHeight();
+                font.drawString("Tempo", tempoBox.mMinX + 10.f*(ofGetHeight()/768.f), tempoBox.mMinY + th);
             }
             
             // waveform buttons
@@ -438,22 +527,16 @@ void SettingsScreen::hide()
 void SettingsScreen::touchDown( ofTouchEventArgs& touch )
 {
 //    printf( "Touch Down: %d, %f, %f\n", touch.id, touch.x, touch.y );
-    // outside the background?
-    if ( touch.x < mMinX || touch.x > mMaxX || touch.y < mMinY || touch.y > mMaxY )
-    {
-        hide();
-    }
-    else // transform to local space and hand to our elements
     {
         const float x = ofMap(touch.x, mMinX, mMaxX, 0, mMaxX-mMinX);
         const float y = ofMap(touch.y, mMinY, mMaxY, 0, mMaxY-mMinY);
         
-        if ( mKeyChooser.handleTouch(x, y) )
+        if ( !mScaleChooser.active() && mKeyChooser.handleTouch(x, y) )
         {
             return;
         }
         
-        if ( mScaleChooser.handleTouch(x, y) )
+        if ( !mKeyChooser.active() && mScaleChooser.handleTouch(x, y) )
         {
             return;
         }

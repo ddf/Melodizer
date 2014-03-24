@@ -13,6 +13,7 @@
 #include "ofTrueTypeFont.h"
 #include "Button.h"
 #include <vector>
+#include "Scales.h"
 
 // object used to choose which scale to use for melody generation
 class ScaleChooser
@@ -21,7 +22,7 @@ public:
     ScaleChooser();
     ~ScaleChooser();
     
-    void setup( const float x, const float y );
+    void setup( const float x, const float y, const float w, const float h );
     void update( const float dt );
     void draw();
     
@@ -31,12 +32,15 @@ public:
     
     bool handleTouch( const float x, const float y );
     
+    ofTrueTypeFont& getFont() { return mFont; }
+    
 private:
     
     Box                     mBox;
     ofTrueTypeFont          mFont;
     std::vector<Button*>    mButtons;
     float                   mAnim;
+    float*                  mButtonFlyout;
     
     enum
     {

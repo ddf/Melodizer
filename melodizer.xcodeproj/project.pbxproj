@@ -26,17 +26,17 @@
 		7741E37014994B2F00F660A7 /* treble_clef.png in Resources */ = {isa = PBXBuildFile; fileRef = 7741E36E14994B2F00F660A7 /* treble_clef.png */; };
 		7741E37614995B2300F660A7 /* KeyChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7741E37514995B2300F660A7 /* KeyChooser.cpp */; };
 		7741E37814996C1500F660A7 /* HelveticaBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7741E37714996C1500F660A7 /* HelveticaBold.ttf */; };
-		77903B8114F201160073280F /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77903B8014F201160073280F /* Accelerate.framework */; };
+		775358A9151B9AE3006D89C4 /* libMinimTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 775358A4151B9ACE006D89C4 /* libMinimTouch.a */; };
+		775358B9151BAD7F006D89C4 /* Icon72.png in Resources */ = {isa = PBXBuildFile; fileRef = 775358B8151BAD7F006D89C4 /* Icon72.png */; };
 		77903B8414F2052A0073280F /* FlangerControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77903B8314F2052A0073280F /* FlangerControl.cpp */; };
 		77903B8714F20E560073280F /* MultitouchControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77903B8614F20E560073280F /* MultitouchControl.cpp */; };
 		77AC9BE214A52D2A0085028B /* ScaleChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77AC9BE114A52D2A0085028B /* ScaleChooser.cpp */; };
 		77AC9C2814A952590085028B /* XYControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77AC9C2714A952590085028B /* XYControl.cpp */; };
 		77AC9C2B14A964880085028B /* SampleRepeat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77AC9C2A14A964880085028B /* SampleRepeat.cpp */; };
 		77AC9C2E14A96B630085028B /* SampleRepeatControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77AC9C2D14A96B630085028B /* SampleRepeatControl.cpp */; };
+		77BF377518DF648C00B78963 /* libofxiOS_iphoneos_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77BF377218DF647A00B78963 /* libofxiOS_iphoneos_Debug.a */; };
 		77DEB7E71490477600C9FB09 /* Instruments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77DEB7E61490477600C9FB09 /* Instruments.cpp */; };
 		77F12D9D14698F3C00F8C32F /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 77F12D9C14698F3C00F8C32F /* Config.xcconfig */; };
-		77F12DB01469926700F8C32F /* libMinimTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77F12D8714698F0A00F8C32F /* libMinimTouch.a */; };
-		77F12DB11469926C00F8C32F /* libofxiPhone_iphoneos_Debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77F12D7E14698EF900F8C32F /* libofxiPhone_iphoneos_Debug.a */; };
 		BB0ECA6310F55E7900A35406 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0ECA6210F55E7900A35406 /* MapKit.framework */; };
 		BB16EBD20F2B2A9500518274 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
 		BB16EBD90F2B2AB500518274 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
@@ -48,30 +48,30 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		77F12D7D14698EF900F8C32F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 77F12D7614698EF900F8C32F /* iPhone+OF Lib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BB24DED610DA7A3F00E9C588;
-			remoteInfo = "iPhone+OF Static Library";
-		};
-		77F12D8614698F0A00F8C32F /* PBXContainerItemProxy */ = {
+		775358A3151B9ACE006D89C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 77F12D7F14698F0900F8C32F /* MinimTouch.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = D2AAC07E0554694100DB518D;
 			remoteInfo = MinimTouch;
 		};
-		77F12DAC1469925D00F8C32F /* PBXContainerItemProxy */ = {
+		775358A5151B9ADC006D89C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 77F12D7F14698F0900F8C32F /* MinimTouch.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = MinimTouch;
 		};
-		77F12DAE1469926000F8C32F /* PBXContainerItemProxy */ = {
+		77BF377118DF647A00B78963 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 77F12D7614698EF900F8C32F /* iPhone+OF Lib.xcodeproj */;
+			containerPortal = 77BF376D18DF647A00B78963 /* iOS+OFLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BB24DED610DA7A3F00E9C588;
+			remoteInfo = "iPhone+OF Static Library";
+		};
+		77BF377318DF648300B78963 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 77BF376D18DF647A00B78963 /* iOS+OFLib.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = BB24DE5C10DA7A3F00E9C588;
 			remoteInfo = "iPhone+OF Static Library";
@@ -106,7 +106,7 @@
 		7741E3741499588100F660A7 /* Box.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Box.h; sourceTree = "<group>"; };
 		7741E37514995B2300F660A7 /* KeyChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyChooser.cpp; sourceTree = "<group>"; };
 		7741E37714996C1500F660A7 /* HelveticaBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = HelveticaBold.ttf; sourceTree = "<group>"; };
-		77903B8014F201160073280F /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		775358B8151BAD7F006D89C4 /* Icon72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon72.png; sourceTree = "<group>"; };
 		77903B8214F204900073280F /* FlangerControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlangerControl.h; sourceTree = "<group>"; };
 		77903B8314F2052A0073280F /* FlangerControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlangerControl.cpp; sourceTree = "<group>"; };
 		77903B8514F20D0E0073280F /* MultitouchControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultitouchControl.h; sourceTree = "<group>"; };
@@ -120,10 +120,10 @@
 		77AC9C2A14A964880085028B /* SampleRepeat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleRepeat.cpp; sourceTree = "<group>"; };
 		77AC9C2C14A96A890085028B /* SampleRepeatControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleRepeatControl.h; sourceTree = "<group>"; };
 		77AC9C2D14A96B630085028B /* SampleRepeatControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleRepeatControl.cpp; sourceTree = "<group>"; };
+		77BF376D18DF647A00B78963 /* iOS+OFLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "iOS+OFLib.xcodeproj"; path = "../../../../Developer/Frameworks/of_v0.8.0_ios_release/libs/openFrameworksCompiled/project/ios/iOS+OFLib.xcodeproj"; sourceTree = "<group>"; };
 		77DEB7E51490444F00C9FB09 /* Instruments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instruments.h; sourceTree = "<group>"; };
 		77DEB7E61490477600C9FB09 /* Instruments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Instruments.cpp; sourceTree = "<group>"; };
-		77F12D7614698EF900F8C32F /* iPhone+OF Lib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "iPhone+OF Lib.xcodeproj"; path = "Frameworks/openFrameworks_iOS/libs/openFrameworksCompiled/project/iphone/iPhone+OF Lib.xcodeproj"; sourceTree = DEVELOPER_DIR; };
-		77F12D7F14698F0900F8C32F /* MinimTouch.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MinimTouch.xcodeproj; path = "Frameworks/minim-cpp/MinimTouch/MinimTouch.xcodeproj"; sourceTree = DEVELOPER_DIR; };
+		77F12D7F14698F0900F8C32F /* MinimTouch.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MinimTouch.xcodeproj; path = "../../../../Developer/Frameworks/minim-cpp/MinimTouch.xcodeproj"; sourceTree = DEVELOPER_DIR; };
 		77F12D9C14698F3C00F8C32F /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		BB0ECA6210F55E7900A35406 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -142,9 +142,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				77903B8114F201160073280F /* Accelerate.framework in Frameworks */,
-				77F12DB11469926C00F8C32F /* libofxiPhone_iphoneos_Debug.a in Frameworks */,
-				77F12DB01469926700F8C32F /* libMinimTouch.a in Frameworks */,
+				77BF377518DF648C00B78963 /* libofxiOS_iphoneos_Debug.a in Frameworks */,
+				775358A9151B9AE3006D89C4 /* libMinimTouch.a in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -174,21 +173,36 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				77903B8014F201160073280F /* Accelerate.framework */,
+				77BF376D18DF647A00B78963 /* iOS+OFLib.xcodeproj */,
+				775358B8151BAD7F006D89C4 /* Icon72.png */,
 				77F12D9C14698F3C00F8C32F /* Config.xcconfig */,
+				77F12D7F14698F0900F8C32F /* MinimTouch.xcodeproj */,
 				6DA14D011308406E003685EC /* Resources-iPad */,
 				BB24DDC910DA781C00E9C588 /* ofxiphone-Info.plist */,
 				BB16F3A50F2B73B000518274 /* src */,
-				BB16F26B0F2B646B00518274 /* addons */,
 				BB24DD8B10DA77E000E9C588 /* data */,
-				BB24E1F710DAA51900E9C588 /* openFrameworks */,
-				BB16E9930F2B1E5900518274 /* libs */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				77BF376C18DF5C7D00B78963 /* Frameworks */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
 		};
-		29B97323FDCFA39411CA2CEA /* core frameworks */ = {
+		6DA14D011308406E003685EC /* Resources-iPad */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Resources-iPad";
+			sourceTree = "<group>";
+		};
+		775358A0151B9ACE006D89C4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				775358A4151B9ACE006D89C4 /* libMinimTouch.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		77BF376C18DF5C7D00B78963 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				BBE5EAB70F49AD8400F28951 /* AudioToolbox.framework */,
@@ -204,46 +218,15 @@
 				6D36252114036088005493CF /* CoreVideo.framework */,
 				6D362535140360DD005493CF /* CoreMedia.framework */,
 			);
-			name = "core frameworks";
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		6DA14D011308406E003685EC /* Resources-iPad */ = {
+		77BF376E18DF647A00B78963 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-			);
-			name = "Resources-iPad";
-			sourceTree = "<group>";
-		};
-		77F12D7714698EF900F8C32F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				77F12D7E14698EF900F8C32F /* libofxiPhone_iphoneos_Debug.a */,
+				77BF377218DF647A00B78963 /* libofxiOS_iphoneos_Debug.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		77F12D8014698F0900F8C32F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				77F12D8714698F0A00F8C32F /* libMinimTouch.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		BB16E9930F2B1E5900518274 /* libs */ = {
-			isa = PBXGroup;
-			children = (
-				77F12D7F14698F0900F8C32F /* MinimTouch.xcodeproj */,
-				BBE5E94E0F497BD800F28951 /* core */,
-			);
-			name = libs;
-			sourceTree = "<group>";
-		};
-		BB16F26B0F2B646B00518274 /* addons */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = addons;
 			sourceTree = "<group>";
 		};
 		BB16F3A50F2B73B000518274 /* src */ = {
@@ -299,22 +282,6 @@
 			path = bin/data;
 			sourceTree = "<group>";
 		};
-		BB24E1F710DAA51900E9C588 /* openFrameworks */ = {
-			isa = PBXGroup;
-			children = (
-				77F12D7614698EF900F8C32F /* iPhone+OF Lib.xcodeproj */,
-			);
-			name = openFrameworks;
-			sourceTree = "<group>";
-		};
-		BBE5E94E0F497BD800F28951 /* core */ = {
-			isa = PBXGroup;
-			children = (
-				29B97323FDCFA39411CA2CEA /* core frameworks */,
-			);
-			name = core;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -329,8 +296,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				77F12DAF1469926000F8C32F /* PBXTargetDependency */,
-				77F12DAD1469925D00F8C32F /* PBXTargetDependency */,
+				77BF377418DF648300B78963 /* PBXTargetDependency */,
+				775358A6151B9ADC006D89C4 /* PBXTargetDependency */,
 			);
 			name = iPad;
 			productName = iPhone;
@@ -359,11 +326,11 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 77F12D7714698EF900F8C32F /* Products */;
-					ProjectRef = 77F12D7614698EF900F8C32F /* iPhone+OF Lib.xcodeproj */;
+					ProductGroup = 77BF376E18DF647A00B78963 /* Products */;
+					ProjectRef = 77BF376D18DF647A00B78963 /* iOS+OFLib.xcodeproj */;
 				},
 				{
-					ProductGroup = 77F12D8014698F0900F8C32F /* Products */;
+					ProductGroup = 775358A0151B9ACE006D89C4 /* Products */;
 					ProjectRef = 77F12D7F14698F0900F8C32F /* MinimTouch.xcodeproj */;
 				},
 			);
@@ -375,18 +342,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		77F12D7E14698EF900F8C32F /* libofxiPhone_iphoneos_Debug.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libofxiPhone_iphoneos_Debug.a;
-			remoteRef = 77F12D7D14698EF900F8C32F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		77F12D8714698F0A00F8C32F /* libMinimTouch.a */ = {
+		775358A4151B9ACE006D89C4 /* libMinimTouch.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libMinimTouch.a;
-			remoteRef = 77F12D8614698F0A00F8C32F /* PBXContainerItemProxy */;
+			remoteRef = 775358A3151B9ACE006D89C4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		77BF377218DF647A00B78963 /* libofxiOS_iphoneos_Debug.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libofxiOS_iphoneos_Debug.a;
+			remoteRef = 77BF377118DF647A00B78963 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -402,6 +369,7 @@
 				7741E36F14994B2F00F660A7 /* bass_clef.png in Resources */,
 				7741E37014994B2F00F660A7 /* treble_clef.png in Resources */,
 				7741E37814996C1500F660A7 /* HelveticaBold.ttf in Resources */,
+				775358B9151BAD7F006D89C4 /* Icon72.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,15 +403,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		77F12DAD1469925D00F8C32F /* PBXTargetDependency */ = {
+		775358A6151B9ADC006D89C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MinimTouch;
-			targetProxy = 77F12DAC1469925D00F8C32F /* PBXContainerItemProxy */;
+			targetProxy = 775358A5151B9ADC006D89C4 /* PBXContainerItemProxy */;
 		};
-		77F12DAF1469926000F8C32F /* PBXTargetDependency */ = {
+		77BF377418DF648300B78963 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "iPhone+OF Static Library";
-			targetProxy = 77F12DAE1469926000F8C32F /* PBXContainerItemProxy */;
+			targetProxy = 77BF377318DF648300B78963 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -458,10 +426,10 @@
 				GCC_PREFIX_HEADER = iPhone_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "ofxiphone-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DPOSIX";
 				PRODUCT_NAME = melodizer;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -475,10 +443,10 @@
 				GCC_PREFIX_HEADER = iPhone_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "ofxiphone-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DPOSIX";
 				PRODUCT_NAME = melodizer;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -502,15 +470,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COMPRESS_PNG_FILES = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iPhone_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "ofxiphone-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DPOSIX";
 				PRODUCT_NAME = melodizer;
-				TARGETED_DEVICE_FAMILY = 2;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Distribution;
 		};

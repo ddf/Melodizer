@@ -28,6 +28,8 @@ class XYControl
 public:
     XYControl();
     
+    void setup();
+    
     const ofPoint& position() const { return mP; }
     float          radius()   const { return mR; }
     
