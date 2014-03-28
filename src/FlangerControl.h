@@ -9,21 +9,15 @@
 #ifndef melodizer_FlangerControl_h
 #define melodizer_FlangerControl_h
 
-#include "MultitouchControl.h"
+#include "XYControl.h"
 #include "Flanger.h"
 #include "Line.h"
 
 // control flanger parameters with 3 touches
-class FlangerControl : public MultitouchControl
+class FlangerControl : public XYControl
 {
 public:
-    FlangerControl( Minim::Flanger& flange )
-    : MultitouchControl(3)
-    , mFlanger( flange )
-    , mWetLine( 0, 0, 0 )
-    {
-        mWetLine.patch( mFlanger.wet );
-    }
+    FlangerControl( Minim::Flanger& flange );
     
     ~FlangerControl()
     {
@@ -32,9 +26,8 @@ public:
     
 private:
     
-    virtual void activate();
-    virtual void deactivate();
-    virtual void setParameters();
+    virtual void enable();
+    virtual void disable();
     
     Minim::Line         mWetLine;
     Minim::Flanger&     mFlanger;

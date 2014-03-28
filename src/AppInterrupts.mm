@@ -114,7 +114,7 @@ void App::gotMemoryWarning()
 
 void App::deviceOrientationChanged(int newOrientation)
 {
-	printf( "Orientation changed to %d.\n", newOrientation );
+	//printf( "Orientation changed to %d.\n", newOrientation );
 	
 	if ( newOrientation == UIDeviceOrientationLandscapeLeft )
 	{

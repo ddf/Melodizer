@@ -10,6 +10,7 @@
 #define melodizer_ControlPoint_h
 
 #include "ofEvents.h"
+#include "Button.h"
 
 struct ValueMapper
 {
@@ -28,15 +29,12 @@ class XYControl
 public:
     XYControl();
     
-    void setup();
+    void setup( const char * label, const float cx, const float cy, const float dim );
+    void draw();
     
-    const ofPoint& position() const { return mP; }
-    float          radius()   const { return mR; }
-    
-    void setPosition( const float x, const float y );
-    
-    void setXControl( ValueMapper mapper );
-    void setYControl( ValueMapper mapper );
+    void setPosition( const float cx, const float cy );
+    void setXValue( float * value, const float valueMin, const float valueMax );
+    void setYValue( float * value, const float valueMin, const float valueMax );
     
     // all return true if the touch was handled.
 	bool touchDown(ofTouchEventArgs &touch);
@@ -45,11 +43,18 @@ public:
     
 private:
     
-    int      mTouchID;
-    ofPoint  mLastTouch;
-    ofPoint  mP; // position
-    float    mR; // radius
+    virtual void enable() {}
+    virtual void disable() {}
     
+    void mapInput( float x, float y );
+    
+    int      mTouchID;
+    bool     mEnabled;
+    
+    string         mLabel;
+    Button         mButtonPower;
+    Box            mControlBox;
+    ofPoint        mControlPoint;
     ValueMapper    mXControl;
     ValueMapper    mYControl;
 };

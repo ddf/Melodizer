@@ -111,6 +111,8 @@ public:
 	void touchDoubleTap(ofTouchEventArgs &touch);
 	void touchCancelled(ofTouchEventArgs &touch);
     
+    ofTrueTypeFont& UIFont() { return mToggleFont; }
+    
 private:
     
     enum
@@ -138,6 +140,8 @@ private:
     
     ofImage          mTrebleClef;
     ofImage          mBassClef;
+
+    Button           mButtonFx;
     
 };
 

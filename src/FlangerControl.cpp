@@ -9,26 +9,25 @@
 #include "FlangerControl.h"
 #include "ofMath.h"
 
+FlangerControl::FlangerControl( Minim::Flanger& flange )
+: XYControl()
+, mFlanger( flange )
+, mWetLine( 0, 0, 0 )
+{
+    mWetLine.patch( mFlanger.wet );
+    
+    setXValue(mFlanger.rate.getLastValues(), 0.001f, 2.0f);
+    setYValue(mFlanger.depth.getLastValues(), 10, 100 );
+}
+
 //-----------------------------------
-void FlangerControl::activate()
+void FlangerControl::enable()
 {
     mWetLine.activate( 0.01f, mFlanger.wet.getLastValue(), 0.5f );
 }
 
 //-----------------------------------
-void FlangerControl::deactivate()
+void FlangerControl::disable()
 {
     mWetLine.activate( 0.01f, mFlanger.wet.getLastValue(), 0 );
-}
-
-//-----------------------------------
-void FlangerControl::setParameters()
-{
-    const float rate    = ofMap( getTouch(0).distance( getTouch(1) ), 0, 1024, 2.0f, 0.001f );
-    const float depth   = ofMap( getTouch(1).distance( getTouch(2) ), 0, 1024, 10, 100 );
-    const float feed    = ofMap( getTouch(2).distance( getTouch(0) ), 0, 1024, 0.1f, 0.85f );
-    
-    mFlanger.rate.setLastValue( rate );
-    mFlanger.depth.setLastValue( depth );
-    mFlanger.feedback.setLastValue( feed );
 }

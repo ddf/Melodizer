@@ -174,6 +174,7 @@ SettingsScreen::SettingsScreen()
 : mState(ST_SHOWN)
 , mAnimTimer(0)
 , mWaveformAnim(0)
+, mButtonFx("FX",0,0,0,0)
 {
 }
 
@@ -188,7 +189,6 @@ SettingsScreen::~SettingsScreen()
 //----------------------------------
 void SettingsScreen::setup()
 {
-    mToggleFont.loadFont("HelveticaBold.ttf", 24);
     
     mMinX = 0;
     mMaxX = ofGetWidth();
@@ -205,6 +205,8 @@ void SettingsScreen::setup()
     
     const float melY = mMinY + sh/2 + waveformButtonDim + 40*hs;
     const float basY = melY  + sh   + waveformButtonDim + 60*hs;
+    
+    mToggleFont.loadFont("HelveticaBold.ttf", 30.0f*hs);
     
     // sliders for melody and bass control
     {
@@ -270,7 +272,7 @@ void SettingsScreen::setup()
         const float kcy = mMaxY - kcd/2 - 15*hs;
         mKeyChooser.setup( kcx, kcy, kcd, kcr );
 
-        const float scw = 400*ws;
+        const float scw = 300*ws;
         const float sch = kcd;
         const float scx = kcx + kcd/2 + 10*ws + scw/2;
         const float scy = kcy;
@@ -291,6 +293,12 @@ void SettingsScreen::setup()
         ValueSlider volSlider( tx, ty, tw, th, -1, &Settings::Tempo );
         volSlider.setRange(40, 160);
         mSliders.push_back(volSlider);
+        
+        const float fxd = kcd;
+        const float fxx = mMaxX - fxd/2 - 15*hs;
+        const float fxy = kcy;
+        mButtonFx.setBox(fxx, fxy, fxd, fxd);
+        mButtonFx.setText("FX", mScaleChooser.getFont());
     }
     
     // toggles for drum parts
@@ -449,6 +457,10 @@ void SettingsScreen::draw()
                 ofSetColor(0, 0, 0, 255);
                 const float th = font.getLineHeight();
                 font.drawString("Tempo", tempoBox.mMinX + 10.f*(ofGetHeight()/768.f), tempoBox.mMinY + th);
+            }
+            
+            {
+                mButtonFx.draw(mScaleChooser.getFont(), ofColor(255,128,0), ofColor(200,200,200));
             }
             
             // waveform buttons
@@ -617,6 +629,11 @@ void SettingsScreen::touchUp( ofTouchEventArgs& touch )
             {
                 return;
             }
+        }
+        
+        if ( mButtonFx.mBox.contains(x, y) )
+        {
+            hide();
         }
     }
 }

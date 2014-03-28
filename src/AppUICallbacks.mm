@@ -14,60 +14,57 @@
 //--------------------------------------------------------------
 void App::touchDown(ofTouchEventArgs &touch)
 {
-    if ( mXYControl.touchDown(touch) )
-        return;
+    if ( mSettingsScreen.active() ) return;
     
     if ( mFlangerControl.touchDown(touch) )
         return;
  
-    if ( mSampleRepeatControl.touchDown(touch) )
-        return;
+//    if ( mSampleRepeatControl.touchDown(touch) )
+//        return;
+    
+    if ( mButtonOpenSettings.mBox.contains(touch.x, touch.y) )
+    {
+        mSettingsScreen.show();
+    }
 }
 
 //--------------------------------------------------------------
 void App::touchMoved(ofTouchEventArgs &touch)
 {
-	if ( mXYControl.touchMoved(touch) )
-        return;
+    if ( mSettingsScreen.active() ) return;
     
     if ( mFlangerControl.touchMoved(touch) )
         return;
     
-    if ( mSampleRepeatControl.touchMoved(touch) )
-        return;
+//    if ( mSampleRepeatControl.touchMoved(touch) )
+//        return;
 }
 
 //--------------------------------------------------------------
 void App::touchUp(ofTouchEventArgs &touch)
 {
-    if ( mXYControl.touchUp(touch) )
-        return;
+    if ( mSettingsScreen.active() ) return;
     
     if ( mFlangerControl.touchUp(touch) )
         return;
     
-    if ( mSampleRepeatControl.touchUp(touch) )
-        return;
+//    if ( mSampleRepeatControl.touchUp(touch) )
+//        return;
 }
 
 //--------------------------------------------------------------
 void App::touchDoubleTap(ofTouchEventArgs &touch)
 {
-    if ( !mSettingsScreen.active() )
-    {
-        mSettingsScreen.show();
-        ofUnregisterTouchEvents( this );
-    }
+    if ( mSettingsScreen.active() ) return;
 }
 
 //--------------------------------------------------------------
 void App::touchCancelled(ofTouchEventArgs &touch)
 {
-    if ( mXYControl.touchUp(touch) )
-        return;
+    if ( mSettingsScreen.active() ) return;
     
-    if ( mSampleRepeatControl.touchUp(touch) )
-        return;
+//    if ( mSampleRepeatControl.touchUp(touch) )
+//        return;
     
     if ( mFlangerControl.touchUp(touch) )
         return;

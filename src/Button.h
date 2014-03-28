@@ -10,6 +10,8 @@
 #define melodizer_Button_h
 
 #include "Box.h"
+#include "ofMain.h"
+#include "ofTrueTypeFont.h"
 
 // just a container for positions
 struct Button
@@ -21,8 +23,32 @@ struct Button
         
     }
     
-    const char * mName;
+    void draw( ofTrueTypeFont& font, ofColor boxColor, ofColor textColor )
+    {
+        ofSetColor(boxColor);
+        ofRect(mBox.mX, mBox.mY, mBox.mW, mBox.mH);
+        
+        ofSetColor(200, 200, 200);
+        font.drawString(mName, mTextRect.getMinX(), mTextRect.getMaxY());
+    }
+    
+    void setBox( const float x, const float y, const float w, const float h )
+    {
+        mBox.mW = w;
+        mBox.mH = h;
+        mBox.setCenter( x, y );
+    }
+    
+    void setText( const char * text, ofTrueTypeFont& usingFont )
+    {
+        mName = text;
+        mTextRect = usingFont.getStringBoundingBox(mName, mBox.mX, mBox.mY);
+        mTextRect.setFromCenter(mBox.mX, mBox.mY, mTextRect.getWidth(), mTextRect.getHeight());
+    }
+    
+    string       mName;
     Box          mBox;
+    ofRectangle  mTextRect;
 };
 
 struct Toggle : public Button

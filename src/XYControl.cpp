@@ -9,6 +9,9 @@
 #include "XYControl.h"
 
 #include "ofMain.h"
+#include "ofTrueTypeFont.h"
+
+static ofTrueTypeFont xyFont;
 
 //--- ValueMapper ----------------------
 ValueMapper::ValueMapper()
@@ -37,55 +40,131 @@ void ValueMapper::map( const float input )
 {
     if ( value )
     {
-        *value = ofMap( input, inputMin, inputMax, outputMin, outputMax );
+        *value = ofMap( input, inputMin, inputMax, outputMin, outputMax, true );
     }
 }
 
 //--- XYControl ------------------------
 XYControl::XYControl()
 : mTouchID(-1)
-, mP(0,0)
-, mR(60)
+, mEnabled(false)
+, mLabel("")
+, mControlBox(0,0,0,0)
+, mButtonPower("",0,0,0,0)
 {
     
 }
 
 //--------------------------------------
-void XYControl::setup()
+void XYControl::setup(const char * label, const float cx, const float cy, const float dim)
 {
-    mP.set(ofGetWidth()/2, ofGetHeight()/2);
+    mLabel         = label;
+    
+    mControlBox.mW = mControlBox.mH = dim;
+    
+    const float screenScale = (float)ofGetHeight() / 768.0f;
+    mButtonPower.mBox.mW    = 64*screenScale;
+    mButtonPower.mBox.mH    = 64*screenScale;
+    
+    setPosition(cx, cy);
+    
+    if ( !xyFont.isLoaded() )
+    {
+        xyFont.loadFont( "HelveticaBold.ttf", 24*screenScale );
+    }
+}
+
+//--------------------------------------
+void XYControl::draw()
+{
+    const float screenScale = ((float)ofGetHeight() / 768.f);
+    
+    ofNoFill();
+    ofRect(mControlBox.mX, mControlBox.mY, mControlBox.mW, mControlBox.mH);
+    
+    ofFill();
+    ofSetColor(255, 0, 0);
+    ofCircle( mControlPoint.x, mControlPoint.y, 32.f * screenScale );
+    
+    if ( mEnabled )
+    {
+        ofSetColor(255, 128, 0);
+    }
+    else
+    {
+        ofSetColor(200, 200, 200);
+    }
+    
+    ofRect(mButtonPower.mBox.mX, mButtonPower.mBox.mY, mButtonPower.mBox.mW, mButtonPower.mBox.mH);
+    
+    ofSetColor(255, 255, 255);
+    xyFont.drawString(mLabel, mButtonPower.mBox.mMaxX +  5.f*screenScale, mButtonPower.mBox.mMaxY );
 }
 
 //--------------------------------------
 void XYControl::setPosition( const float x, const float y )
 {
-    mP.x = x;
-    mP.y = y;
+    const float screenScale = ((float)ofGetHeight() / 768.f);
     
-    mXControl.map( x );
-    mYControl.map( y );
+    mControlBox.setCenter(x, y);
+    mButtonPower.mBox.setCenter( mControlBox.mMinX + mButtonPower.mBox.mW/2, mControlBox.mMinY - mButtonPower.mBox.mH/2 - 10.f*screenScale );
+    
+    mXControl.inputMin = mControlBox.mMinX;
+    mXControl.inputMax = mControlBox.mMaxX;
+    
+    mYControl.inputMin = mControlBox.mMaxY;
+    mYControl.inputMax = mControlBox.mMinY;
+    
+    mapInput(x, y);
 }
 
 //--------------------------------------
-void XYControl::setXControl( ValueMapper mapper )
+void XYControl::setXValue( float * value, const float valueMin, const float valueMax )
 {
-    mXControl = mapper;
+    mXControl.outputMin = valueMin;
+    mXControl.outputMax = valueMax;
+    mXControl.value     = value;
 }
 
 //--------------------------------------
-void XYControl::setYControl( ValueMapper mapper )
+void XYControl::setYValue( float * value, const float valueMin, const float valueMax )
 {
-    mYControl = mapper;
+    mYControl.outputMin = valueMin;
+    mYControl.outputMax = valueMax;
+    mYControl.value     = value;
+}
+
+//--------------------------------------
+void XYControl::mapInput( float x, float y)
+{
+    x = ofClamp(x, mControlBox.mMinX, mControlBox.mMaxX);
+    y = ofClamp(y, mControlBox.mMinY, mControlBox.mMaxY);
+    
+    mXControl.map(x);
+    mYControl.map(y);
+    mControlPoint.set(x,y);
 }
 
 //--------------------------------------
 bool XYControl::touchDown( ofTouchEventArgs& touch )
 {
-    if ( mTouchID == -1 && ofDist(touch.x, touch.y, mP.x, mP.y) < mR )
+    if ( mTouchID == -1 && mControlBox.contains(touch.x, touch.y) )
     {
         mTouchID = touch.id;
-        mLastTouch.x = touch.x;
-        mLastTouch.y = touch.y;
+        mapInput(touch.x, touch.y);
+    }
+    
+    if ( mButtonPower.mBox.contains(touch.x, touch.y) )
+    {
+        mEnabled = !mEnabled;
+        if ( mEnabled )
+        {
+            enable();
+        }
+        else
+        {
+            disable();
+        }
     }
     
     return (mTouchID == touch.id);
@@ -98,13 +177,7 @@ bool XYControl::touchMoved( ofTouchEventArgs& touch )
     
     if ( bMine )
     {
-        mP.x += touch.x - mLastTouch.x;
-        mP.y += touch.y - mLastTouch.y;
-        mLastTouch.x = touch.x;
-        mLastTouch.y = touch.y;
-        
-        mXControl.map( mP.x );
-        mYControl.map( mP.y );
+        mapInput(touch.x, touch.y);
     }
     
     return bMine;

@@ -33,6 +33,7 @@ App::App()
 , mRepeater(1.0f) // repeater that can repeat a max of one second
 , mSampleRepeatControl( mRepeater )
 , mFlangerControl( mFlanger )
+, mButtonOpenSettings("Settings",0,0,0,0)
 {
 	gApp = this;
 }
@@ -76,7 +77,7 @@ void App::setup()
         mDrumBus.patch( mMixBus );
         
         mRate.setInterpolation(true);
-        mMixBus.patch( mRepeater ).patch( mRate ).patch( mFlanger ).patch( *mOutput );
+        mMixBus.patch( mFlanger ).patch( *mOutput );
         //mMixBus.patch( *mOutput );
         
         SetupInstruments();
@@ -126,12 +127,20 @@ void App::update()
     if ( mSettingsScreen.needsSetup() )
     {
         mSettingsScreen.setup();
+
+        const float screenScale = (float)ofGetHeight() / 768.0f;
+        const float xydim = 400*screenScale;
+        const float fcx   = ofGetWidth()/2 - xydim/2;
+        const float fcy   = ofGetHeight()/2;
         
-        mXYControl.setup();
-        mXYControl.setXControl( ValueMapper(&Settings::Tempo, 0, ofGetWidth(), 40, 160) );
-        mXYControl.setYControl( ValueMapper(mRate.value.getLastValues(), 0, ofGetHeight(), 1.0f, 0.2f) );
-        mXYControl.setPosition( ofGetWidth()/2, ofGetHeight()/2 );
+        mFlangerControl.setup("Flanger", fcx, fcy, xydim);
         
+        const float sbw = 200*screenScale;
+        const float sbh = 100*screenScale;
+        const float sbx = ofGetWidth() - sbw/2 - 15*screenScale;
+        const float sby = ofGetHeight() - sbh/2 - 15*screenScale;
+        mButtonOpenSettings.setBox(sbx, sby, sbw, sbh);
+        mButtonOpenSettings.setText("Settings", mSettingsScreen.UIFont());
     }
 
     const float fps = ofGetFrameRate();
@@ -144,17 +153,11 @@ void App::update()
         mMelodyBus.volume.setLastValue( Settings::MelodyVolume );
         mBassBus.volume.setLastValue( Settings::BassVolume );
         
-        mSampleRepeatControl.update( dt );
-        mFlangerControl.update( dt );
+//        mSampleRepeatControl.update( dt );
         
         if ( mSettingsScreen.active() )
         {
             mSettingsScreen.update( dt );
-            
-            if ( !mSettingsScreen.active() )
-            {
-                ofRegisterTouchEvents( this );
-            }
         }
     }
 }
@@ -167,12 +170,6 @@ void App::draw()
 //    ofSetColor(20, 20, 20, 40);
 //    ofFill();
 //    ofRect(0, 0, ofGetWidth(), ofGetHeight());
-    
-    const ofPoint& xyPos = mXYControl.position();
-    
-    ofSetColor(21, 21, 21);
-    ofFill();
-    ofCircle(xyPos.x, xyPos.y, mXYControl.radius());
     
     ofSetColor(200, 0, 128);
     ofNoFill();
@@ -201,42 +198,15 @@ void App::draw()
 //        ofPopMatrix();
 //    }
     
-    // sample repeater control viz
-    if ( mSampleRepeatControl.active() )
-    {
-        ofSetRectMode( OF_RECTMODE_CENTER );
-        ofSetColor(128, 200, 0, 128);
-        ofFill();
-        
-        ofRect( mSampleRepeatControl.getTouch(0).x, ofGetHeight()/2, 40, ofGetHeight() );
-        ofRect( mSampleRepeatControl.getTouch(1).x, ofGetHeight()/2, 40, ofGetHeight() );
-    }
-    
-    // flanger control viz
-    if ( mFlangerControl.active() )
-    {
-        // pale yellow
-        ofSetColor(255, 255, 0, 64);
-        ofFill();
-        
-        ofPoint touch1 = mFlangerControl.getTouch(0);
-        ofPoint touch2 = mFlangerControl.getTouch(1);
-        ofPoint touch3 = mFlangerControl.getTouch(2);
-        
-        const float touchRadius = 65;
-        ofCircle( touch1.x, touch1.y, touchRadius );
-        ofCircle( touch2.x, touch2.y, touchRadius );
-        ofCircle( touch3.x, touch3.y, touchRadius );
-        
-        // connect dots with lines, somehow try to communicate that the lines are the control values
-        // idea: show pulsing circle in center of the dot to visualize the state of the
-        //       flanger's lfo. maybe adjust triangle fill color to represent feedback.
-    }
-    
     // SETTINGS
     if ( mSettingsScreen.active() )
     {
         mSettingsScreen.draw();
+    }
+    else
+    {
+        mFlangerControl.draw();
+        mButtonOpenSettings.draw(mSettingsScreen.UIFont(), ofColor(255,128,0), ofColor(200,200,200));
     }
     
     ofSetColor(255, 255, 255);

@@ -6,6 +6,7 @@
 #include "XYControl.h"
 #include "SampleRepeatControl.h"
 #include "FlangerControl.h"
+#include "Button.h"
 
 // forward declares
 @class UIActionHandler;
@@ -93,8 +94,8 @@ private:
     float       mYOff;
     
     // AUDIO CONTROL
-    XYControl                   mXYControl;
 	SampleRepeatControl         mSampleRepeatControl;
     FlangerControl              mFlangerControl;
+    Button                      mButtonOpenSettings;
 };
 
