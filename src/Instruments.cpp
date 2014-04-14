@@ -37,46 +37,11 @@ static Minim::Waveform* generate( WaveformType type )
 }
 
 // our instrument pools.
-static std::list<Kick*>        kicks;
-static std::list<Snare*>       snares;
-static std::list<Hat*>         hats;
 static std::list<Tone*>        tones[WT_Count];
-
-// our drum beat
-struct DrumNote
-{
-    float prob;
-    float amp;
-};
-
-DrumNote hatNotes[] = {
-    {0.0f, 0.0f}, {0.0f, 0.00f}, {1.0f, 0.5f}, {0.0f, 0.0f},
-    {0.0f, 0.0f}, {0.0f, 0.00f}, {1.0f, 0.5f}, {1.0f, 0.25f},
-    {0.0f, 0.0f}, {0.0f, 0.00f}, {1.0f, 0.5f}, {0.0f, 0.0f},
-    {0.0f, 0.0f}, {1.0f, 0.25f}, {0.0f, 0.0f}, {1.0f, 0.5f}
-};
-
-DrumNote snareNotes[] = {
-    {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f},
-    {1.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f},
-    {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {1.0f, 1.5f},
-    {0.0f, 0.0f}, {0.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 0.0f}
-};
-
-DrumNote kickNotes[] = { 
-    {1.0f, 0.75f}, {0.0f, 0.0f}, {0.3f, 0.5f}, {0.0f, 0.0f},
-    {1.0f, 0.75f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f},
-    {1.0f, 0.75f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f},
-    {1.0f, 0.75f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {0.2f, 0.3f}
-};
     
 
 void SetupInstruments()
 {
-    kicks.push_back( new Kick );
-    snares.push_back( new Snare );
-    hats.push_back( new Hat );
-    
     // make 4 of each kind of tone
     for( int i = 0; i < WT_Count; ++i )
     {
@@ -90,24 +55,6 @@ void SetupInstruments()
 
 void ClearInstruments()
 {
-    for( std::list<Kick*>::iterator iter = kicks.begin(), end = kicks.end(); iter != end; ++iter )
-    {
-        delete *iter;
-    }
-    kicks.clear();
-    
-    for( std::list<Snare*>::iterator iter = snares.begin(), end = snares.end(); iter != end; ++iter )
-    {
-        delete *iter;
-    }
-    snares.clear();
-    
-    for( std::list<Hat*>::iterator iter = hats.begin(), end = hats.end(); iter != end; ++iter )
-    {
-        delete *iter;
-    }
-    hats.clear();
-    
     for( int i = 0; i < WT_Count; ++i )
     {
         std::list<Tone*> & list = tones[ i ];
@@ -117,44 +64,6 @@ void ClearInstruments()
         }
         list.clear();
     }
-}
-
-static void kick( float time, float amp )
-{
-    Kick* k = kicks.front();
-    k->init( amp );
-    
-    Out().playNote( time, 0.3f, *k );
-    
-    kicks.pop_front();
-    kicks.push_back( k );
-}
-
-static void kick( float amp )
-{
-    kick( 0, amp );
-}
-
-static void snare( float time, float amp )
-{
-    Snare* s = snares.front();
-    s->init( amp );
-    
-    Out().playNote( time, 0.3f, *s );
-    
-    snares.pop_front();
-    snares.push_back(s);
-}
-
-static void hat( float time, float amp )
-{
-    Hat* h = hats.front();
-    h->init( amp );
-    
-    Out().playNote( time, 0.5f, *h );
-    
-    hats.pop_front();
-    hats.push_back(h);
 }
 
 static void tone( Minim::Summer* bus, float time, WaveformType type, float freq, float amp, float dur, float pan )
@@ -225,24 +134,6 @@ void Looper::noteOn(float dur)
     {
         generateNote(Bass(), time, Settings::BassWave, Scales[ Settings::Scale ], 2, 5, 0, Settings::PreviousBassNoteIndex );
     }
-    
-    // hat
-    if ( ofRandom(1) < hatNotes[tick].prob )
-    {
-        hat( time, hatNotes[tick].amp );
-    }
-    
-    // snare
-    if ( ofRandom(1) < snareNotes[tick].prob )
-    {
-        snare( time, snareNotes[tick].amp );
-    }
-    
-    // kick
-    if ( ofRandom(1) < kickNotes[tick].prob )
-    {
-        kick( time, kickNotes[tick].amp );
-    }
 }
 
 void Looper::noteOff()
@@ -250,106 +141,6 @@ void Looper::noteOff()
     Out().setTempo( Settings::Tempo );
     Out().playNote( 0.f, 0.25f, *this );
     tick = (tick+1)%16;
-}
-
-//--------------------------------------
-//-- KICK
-//--------------------------------------
-Kick::Kick()
-: osc( 80.f, 0.f, Minim::Waves::SINE() )
-, freqSweep()
-, ampSweep( 0, 0, 0 )
-, bPatched(false)
-{
-    freqSweep.patch( osc.frequency );
-    ampSweep.patch( osc.amplitude );
-    osc.patch( Drums() );
-}
-
-void Kick::init( float amp )
-{
-    amplitudes.push_back(amp);
-}
-
-void Kick::noteOn(float dur)
-{
-    if ( Settings::PlayKick )
-    {
-        ampSweep.activate( 0.1f, amplitudes.front(), 0 );
-        freqSweep.activate( 0.1f, 120.f, 40.f );
-    }
-    
-    amplitudes.pop_front();
-}
-
-void Kick::noteOff()
-{
-}
-
-//--------------------------------------
-//-- SNARE
-//--------------------------------------
-Snare::Snare()
-: noize( 1, Minim::Noise::eTintPink )
-, ampSweep( 0, 0, 0 )
-, filter( 200.f, 0.5f, Minim::MoogFilter::HP )
-, bPatched(false)
-{
-    noize.patch( filter );
-    ampSweep.patch( noize.amplitude );
-    filter.patch( Drums() );
-}
-
-void Snare::init( float amp )
-{
-    amplitudes.push_back(amp);
-}
-
-void Snare::noteOn(float dur)
-{
-    if ( Settings::PlaySnare )
-    {
-        ampSweep.activate( 0.05f, amplitudes.front(), 0 );
-    }
-    
-    amplitudes.pop_front();
-}
-
-void Snare::noteOff()
-{
-}
-
-//--------------------------------------
-//-- HAT
-//--------------------------------------
-Hat::Hat()
-: noize( 1, Minim::Noise::eTintWhite )
-, ampSweep( 0, 0, 0 )
-, filter( 10000.0f, 0.1f, Minim::MoogFilter::HP )
-, bPatched(false)
-{
-    noize.patch( filter );
-    ampSweep.patch( noize.amplitude );
-    filter.patch( Drums() );
-}
-
-void Hat::init( float amp )
-{
-    amplitudes.push_back( amp );
-}
-
-void Hat::noteOn(float dur)
-{
-    if ( Settings::PlayHat )
-    {
-        ampSweep.activate( 0.05f, amplitudes.front() * 0.8f, 0 );
-    }
-    
-    amplitudes.pop_front();
-}
-
-void Hat::noteOff()
-{
 }
 
 //---------------------------------------

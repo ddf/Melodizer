@@ -11,25 +11,35 @@
 #include "Settings.h"
 
 //-----------------------------------
-void SampleRepeatControl::activate()
+SampleRepeatControl::SampleRepeatControl( SampleRepeat& repeater )
+: XYControl()
+, mRepeater(repeater)
+, mRepeatStart(0)
+, mRepeatEnd(1)
+{
+    setXValue(&mRepeatStart, 0, 0.48f);
+    setYValue(&mRepeatEnd, 1.0f, 0.5f );
+}
+
+SampleRepeatControl::~SampleRepeatControl()
+{
+    
+}
+
+//-----------------------------------
+void SampleRepeatControl::enable()
 {
     mRepeater.activate();
 }
 
 //-----------------------------------
-void SampleRepeatControl::deactivate()
+void SampleRepeatControl::disable()
 {
     mRepeater.deactivate();
 }
 
 //-----------------------------------
-void SampleRepeatControl::setParameters()
+void SampleRepeatControl::inputChanged()
 {
-    float s = ofClamp( -0.001f + getTouch(0).x / ofGetWidth(), 0, 1 );
-    float e = ofClamp(  0.001f + getTouch(1).x / ofGetWidth(), 0, 1 );
-    if ( s > e ) std::swap(s,e);
-    if ( e-s < 0.001f ) e = s+0.001f;
-    
-    
-    mRepeater.setRepeatSection( s, e );
+    mRepeater.setRepeatSection( mRepeatStart, mRepeatEnd );
 }

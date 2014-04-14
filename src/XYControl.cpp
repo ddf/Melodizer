@@ -143,6 +143,8 @@ void XYControl::mapInput( float x, float y)
     mXControl.map(x);
     mYControl.map(y);
     mControlPoint.set(x,y);
+    
+    inputChanged();
 }
 
 //--------------------------------------

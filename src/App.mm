@@ -30,9 +30,11 @@ const int kOutputBufferSize = 1024;
 App::App()
 : ofxiOSApp()
 , mFlanger( 5, 0.1f, 2, 0.3f, 0.8f, 0.0f )
+, mDelay( 2, 0, true, true )
 , mRepeater(1.0f) // repeater that can repeat a max of one second
 , mSampleRepeatControl( mRepeater )
 , mFlangerControl( mFlanger )
+, mDelayControl( mDelay )
 , mButtonOpenSettings("Settings",0,0,0,0)
 {
 	gApp = this;
@@ -74,10 +76,8 @@ void App::setup()
         mBassBus.patch( mMixBus );
         
         //mNoteBus.patch( mMixBus );
-        mDrumBus.patch( mMixBus );
         
-        mRate.setInterpolation(true);
-        mMixBus.patch( mFlanger ).patch( *mOutput );
+        mMixBus.patch( mRepeater ).patch( mFlanger ).patch( mDelay ).patch( *mOutput );
         //mMixBus.patch( *mOutput );
         
         SetupInstruments();
@@ -129,11 +129,19 @@ void App::update()
         mSettingsScreen.setup();
 
         const float screenScale = (float)ofGetHeight() / 768.0f;
-        const float xydim = 400*screenScale;
-        const float fcx   = ofGetWidth()/2 - xydim/2;
-        const float fcy   = ofGetHeight()/2;
+        const float xydim = 300*screenScale;
         
+        const float rcx = ofGetWidth()/2 - xydim - 40*screenScale;
+        const float rcy = ofGetHeight()/2;
+        mSampleRepeatControl.setup("Stutter", rcx, rcy, xydim);
+        
+        const float fcx   = ofGetWidth()/2;
+        const float fcy   = ofGetHeight()/2;
         mFlangerControl.setup("Flanger", fcx, fcy, xydim);
+        
+        const float dcx = ofGetWidth()/2 + xydim + 40*screenScale;
+        const float dcy = ofGetHeight()/2;
+        mDelayControl.setup("Delay", dcx, dcy, xydim);
         
         const float sbw = 200*screenScale;
         const float sbh = 100*screenScale;
@@ -152,8 +160,6 @@ void App::update()
         
         mMelodyBus.volume.setLastValue( Settings::MelodyVolume );
         mBassBus.volume.setLastValue( Settings::BassVolume );
-        
-//        mSampleRepeatControl.update( dt );
         
         if ( mSettingsScreen.active() )
         {
@@ -206,6 +212,8 @@ void App::draw()
     else
     {
         mFlangerControl.draw();
+        mSampleRepeatControl.draw();
+        mDelayControl.draw();
         mButtonOpenSettings.draw(mSettingsScreen.UIFont(), ofColor(255,128,0), ofColor(200,200,200));
     }
     

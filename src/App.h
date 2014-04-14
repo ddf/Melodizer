@@ -6,6 +6,7 @@
 #include "XYControl.h"
 #include "SampleRepeatControl.h"
 #include "FlangerControl.h"
+#include "DelayControl.h"
 #include "Button.h"
 
 // forward declares
@@ -17,7 +18,6 @@ namespace Minim
 	class AudioSystem;
 	class AudioOutput;
 	class Noise;
-	class TickRate;
 	class Multiplier;
 	class Oscil;
 	class WaveShaper;
@@ -26,7 +26,6 @@ namespace Minim
 }
 
 #include "Summer.h"
-#include "TickRate.h"
 #include "Delay.h"
 #include "MoogFilter.h"
 #include "Flanger.h"
@@ -54,7 +53,6 @@ public:
 	Minim::AudioOutput & Out() { return *mOutput; }
     Minim::Summer&       Melody() { return mMelodyBus; }
     Minim::Summer&       Bass()   { return mBassBus; }
-    Minim::Summer&       Drums()  { return mDrumBus; }
 	
 	void pauseAudio();
 	void resumeAudio();
@@ -76,9 +74,8 @@ private:
     Minim::Summer             mNoteBus;
     Minim::Summer             mMelodyBus;
     Minim::Summer             mBassBus;
-    Minim::Summer             mDrumBus;
-    Minim::TickRate           mRate;
     Minim::Flanger            mFlanger;
+    Minim::Delay              mDelay;
     SampleRepeat              mRepeater;
     Looper                    mLooper;
 	
@@ -96,6 +93,7 @@ private:
     // AUDIO CONTROL
 	SampleRepeatControl         mSampleRepeatControl;
     FlangerControl              mFlangerControl;
+    DelayControl                mDelayControl;
     Button                      mButtonOpenSettings;
 };
 

@@ -41,10 +41,13 @@ public:
 	bool touchMoved(ofTouchEventArgs &touch);
 	bool touchUp(ofTouchEventArgs &touch);
     
-private:
+protected:
     
     virtual void enable() {}
     virtual void disable() {}
+    virtual void inputChanged() {}
+    
+private:
     
     void mapInput( float x, float y );
     

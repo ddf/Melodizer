@@ -19,8 +19,11 @@ void App::touchDown(ofTouchEventArgs &touch)
     if ( mFlangerControl.touchDown(touch) )
         return;
  
-//    if ( mSampleRepeatControl.touchDown(touch) )
-//        return;
+    if ( mSampleRepeatControl.touchDown(touch) )
+        return;
+    
+    if ( mDelayControl.touchDown(touch) )
+        return;
     
     if ( mButtonOpenSettings.mBox.contains(touch.x, touch.y) )
     {
@@ -36,8 +39,11 @@ void App::touchMoved(ofTouchEventArgs &touch)
     if ( mFlangerControl.touchMoved(touch) )
         return;
     
-//    if ( mSampleRepeatControl.touchMoved(touch) )
-//        return;
+    if ( mSampleRepeatControl.touchMoved(touch) )
+        return;
+    
+    if ( mDelayControl.touchMoved(touch) )
+        return;
 }
 
 //--------------------------------------------------------------
@@ -48,8 +54,11 @@ void App::touchUp(ofTouchEventArgs &touch)
     if ( mFlangerControl.touchUp(touch) )
         return;
     
-//    if ( mSampleRepeatControl.touchUp(touch) )
-//        return;
+    if ( mSampleRepeatControl.touchUp(touch) )
+        return;
+    
+    if ( mDelayControl.touchUp(touch) )
+        return;
 }
 
 //--------------------------------------------------------------
@@ -63,10 +72,13 @@ void App::touchCancelled(ofTouchEventArgs &touch)
 {
     if ( mSettingsScreen.active() ) return;
     
-//    if ( mSampleRepeatControl.touchUp(touch) )
-//        return;
+    if ( mSampleRepeatControl.touchUp(touch) )
+        return;
     
     if ( mFlangerControl.touchUp(touch) )
+        return;
+    
+    if ( mDelayControl.touchUp(touch) )
         return;
 }
 

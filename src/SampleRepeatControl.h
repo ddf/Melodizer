@@ -11,24 +11,25 @@
 
 #include "ofEvents.h"
 #include "SampleRepeat.h"
-#include "MultitouchControl.h"
+#include "XYControl.h"
 
-class SampleRepeatControl : public MultitouchControl
+class SampleRepeatControl : public XYControl
 {
 public:
-    SampleRepeatControl( SampleRepeat& repeater )
-    : MultitouchControl( 2 )
-    , mRepeater( repeater )
-    {
-    }
+    SampleRepeatControl( SampleRepeat& repeater );
+    virtual ~SampleRepeatControl();
+    
+protected:
+    
+    virtual void enable();
+    virtual void disable();
+    virtual void inputChanged();
     
 private:
     
-    virtual void activate();
-    virtual void deactivate();
-    virtual void setParameters();
-    
     SampleRepeat&       mRepeater;
+    float               mRepeatStart;
+    float               mRepeatEnd;
     
     
 };

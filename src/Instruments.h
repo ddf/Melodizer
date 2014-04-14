@@ -36,62 +36,6 @@ private:
     int  tick;
 };
 
-class Kick : public Minim::Instrument
-{
-public:
-    
-    Kick();
-    
-    void init( float amp );
-    void noteOn( float dur );
-    void noteOff();
-    
-private:
-    
-    std::list<float>    amplitudes;
-    Minim::Line         freqSweep;
-    Minim::Line         ampSweep;
-    Minim::Oscil        osc;
-    bool                bPatched;
-};
-
-class Snare : public Minim::Instrument
-{
-public:
-    
-    Snare();
-    
-    void init( float amp );
-    void noteOn( float dur );
-    void noteOff();
-    
-private:
-    
-    std::list<float>    amplitudes;
-    Minim::Noise        noize;
-    Minim::Line         ampSweep;
-    Minim::MoogFilter   filter;
-    bool                bPatched;
-};
-
-class Hat : public Minim::Instrument
-{
-public:
-    Hat();
-    
-    void init( float amp );
-    void noteOn( float dur );
-    void noteOff();
-    
-private:
-
-    std::list<float>    amplitudes;
-    Minim::Noise        noize;
-    Minim::Line         ampSweep;
-    Minim::MoogFilter   filter;
-    bool                bPatched;
-};
-
 class Tone : public Minim::Instrument
 {
 public:

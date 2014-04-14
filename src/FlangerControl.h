@@ -24,10 +24,12 @@ public:
         mWetLine.unpatch( mFlanger );
     }
     
-private:
+protected:
     
     virtual void enable();
     virtual void disable();
+    
+private:
     
     Minim::Line         mWetLine;
     Minim::Flanger&     mFlanger;

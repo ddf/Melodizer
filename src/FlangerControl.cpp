@@ -7,7 +7,6 @@
 //
 
 #include "FlangerControl.h"
-#include "ofMath.h"
 
 FlangerControl::FlangerControl( Minim::Flanger& flange )
 : XYControl()
