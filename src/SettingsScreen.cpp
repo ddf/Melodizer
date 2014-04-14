@@ -111,6 +111,19 @@ bool ValueSlider::handleTouchUp( const int id, const float x, const float y )
 // WAVEFORM BUTTON
 //
 ////////////////////////////////////
+WaveformButton::WaveformButton( float x, float y, float w, float h, WaveformType myType, WaveformType* refType, Minim::Waveform* wave )
+: mBox( x+0.5f, y+0.5f, w, h )
+, mWave(wave)
+, mTouch(-1)
+, mType( myType )
+, mRefType( refType )
+{
+    for( int lx = mBox.mMinX; lx < mBox.mMinX+mBox.mW; ++lx )
+    {
+        mLine.addVertex(ofPoint(lx+0.5f,0));
+    }
+}
+
 void WaveformButton::draw( float anim )
 {
     if ( *mRefType == mType )
@@ -126,23 +139,22 @@ void WaveformButton::draw( float anim )
     
     // first draw the waveform in our box (x,y) is center
     {
-        const int res = 1;
-        for( int x = 0; x < mBox.mW-res; x+=res )
+        auto& verts = mLine.getVertices();
+        for( int x = 0; x < verts.size(); ++x )
         {
             const float animX = (int)(x + mBox.mW*anim) % (int)(mBox.mW);
             const float lu1   = animX / mBox.mW;
-            const float lu2   = (animX+res) / mBox.mW;
-            const float y1    = mBox.mY - mWave->value( lu1 )*mBox.mH*0.3f;
-            const float y2    = mBox.mY - mWave->value( lu2 )*mBox.mH*0.3f;
-            ofLine( mBox.mMinX + x, y1, mBox.mMinX + x+res, y2);
+            verts[x].y        = mBox.mY - mWave->value( lu1 )*mBox.mH*0.3f;
         }
+        
+        mLine.draw();
     }
     
     // now draw the box
     {
-        ofSetRectMode( OF_RECTMODE_CENTER );
+        ofSetRectMode( OF_RECTMODE_CORNER );
         ofNoFill();
-        ofRect( mBox.mX, mBox.mY, mBox.mW, mBox.mH );
+        ofRect( mBox.mMinX, mBox.mMinY, mBox.mW, mBox.mH );
     }
 }
 

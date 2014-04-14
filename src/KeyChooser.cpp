@@ -147,6 +147,8 @@ void KeyChooser::drawButton( KeyButton* button, float alpha )
 //--------------------------------
 void KeyChooser::draw()
 {
+    ofSetRectMode(OF_RECTMODE_CENTER);
+    
     switch ( mState ) 
     {
         case ST_OPENING:

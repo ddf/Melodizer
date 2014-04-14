@@ -80,10 +80,14 @@ void XYControl::draw()
     const float screenScale = ((float)ofGetHeight() / 768.f);
     
     ofNoFill();
-    ofRect(mControlBox.mX, mControlBox.mY, mControlBox.mW, mControlBox.mH);
+    ofSetColor(200);
+    ofSetLineWidth(1);
+    ofRect(mControlBox.mX+0.5f, mControlBox.mY+0.5f, mControlBox.mW, mControlBox.mH);
     
     ofFill();
     ofSetColor(255, 0, 0);
+    ofSetLineWidth(1);
+    
     ofCircle( mControlPoint.x, mControlPoint.y, 32.f * screenScale );
     
     if ( mEnabled )

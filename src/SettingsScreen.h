@@ -63,15 +63,7 @@ private:
 class WaveformButton
 {
 public:
-    WaveformButton( float x, float y, float w, float h, WaveformType myType, WaveformType* refType, Minim::Waveform* wave )
-    : mBox( x, y, w, h )
-    , mWave(wave)
-    , mTouch(-1)
-    , mType( myType )
-    , mRefType( refType )
-    {
-        
-    }
+    WaveformButton( float x, float y, float w, float h, WaveformType myType, WaveformType* refType, Minim::Waveform* wave );
     
     void draw( float anim );
     
@@ -85,6 +77,7 @@ private:
     WaveformType        mType;
     WaveformType*       mRefType;
     Minim::Waveform*    mWave;
+    ofPolyline          mLine;
     
 };
 

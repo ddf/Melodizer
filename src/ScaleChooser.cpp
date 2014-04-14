@@ -93,6 +93,8 @@ void ScaleChooser::update( const float dt )
 //--------------------------------
 void ScaleChooser::draw()
 {
+    ofSetRectMode(OF_RECTMODE_CENTER);
+    
     switch (mState) 
     {
         case ST_CLOSED:
