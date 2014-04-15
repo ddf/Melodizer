@@ -10,10 +10,20 @@
 #define melodizer_SampleRepeat_h
 
 #include "UGen.h"
+#include <vector>
 
 class SampleRepeat : public Minim::UGen
 {
 public:
+    
+    enum State
+    {
+        ST_INACTIVE,
+        ST_SAMPLE,
+        ST_REPEAT
+    };
+    
+    
     // we constantly sample this duration
     // and when activated begin repeating 
     // only as much of the sampled buffer as 
@@ -28,6 +38,10 @@ public:
     
     void    activate();
     void    deactivate();
+    
+    void    getPeaks( std::vector<float>& outPeaks );
+    
+    State getState() const { return mState; }
     
     
     UGenInput audio;
@@ -52,14 +66,7 @@ private:
     int         mSampleEnd;      // what sample we wrap at when repeating
     int         mSampleHead;     // where we read/write
     
-    enum State
-    {
-        ST_SAMPLE,
-        ST_REPEAT
-    };
-    
     State mState;
-    State mNextState;
 };
 
 

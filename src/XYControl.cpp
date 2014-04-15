@@ -18,18 +18,26 @@ class Back
 public:
     static float easeIn (float t, float b, float c, float d, float s)
     {
-        return c*(t/=d)*t*((s+1)*t - s) + b;
+        t/=d;
+        return c*t*t*((s+1)*t - s) + b;
     }
     
     static float easeOut (float t, float b, float c, float d, float s)
     {
-        return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
+        t = t/d-1;
+        return c*(t*t*((s+1)*t + s) + 1) + b;
     }
     
     static float easeInOut (float t, float b, float c, float d, float s)
     {
-        if ((t/=d/2) < 1) return c/2*(t*t*(((s*=(1.525f))+1)*t - s)) + b;
-        return c/2*((t-=2)*t*(((s*=(1.525f))+1)*t + s) + 2) + b;
+        t/=(d/2);
+        s*=1.525f;
+        if (t < 1)
+        {
+            return c/2*(t*t*((s+1)*t - s)) + b;
+        }
+        t-=2;
+        return c/2*(t*t*((s+1)*t + s) + 2) + b;
     }
 };
 
@@ -109,14 +117,22 @@ void XYControl::update(const float dt)
     }
 }
 
+void XYControl::drawBoxBackground(const Box& controlBox)
+{
+    ofFill();
+    ofSetColor(40);
+    ofRect(controlBox.mX+0.5f, controlBox.mY+0.5f, controlBox.mW, controlBox.mH);
+}
+
 //--------------------------------------
 void XYControl::draw()
 {
     const float screenScale = ((float)ofGetHeight() / 768.f);
     
-    ofFill();
-    ofSetColor(40);
-    ofRect(mControlBox.mX+0.5f, mControlBox.mY+0.5f, mControlBox.mW, mControlBox.mH);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(mControlBox.mMinY, mControlBox.mMinX, mControlBox.mH, mControlBox.mW);
+    
+    drawBoxBackground(mControlBox);
     
     ofFill();
     if ( mEnabled )
@@ -132,8 +148,6 @@ void XYControl::draw()
     
     const float dim = Back::easeInOut(mControlPointAnim/10.0f, 4.0f, 28.0f, 0.1f, 3.7f) * screenScale;
     
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(mControlBox.mMinY, mControlBox.mMinX, mControlBox.mH, mControlBox.mW);
     // ofCircle( mControlPoint.x, mControlPoint.y, 32.f * screenScale );
     ofLine( mControlPoint.x-dim, mControlPoint.y-dim, mControlPoint.x-dim/2, mControlPoint.y-dim );
     ofLine( mControlPoint.x-dim, mControlPoint.y-dim, mControlPoint.x-dim, mControlPoint.y-dim/2 );

@@ -10,6 +10,7 @@
 
 #include <string.h> // mem functions
 #include <cassert>
+#include <math.h>
 
 //----------------------------
 SampleRepeat::SampleRepeat( const float sampleDuration )
@@ -21,8 +22,7 @@ SampleRepeat::SampleRepeat( const float sampleDuration )
 , mSampleStart(0)
 , mSampleEnd(0)
 , mSampleHead(0)
-, mState(ST_SAMPLE)
-, mNextState(ST_SAMPLE)
+, mState(ST_INACTIVE)
 {
     
 }
@@ -62,6 +62,7 @@ void SampleRepeat::allocateBuffer()
     {
         mBufferLength = (int)(mBufferDuration*sampleRate()) * getAudioChannelCount();
         mBuffer = new float[ mBufferLength ];
+        memset(mBuffer, 0, sizeof(float)*mBufferLength);
     }
 }
 
@@ -74,15 +75,41 @@ void SampleRepeat::setRepeatSection(const float start, const float end)
 }
 
 //----------------------------
+void SampleRepeat::getPeaks( std::vector<float>& outPeaks )
+{
+    int hop       = getAudioChannelCount();
+    int sliceSize = (mBufferLength/hop) / outPeaks.size();
+    
+    for( int p = 0; p < outPeaks.size(); ++p )
+    {
+        float peak = 0;
+        for( int s = 0; s < sliceSize; ++s )
+        {
+            int offset = p * sliceSize * hop + s * hop;
+            float mono = 0;
+            for ( int c = 0; c < hop; ++c )
+            {
+                mono += mBuffer[offset+c];
+            }
+            mono /= hop;
+            peak += (mono*mono);
+        }
+        outPeaks[p] = sqrtf(peak/sliceSize);
+    }
+}
+
+//----------------------------
 void SampleRepeat::activate()
 {
-    mNextState = ST_REPEAT;
+    mSampleHead = 0;
+    mState      = ST_SAMPLE;
 }
 
 //----------------------------
 void SampleRepeat::deactivate()
 {
-    mNextState = ST_SAMPLE;
+    mState = ST_INACTIVE;
+    memset(mBuffer, 0, sizeof(float)*mBufferLength);
 }
 
 //----------------------------
@@ -100,12 +127,17 @@ void SampleRepeat::uGenerate(float * out, const int numChannels)
         {
             if ( mSampleHead >= mBufferLength )
             {
-                mSampleHead = 0;
+                mSampleHead = mSampleStart;
+                mState      = ST_REPEAT;
+            }
+            else
+            {
+                memcpy( mBuffer + mSampleHead, audio.getLastValues(), sizeof(float)*numChannels );
             }
             
-            memcpy( mBuffer + mSampleHead, audio.getLastValues(), sizeof(float)*numChannels );
-            // output what we just sampled
             memcpy( out, mBuffer + mSampleHead, sizeof(float)*numChannels );
+            
+            mSampleHead += getAudioChannelCount();
         }
         break;
             
@@ -117,6 +149,14 @@ void SampleRepeat::uGenerate(float * out, const int numChannels)
             }
             
             memcpy( out, mBuffer + mSampleHead, sizeof(float)*numChannels );
+            
+            mSampleHead += getAudioChannelCount();
+        }
+        break;
+            
+        case ST_INACTIVE:
+        {
+            memcpy( out, audio.getLastValues(), sizeof(float)*numChannels );
         }
         break;
             
@@ -124,7 +164,6 @@ void SampleRepeat::uGenerate(float * out, const int numChannels)
             break;
     }
     
-    mSampleHead += getAudioChannelCount();
-    mState       = mNextState;
+
 }
 

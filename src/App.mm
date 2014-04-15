@@ -31,7 +31,7 @@ App::App()
 : ofxiOSApp()
 , mFlanger( 5, 0.1f, 2, 0.3f, 0.8f, 0.0f )
 , mDelay( 2, 0, true, true )
-, mRepeater(1.0f) // repeater that can repeat a max of one second
+, mRepeater(0.5f) // repeater that can repeat a max of one second
 , mSampleRepeatControl( mRepeater )
 , mFlangerControl( mFlanger )
 , mDelayControl( mDelay )

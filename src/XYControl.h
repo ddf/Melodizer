@@ -30,7 +30,7 @@ public:
     XYControl();
     
     void setup( const char * label, const float cx, const float cy, const float dim );
-    void update( const float dt );
+    virtual void update( const float dt );
     void draw();
     
     void setPosition( const float cx, const float cy );
@@ -47,6 +47,7 @@ protected:
     virtual void enable() {}
     virtual void disable() {}
     virtual void inputChanged() {}
+    virtual void drawBoxBackground( const Box& controlBox );
     
 private:
     
