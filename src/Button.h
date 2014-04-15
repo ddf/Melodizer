@@ -25,6 +25,7 @@ struct Button
     
     void draw( ofTrueTypeFont& font, ofColor boxColor, ofColor textColor )
     {
+        ofFill();
         ofSetColor(boxColor);
         ofRect(mBox.mX, mBox.mY, mBox.mW, mBox.mH);
         

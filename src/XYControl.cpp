@@ -13,6 +13,26 @@
 
 static ofTrueTypeFont xyFont;
 
+class Back
+{
+public:
+    static float easeIn (float t, float b, float c, float d, float s)
+    {
+        return c*(t/=d)*t*((s+1)*t - s) + b;
+    }
+    
+    static float easeOut (float t, float b, float c, float d, float s)
+    {
+        return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
+    }
+    
+    static float easeInOut (float t, float b, float c, float d, float s)
+    {
+        if ((t/=d/2) < 1) return c/2*(t*t*(((s*=(1.525f))+1)*t - s)) + b;
+        return c/2*((t-=2)*t*(((s*=(1.525f))+1)*t + s) + 2) + b;
+    }
+};
+
 //--- ValueMapper ----------------------
 ValueMapper::ValueMapper()
 : value(NULL)
@@ -51,6 +71,8 @@ XYControl::XYControl()
 , mLabel("")
 , mControlBox(0,0,0,0)
 , mButtonPower("",0,0,0,0)
+, mControlPoint()
+, mControlPointAnim(0)
 {
     
 }
@@ -75,21 +97,28 @@ void XYControl::setup(const char * label, const float cx, const float cy, const 
 }
 
 //--------------------------------------
+void XYControl::update(const float dt)
+{
+    if ( mTouchID == -1 )
+    {
+        mControlPointAnim = ofClamp(mControlPointAnim-dt*10, 0, 1);
+    }
+    else
+    {
+        mControlPointAnim = ofClamp(mControlPointAnim+dt*10, 0, 1);
+    }
+}
+
+//--------------------------------------
 void XYControl::draw()
 {
     const float screenScale = ((float)ofGetHeight() / 768.f);
     
-    ofNoFill();
-    ofSetColor(200);
-    ofSetLineWidth(1);
+    ofFill();
+    ofSetColor(40);
     ofRect(mControlBox.mX+0.5f, mControlBox.mY+0.5f, mControlBox.mW, mControlBox.mH);
     
     ofFill();
-    ofSetColor(255, 0, 0);
-    ofSetLineWidth(1);
-    
-    ofCircle( mControlPoint.x, mControlPoint.y, 32.f * screenScale );
-    
     if ( mEnabled )
     {
         ofSetColor(255, 128, 0);
@@ -99,10 +128,38 @@ void XYControl::draw()
         ofSetColor(200, 200, 200);
     }
     
+    ofSetLineWidth(2);
+    
+    const float dim = Back::easeInOut(mControlPointAnim/10.0f, 4.0f, 28.0f, 0.1f, 3.7f) * screenScale;
+    
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(mControlBox.mMinY, mControlBox.mMinX, mControlBox.mH, mControlBox.mW);
+    // ofCircle( mControlPoint.x, mControlPoint.y, 32.f * screenScale );
+    ofLine( mControlPoint.x-dim, mControlPoint.y-dim, mControlPoint.x-dim/2, mControlPoint.y-dim );
+    ofLine( mControlPoint.x-dim, mControlPoint.y-dim, mControlPoint.x-dim, mControlPoint.y-dim/2 );
+    
+    ofLine( mControlPoint.x+dim, mControlPoint.y-dim, mControlPoint.x+dim/2, mControlPoint.y-dim );
+    ofLine( mControlPoint.x+dim, mControlPoint.y-dim, mControlPoint.x+dim, mControlPoint.y-dim/2 );
+    
+    ofLine( mControlPoint.x-dim, mControlPoint.y+dim, mControlPoint.x-dim/2, mControlPoint.y+dim );
+    ofLine( mControlPoint.x-dim, mControlPoint.y+dim, mControlPoint.x-dim, mControlPoint.y+dim/2 );
+    
+    ofLine( mControlPoint.x+dim, mControlPoint.y+dim, mControlPoint.x+dim/2, mControlPoint.y+dim );
+    ofLine( mControlPoint.x+dim, mControlPoint.y+dim, mControlPoint.x+dim, mControlPoint.y+dim/2 );
+    
+    glDisable(GL_SCISSOR_TEST);
+    
+    ofSetLineWidth(1);
+    
     ofRect(mButtonPower.mBox.mX, mButtonPower.mBox.mY, mButtonPower.mBox.mW, mButtonPower.mBox.mH);
     
     ofSetColor(255, 255, 255);
     xyFont.drawString(mLabel, mButtonPower.mBox.mMaxX +  5.f*screenScale, mButtonPower.mBox.mMaxY );
+    
+    ofNoFill();
+    ofSetColor(200);
+    ofSetLineWidth(1);
+    ofRect(mControlBox.mX+0.5f, mControlBox.mY+0.5f, mControlBox.mW, mControlBox.mH);
 }
 
 //--------------------------------------
@@ -141,8 +198,8 @@ void XYControl::setYValue( float * value, const float valueMin, const float valu
 //--------------------------------------
 void XYControl::mapInput( float x, float y)
 {
-    x = ofClamp(x, mControlBox.mMinX, mControlBox.mMaxX);
-    y = ofClamp(y, mControlBox.mMinY, mControlBox.mMaxY);
+    x = ofClamp(x, mControlBox.mMinX+5, mControlBox.mMaxX-5);
+    y = ofClamp(y, mControlBox.mMinY+5, mControlBox.mMaxY-5);
     
     mXControl.map(x);
     mYControl.map(y);

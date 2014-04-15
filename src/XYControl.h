@@ -30,6 +30,7 @@ public:
     XYControl();
     
     void setup( const char * label, const float cx, const float cy, const float dim );
+    void update( const float dt );
     void draw();
     
     void setPosition( const float cx, const float cy );
@@ -58,6 +59,7 @@ private:
     Button         mButtonPower;
     Box            mControlBox;
     ofPoint        mControlPoint;
+    float          mControlPointAnim;
     ValueMapper    mXControl;
     ValueMapper    mYControl;
 };

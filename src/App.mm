@@ -165,6 +165,10 @@ void App::update()
         {
             mSettingsScreen.update( dt );
         }
+        
+        mFlangerControl.update(dt);
+        mSampleRepeatControl.update(dt);
+        mDelayControl.update(dt);
     }
 }
 
