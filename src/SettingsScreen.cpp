@@ -8,8 +8,32 @@
 
 #include "SettingsScreen.h"
 #include "Waves.h"
+#include "Audio.h"
 
 static const float sk_AnimLength = 0.25f;
+static const float sk_noteAnimLength = 0.45f;
+
+class Expo
+{
+public:
+    static float easeIn (float t, float b, float c, float d)
+    {
+        return (t==0) ? b : c * powf(2, 10 * (t/d - 1)) + b;
+    }
+    
+    static float easeOut (float t, float b, float c, float d)
+    {
+        return (t==d) ? b+c : c * (-powf(2, -10 * t/d) + 1) + b;
+    }
+    
+    static float easeInOut (float t, float b, float c, float d)
+    {
+        if (t==0) return b;
+        if (t==d) return b+c;
+        if ((t/=d/2) < 1) return c/2 * powf(2, 10 * (t - 1)) + b;
+        return c/2 * (-powf(2, -10 * --t) + 2) + b;
+    }
+};
 
 /////////////////////////////////////////
 //
@@ -137,6 +161,8 @@ void WaveformButton::draw( float anim )
         anim = 0;
     }
     
+    ofSetLineWidth(1);
+    
     // first draw the waveform in our box (x,y) is center
     {
         auto& verts = mLine.getVertices();
@@ -226,17 +252,20 @@ void SettingsScreen::setup()
         float x  = (w - (sw*1.5f*17)) / 2 + sw*0.5f;
         
         // -1 for hue means white for me
-        mSliders.push_back( ValueSlider( x, melY, sw, sh, -1, &Settings::MelodyVolume ) );
-        mSliders.push_back( ValueSlider( x, basY, sw, sh, -1, &Settings::BassVolume ) );
+        mMelodySliders.push_back( ValueSlider( x, melY, sw, sh, -1, &Settings::MelodyVolume ) );
+        mBassSliders.push_back( ValueSlider( x, basY, sw, sh, -1, &Settings::BassVolume ) );
         
         x += sw * 1.75f;
         
         for ( int i = 0; i < 16; ++i )
         {
-            mSliders.push_back( ValueSlider( x, melY, sw, sh, 200, &Settings::MelodyProbablities[i] ) );
-            mSliders.push_back( ValueSlider( x, basY, sw, sh, 150, &Settings::BassProbabilities[i] ) );
+            mMelodySliders.push_back( ValueSlider( x, melY, sw, sh, 200, &Settings::MelodyProbablities[i] ) );
+            mBassSliders.push_back( ValueSlider( x, basY, sw, sh, 150, &Settings::BassProbabilities[i] ) );
             x += sw*1.5f;
         }
+        
+        mMelodyAnims.resize(16,0);
+        mBassAnims.resize(16,0);
         
     }
     
@@ -296,7 +325,7 @@ void SettingsScreen::setup()
         const float shx = scx + scw/2 + shw/2 + 10*ws;
         const float shy = mMaxY - shh/2 - 15*hs;
         
-        mSliders.push_back( ValueSlider( shx, shy, shw, shh, -1, &Settings::Shuffle ) );
+        mOtherSliders.push_back( ValueSlider( shx, shy, shw, shh, -1, &Settings::Shuffle ) );
         
         const float tw = 200*ws;
         const float th = shh;
@@ -304,7 +333,7 @@ void SettingsScreen::setup()
         const float ty = shy;
         ValueSlider volSlider( tx, ty, tw, th, -1, &Settings::Tempo );
         volSlider.setRange(40, 160);
-        mSliders.push_back(volSlider);
+        mOtherSliders.push_back(volSlider);
         
         const float fxd = kcd;
         const float fxx = mMaxX - fxd/2 - 15*hs;
@@ -313,20 +342,22 @@ void SettingsScreen::setup()
         mButtonFx.setText("FX", mScaleChooser.getFont());
     }
     
-    // toggles for drum parts
-    if ( 0 )
-    {
-        const int   dimX = 100;
-        const int   dimY = 60;
-        const float th  = h - dimY*0.75f;
-        mToggles.push_back( Toggle(&Settings::PlayKick,  "Kick",  w/2 - 120, th, dimX, dimY) );
-        mToggles.push_back( Toggle(&Settings::PlaySnare, "Snare", w/2,       th, dimX, dimY) );
-        mToggles.push_back( Toggle(&Settings::PlayHat,   "Hat",   w/2 + 120, th, dimX, dimY) );
-    }
-    
     if ( mState == ST_SHOWN )
     {
         ofRegisterTouchEvents(this);
+    }
+}
+
+//----------------------------------
+void SettingsScreen::toneBegan(Minim::Summer* onBus, const int onTick)
+{
+    if ( onBus == &Audio::Melody() )
+    {
+        mMelodyAnims[onTick] = sk_noteAnimLength;
+    }
+    else if ( onBus == &Audio::Bass() )
+    {
+        mBassAnims[onTick] = sk_noteAnimLength;
     }
 }
 
@@ -337,6 +368,12 @@ void SettingsScreen::update( const float dt )
     {
         mAnimTimer -= dt;
         if ( mAnimTimer < 0 ) mAnimTimer = 0;
+    }
+    
+    for( int i = 0; i < 16; ++i )
+    {
+        mMelodyAnims[i] = ofClamp(mMelodyAnims[i]-dt, 0, 1);
+        mBassAnims[i] = ofClamp(mBassAnims[i]-dt, 0, 1);
     }
     
     switch ( mState )
@@ -434,27 +471,61 @@ void SettingsScreen::draw()
                 ofSetRectMode( OF_RECTMODE_CORNER );
                 const float scale = (ofGetWidth()/1024.0f);
                 
-                const float tx = mSliders[0].box().mX - mSliders[0].box().mW;
-                const float ty = mSliders[0].box().mY;
+                const float tx = mMelodySliders[0].box().mX - mMelodySliders[0].box().mW;
+                const float ty = mMelodySliders[0].box().mY;
                 mTrebleClef.draw( tx, ty, mTrebleClef.width*scale, mTrebleClef.height*scale );
                 
-                const float bx = mSliders[1].box().mX;
-                const float by = mSliders[1].box().mY;
+                const float bx = mBassSliders[0].box().mX;
+                const float by = mBassSliders[0].box().mY;
                 mBassClef.draw  ( bx, by, mBassClef.width*scale, mBassClef.height*scale );
             }
             
             ofSetRectMode( OF_RECTMODE_CENTER );
             
             // sliders
-            for( int i = 0; i < mSliders.size(); ++i )
+            for( int i = 0; i < mMelodySliders.size(); ++i )
             {
-                mSliders[i].draw();
+                auto& slider = mMelodySliders[i];
+                slider.draw();
+                
+                const int tick = i-1;
+                if ( tick >= 0 )
+                {
+                    const float alpha = Expo::easeIn(sk_noteAnimLength - mMelodyAnims[tick], 255, -255, sk_noteAnimLength);
+                    ofSetColor(255, alpha);
+                    ofSetLineWidth(4);
+                    const float hwid = slider.box().mW*0.35;
+                    const float posY = ofMap(mMelodyAnims[tick], 0, sk_noteAnimLength, slider.box().mMinY, slider.box().mMaxY);
+                    ofLine(slider.box().mX-hwid, posY, slider.box().mX+hwid, posY);
+                }
+            }
+            
+            for( int i = 0; i < mBassSliders.size(); ++i )
+            {
+                auto& slider = mBassSliders[i];
+                slider.draw();
+                
+                const int tick = i-1;
+                if ( tick >= 0 )
+                {
+                    const float alpha = Expo::easeIn(sk_noteAnimLength - mBassAnims[tick], 255, -255, sk_noteAnimLength);
+                    ofSetColor(255, alpha);
+                    ofSetLineWidth(4);
+                    const float hwid = slider.box().mW*0.35;
+                    const float posY = ofMap(mBassAnims[tick], 0, sk_noteAnimLength, slider.box().mMinY, slider.box().mMaxY);
+                    ofLine(slider.box().mX-hwid, posY, slider.box().mX+hwid, posY);
+                }
+            }
+            
+            for ( auto& slider : mOtherSliders )
+            {
+                slider.draw();
             }
             
             // jenky label drawing for swing slider
             {
-                Box& swingBox = mSliders[mSliders.size()-2].box();
-                ofTrueTypeFont& font = mScaleChooser.getFont();
+                Box& swingBox = mOtherSliders[0].box();
+                ofTrueTypeFont& font = UIFont();
                 
                 ofSetColor(0, 0, 0, 255);
                 const float th = font.getLineHeight();
@@ -463,8 +534,8 @@ void SettingsScreen::draw()
             
             // jenky label drawing for tempo slider
             {
-                Box& tempoBox = mSliders[mSliders.size()-1].box();
-                ofTrueTypeFont& font = mScaleChooser.getFont();
+                Box& tempoBox = mOtherSliders[1].box();
+                ofTrueTypeFont& font = UIFont();
                 
                 ofSetColor(0, 0, 0, 255);
                 const float th = font.getLineHeight();
@@ -481,27 +552,21 @@ void SettingsScreen::draw()
                 mWaveformButtons[i].draw( mWaveformAnim );
             }
             
-            // toggles
-            for( int i = 0; i < mToggles.size(); ++i )
+            // sequence position
             {
-                Toggle& t = mToggles[i];
-                if ( t.on() )
-                {
-                    ofSetColor(0, 92, 200);
-                }
-                else
-                {
-                    ofSetColor( 60, 60, 60 );
-                }
+                const int sliderID = Audio::CurrentTick() + 1;
+                const float screenScale = (ofGetHeight()/768.0f);
+                const float tickW     = mMelodySliders[1].box().mW;
+                const float tickH     = tickW/4.0f;
                 
+                ofSetRectMode(OF_RECTMODE_CENTER);
                 ofFill();
-                ofRect( t.mBox.mX, t.mBox.mY, t.mBox.mW, t.mBox.mH );
-                
-                ofSetColor(200, 200, 200);
-                const string    name = t.mName;
-                const float     yoff = mToggleFont.getLineHeight() * 0.35f;
-                const float     xoff = mToggleFont.stringWidth( name ) * -0.5f;
-                mToggleFont.drawString( name, t.mBox.mX + xoff, t.mBox.mY + yoff );
+                ofSetColor(128);
+                const float posX = mMelodySliders[sliderID].box().mX;
+                const float posYMel = mMelodySliders[sliderID].box().mMaxY + 5*screenScale + tickH/2;
+                const float posYBass = mBassSliders[sliderID].box().mMaxY + 5*screenScale + tickH/2;
+                ofRect(posX, posYMel, tickW, tickH);
+                ofRect(posX, posYBass, tickW, tickH);
             }
             
             if ( mScaleChooser.active() )
@@ -565,17 +630,25 @@ void SettingsScreen::touchDown( ofTouchEventArgs& touch )
             return;
         }
         
-        for( int i = 0; i < mToggles.size(); ++i )
+        for( auto& slider : mMelodySliders )
         {
-            if ( mToggles[i].handleTouch(x, y) )
+            if ( slider.handleTouch(touch.id, x, y) )
             {
                 return;
             }
         }
         
-        for( int i = 0; i < mSliders.size(); ++i )
+        for( auto& slider : mBassSliders )
         {
-            if ( mSliders[i].handleTouch(touch.id, x, y) )
+            if ( slider.handleTouch(touch.id, x, y) )
+            {
+                return;
+            }
+        }
+        
+        for( auto& slider : mOtherSliders )
+        {
+            if ( slider.handleTouch(touch.id, x, y) )
             {
                 return;
             }
@@ -605,9 +678,25 @@ void SettingsScreen::touchMoved( ofTouchEventArgs& touch )
         const float x = ofMap(touch.x, mMinX, mMaxX, 0, mMaxX-mMinX);
         const float y = ofMap(touch.y, mMinY, mMaxY, 0, mMaxY-mMinY);
         
-        for( int i = 0; i < mSliders.size(); ++i )
+        for( auto& slider : mMelodySliders )
         {
-            if ( mSliders[i].handleTouch(touch.id, x, y) )
+            if ( slider.handleTouch(touch.id, x, y) )
+            {
+                return;
+            }
+        }
+        
+        for( auto& slider : mBassSliders )
+        {
+            if ( slider.handleTouch(touch.id, x, y) )
+            {
+                return;
+            }
+        }
+        
+        for( auto& slider : mOtherSliders )
+        {
+            if ( slider.handleTouch(touch.id, x, y) )
             {
                 return;
             }
@@ -635,9 +724,25 @@ void SettingsScreen::touchUp( ofTouchEventArgs& touch )
         const float x = ofMap(touch.x, mMinX, mMaxX, 0, mMaxX-mMinX);
         const float y = ofMap(touch.y, mMinY, mMaxY, 0, mMaxY-mMinY);
         
-        for( int i = 0; i < mSliders.size(); ++i )
+        for( auto& slider : mMelodySliders )
         {
-            if ( mSliders[i].handleTouchUp( touch.id, x, y ) )
+            if ( slider.handleTouchUp(touch.id, x, y) )
+            {
+                return;
+            }
+        }
+        
+        for( auto& slider : mBassSliders )
+        {
+            if ( slider.handleTouchUp(touch.id, x, y) )
+            {
+                return;
+            }
+        }
+        
+        for( auto& slider : mOtherSliders )
+        {
+            if ( slider.handleTouchUp(touch.id, x, y) )
             {
                 return;
             }

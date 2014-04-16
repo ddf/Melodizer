@@ -66,19 +66,20 @@ void ClearInstruments()
     }
 }
 
-static void tone( Minim::Summer* bus, float time, WaveformType type, float freq, float amp, float dur, float pan )
+static void tone( Minim::Summer* bus, int tick, float time, WaveformType type, float freq, float amp, float dur, float pan )
 {
     std::list<Tone*> & list = tones[ type ];
     Tone* t = list.front();
-    t->init( bus, freq, amp, pan );
+    t->init( bus, tick, freq, amp, pan );
     
-    Out().playNote( time, dur, *t );
+    Audio::Out().playNote( time, dur, *t );
     
     list.pop_front();
     list.push_back( t );
 }
 
 static void generateNote( Minim::Summer& bus,
+                          int   tick,
                           float time,
                           WaveformType type, 
                           const Scale* notes, 
@@ -106,7 +107,7 @@ static void generateNote( Minim::Summer& bus,
         }
     }
     
-    tone( &bus, time, type, freq, amp, dur, ofRandom(-pan, pan) );
+    tone( &bus, tick, time, type, freq, amp, dur, ofRandom(-pan, pan) );
     
     previousNoteIndex = nextNoteIndex;    
 }
@@ -122,24 +123,36 @@ Looper::Looper()
 
 void Looper::noteOn(float dur)
 {
-    float time = (tick%2) * Settings::Shuffle * 0.08f;
+    //float time = (tick%2) * Settings::Shuffle * 0.08f;
     
     // first melody and bass
     if ( ofRandom(1) < Settings::MelodyProbablities[tick] )
     {
-        generateNote(Melody(), time, Settings::MelodyWave, Scales[ Settings::Scale ], 5, 7, 0.8f, Settings::PreviousMelodyNoteIndex );
+        generateNote(Audio::Melody(), tick, 0, Settings::MelodyWave, Scales[ Settings::Scale ], 5, 7, 0.8f, Settings::PreviousMelodyNoteIndex );
     }
     
     if ( ofRandom(1) < Settings::BassProbabilities[tick] )
     {
-        generateNote(Bass(), time, Settings::BassWave, Scales[ Settings::Scale ], 2, 5, 0, Settings::PreviousBassNoteIndex );
+        generateNote(Audio::Bass(), tick, 0, Settings::BassWave, Scales[ Settings::Scale ], 2, 5, 0, Settings::PreviousBassNoteIndex );
     }
 }
 
 void Looper::noteOff()
 {
-    Out().setTempo( Settings::Tempo );
-    Out().playNote( 0.f, 0.25f, *this );
+    Audio::Out().setTempo( Settings::Tempo );
+    
+    float time = 0.25f;
+    if ( tick%2 == 0 )
+    {
+        time -= Settings::Shuffle*0.02f;
+    }
+    else
+    {
+        time += Settings::Shuffle*0.08f;
+    }
+    
+    Audio::Out().playNote( 0.f, time, *this );
+    
     tick = (tick+1)%16;
 }
 
@@ -156,9 +169,9 @@ Tone::Tone( Minim::Waveform* waveform )
     wave.patch( panner ).patch ( adsr );
 }
 
-void Tone::init( Minim::Summer* out, float freq, float amp, float pan )
+void Tone::init( Minim::Summer* out, int tick, float freq, float amp, float pan )
 {
-    params.push_back( ToneParams( out, freq, amp, pan ) );
+    params.push_back( ToneParams( out, tick, freq, amp, pan ) );
 }
 
 void Tone::noteOn( float dur )
@@ -174,12 +187,13 @@ void Tone::noteOn( float dur )
                         0                   // after amp
                        );
     panner.pan.setLastValue( param.pan );
-    out = param.out;
+    out  = param.out;
+    tick = param.tick;
     
     adsr.noteOn();
     adsr.patch( *out );
     
-    out->printInputs();
+    Audio::ToneBegan(out, tick);
     
     params.pop_front();
 }

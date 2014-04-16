@@ -21,6 +21,7 @@
 namespace Minim 
 {
     class Waveform;
+    class Summer;
 }
 
 class ValueSlider
@@ -88,11 +89,13 @@ public:
     SettingsScreen();
     ~SettingsScreen();
     
-    bool needsSetup() const { return mSliders.empty(); }
+    bool needsSetup() const { return mOtherSliders.empty(); }
     
     void setup();
     void update( const float dt );
     void draw();
+    
+    void toneBegan(Minim::Summer* onBus, const int onTick);
     
     void show();
     void hide();
@@ -119,14 +122,18 @@ private:
     float mAnimTimer;
     float mMinX, mMaxX, mMinY, mMaxY;
     
-    std::vector<ValueSlider>    mSliders;
+    std::vector<ValueSlider>    mMelodySliders;
+    std::vector<ValueSlider>    mBassSliders;
+    std::vector<ValueSlider>    mOtherSliders;
+    
+    std::vector<float>          mMelodyAnims;
+    std::vector<float>          mBassAnims;
     
     std::vector<WaveformButton> mWaveformButtons;
     Minim::Waveform* mWaveforms[WT_Count];
     float            mWaveformAnim;
     
     ofTrueTypeFont              mToggleFont;
-    std::vector<Toggle>         mToggles;
     
     KeyChooser       mKeyChooser;
     ScaleChooser     mScaleChooser;

@@ -23,6 +23,7 @@
 
 void SetupInstruments();
 void ClearInstruments();
+int  CurrentTick();
 
 class Looper : public Minim::Instrument
 {
@@ -31,6 +32,8 @@ public:
     
     void noteOn( float dur );
     void noteOff();
+    
+    int currentTick() const { return tick; }
     
 private:
     int  tick;
@@ -41,17 +44,19 @@ class Tone : public Minim::Instrument
 public:
     Tone( Minim::Waveform* waveform );
     
-    void init( Minim::Summer* out, float freq, float amp, float pan );
+    void init( Minim::Summer* out, int tick, float freq, float amp, float pan );
     void noteOn( float dur );
     void noteOff();
+    int  getTick() const { return tick; }
     
 private:
     
     struct ToneParams
     {
-        ToneParams( Minim::Summer* o, float f, float a, float p ) : out(o), freq(f), amp(a), pan(p) {}
+        ToneParams( Minim::Summer* o, int t, float f, float a, float p ) : out(o), tick(t), freq(f), amp(a), pan(p) {}
         
         Minim::Summer* out;
+        int   tick;
         float freq, amp, pan;
     };
     
@@ -61,6 +66,7 @@ private:
     Minim::Oscil    wave;
     Minim::ADSR     adsr;
     Minim::Pan      panner;
+    int             tick;
 };
 
 #endif

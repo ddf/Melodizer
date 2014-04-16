@@ -26,6 +26,11 @@ App* gApp = NULL;
 // global tweaks
 const int kOutputBufferSize = 1024;
 
+App& App::Instance()
+{
+    return *gApp;
+}
+
 //--------------------------------------------------------------
 App::App()
 : ofxiOSApp()
@@ -119,6 +124,12 @@ void App::setup()
 	
 	//-- DONE ---------------------------
 	m_bWasPlaying			= false;
+}
+
+//--------------------------------------------------------------
+void App::toneBegan(Minim::Summer* onBus, const int onTick)
+{
+    mSettingsScreen.toneBegan(onBus, onTick);
 }
 
 //--------------------------------------------------------------

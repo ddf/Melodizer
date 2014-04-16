@@ -38,6 +38,8 @@ class App : public ofxiOSApp
 	
 public:
 	App();
+    
+    static App& Instance();
 	
 	void setup();
 	void update();
@@ -53,6 +55,12 @@ public:
 	Minim::AudioOutput & Out() { return *mOutput; }
     Minim::Summer&       Melody() { return mMelodyBus; }
     Minim::Summer&       Bass()   { return mBassBus; }
+
+    // polled by SettingsScreen
+    int currentTick() const { return mLooper.currentTick(); }
+    
+    // called from Tones in audio thread
+    void toneBegan( Minim::Summer* onBus, const int onTick );
 	
 	void pauseAudio();
 	void resumeAudio();

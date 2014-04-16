@@ -15,8 +15,14 @@ namespace Minim
     class Summer;
 }
 
-Minim::AudioOutput& Out();
-Minim::Summer&      Melody();
-Minim::Summer&      Bass();
+namespace Audio
+{
+
+    Minim::AudioOutput& Out();
+    Minim::Summer&      Melody();
+    Minim::Summer&      Bass();
+    int                 CurrentTick();
+    void                ToneBegan( Minim::Summer* onBus, const int onTick );
+}
 
 #endif

@@ -9,19 +9,27 @@
 #include "Audio.h"
 #include "App.h"
 
-extern App* gApp;
-
-Minim::AudioOutput& Out()
+Minim::AudioOutput& Audio::Out()
 {
-    return gApp->Out();
+    return App::Instance().Out();
 }
 
-Minim::Summer& Melody()
+Minim::Summer& Audio::Melody()
 {
-    return gApp->Melody();
+    return App::Instance().Melody();
 }
 
-Minim::Summer& Bass()
+Minim::Summer& Audio::Bass()
 {
-    return gApp->Bass();
+    return App::Instance().Bass();
+}
+
+int Audio::CurrentTick()
+{
+    return App::Instance().currentTick();
+}
+
+void Audio::ToneBegan( Minim::Summer* onBus, const int onTick )
+{
+    App::Instance().toneBegan(onBus, onTick);
 }
