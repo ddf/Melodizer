@@ -60,7 +60,7 @@ SampleRepeatControl::SampleRepeatControl( SampleRepeat& repeater )
 , mWaveSectionAnim(0)
 {
     setXValue(&mRepeatCenter, 0, 1);
-    setYValue(&mRepeatLength, 0.01f, 0.51f);
+    setYValue(&mRepeatLength, 0.01f, 0.52f);
 }
 
 SampleRepeatControl::~SampleRepeatControl()

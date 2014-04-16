@@ -9,6 +9,8 @@
 #ifndef melodizer_Box_h
 #define melodizer_Box_h
 
+#include "ofGraphics.h"
+
 struct Box
 {
     Box( float cx, float cy, float w, float h )
@@ -21,7 +23,6 @@ struct Box
     , mMinY( mY - mH/2 )
     , mMaxY( mY + mH/2 )
     {
-        
     }
     
     float   mX, mY, mW, mH;
@@ -52,6 +53,12 @@ struct Box
     inline bool contains( float x, float y )
     {
         return (x > mMinX && x < mMaxX && y > mMinY && y < mMaxY);
+    }
+    
+    void drawRect() const
+    {
+        ofSetRectMode(OF_RECTMODE_CORNER);
+        ofRect( floorf(mMinX)+0.5f, floorf(mMinY)+0.5f, floorf(mW), floorf(mH) );
     }
 };
 

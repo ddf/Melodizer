@@ -121,13 +121,13 @@ void XYControl::drawBoxBackground(const Box& controlBox)
 {
     ofFill();
     ofSetColor(40);
-    ofRect(controlBox.mX+0.5f, controlBox.mY+0.5f, controlBox.mW, controlBox.mH);
+    controlBox.drawRect();
 }
 
 //--------------------------------------
 void XYControl::draw()
 {
-    const float screenScale = ((float)ofGetHeight() / 768.f);
+    const float screenScale = ((float)ofGetWidth() / 1024.f);
     
     ofSetRectMode(OF_RECTMODE_CENTER);
     
@@ -148,7 +148,7 @@ void XYControl::draw()
     
     ofSetLineWidth(2);
     
-    const float dim = Back::easeInOut(mControlPointAnim/10.0f, 4.0f, 28.0f, 0.1f, 3.7f) * screenScale;
+    const float dim = Back::easeInOut(mControlPointAnim/10.0f, 4.0f, 42.0f, 0.1f, 3.7f) * screenScale;
     
     // ofCircle( mControlPoint.x, mControlPoint.y, 32.f * screenScale );
     ofLine( mControlPoint.x-dim, mControlPoint.y-dim, mControlPoint.x-dim/2, mControlPoint.y-dim );
@@ -167,15 +167,15 @@ void XYControl::draw()
     
     ofSetLineWidth(1);
     
-    ofRect(mButtonPower.mBox.mX, mButtonPower.mBox.mY, mButtonPower.mBox.mW, mButtonPower.mBox.mH);
+    mButtonPower.mBox.drawRect();
     
     ofSetColor(255, 255, 255);
-    xyFont.drawString(mLabel, mButtonPower.mBox.mMaxX +  5.f*screenScale, mButtonPower.mBox.mMaxY );
+    xyFont.drawString(mLabel, mButtonPower.mBox.mMaxX +  5.f*screenScale, mButtonPower.mBox.mMinY + xyFont.getLineHeight() );
     
     ofNoFill();
     ofSetColor(200);
     ofSetLineWidth(1);
-    ofRect(mControlBox.mX+0.5f, mControlBox.mY+0.5f, mControlBox.mW, mControlBox.mH);
+    mControlBox.drawRect();
 }
 
 //--------------------------------------

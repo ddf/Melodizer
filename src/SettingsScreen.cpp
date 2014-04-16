@@ -44,8 +44,9 @@ void ValueSlider::draw()
 {
     // background
     {
+        ofFill();
         ofSetColor(60, 60, 60);
-        ofRect( mBox.mX, mBox.mY, mBox.mW, mBox.mH );
+        mBox.drawRect();
     }
     
     // fill
@@ -69,10 +70,11 @@ void ValueSlider::draw()
             
             ofSetColor(color);
             
+            ofSetRectMode(OF_RECTMODE_CORNER);
             if ( mBox.mH > mBox.mW )
             {
-                const float fH = mBox.mH * dval;
-                ofRect( mBox.mX, mBox.mMaxY - fH/2, mBox.mW, fH);
+                const float fH = floorf(mBox.mH * dval);
+                ofRect( floorf(mBox.mMinX)+0.5, floorf(mBox.mMaxY - fH)+0.5f, floorf(mBox.mW), fH);
             }
             else
             {
@@ -136,13 +138,15 @@ bool ValueSlider::handleTouchUp( const int id, const float x, const float y )
 //
 ////////////////////////////////////
 WaveformButton::WaveformButton( float x, float y, float w, float h, WaveformType myType, WaveformType* refType, Minim::Waveform* wave )
-: mBox( x+0.5f, y+0.5f, w, h )
+: mBox( x, y, w, h )
 , mWave(wave)
 , mTouch(-1)
 , mType( myType )
 , mRefType( refType )
 {
-    for( int lx = mBox.mMinX; lx < mBox.mMinX+mBox.mW; ++lx )
+    const int bx = floorf(mBox.mMinX);
+    const int ex = bx + floorf(mBox.mW);
+    for( int lx = bx; lx < ex; ++lx )
     {
         mLine.addVertex(ofPoint(lx+0.5f,0));
     }
@@ -178,9 +182,8 @@ void WaveformButton::draw( float anim )
     
     // now draw the box
     {
-        ofSetRectMode( OF_RECTMODE_CORNER );
         ofNoFill();
-        ofRect( mBox.mMinX, mBox.mMinY, mBox.mW, mBox.mH );
+        mBox.drawRect();
     }
 }
 
@@ -470,10 +473,6 @@ void SettingsScreen::draw()
             {
                 ofSetRectMode( OF_RECTMODE_CENTER );
                 ofFill();
-                
-                // drop shadow
-                ofSetColor( 10, 10, 10, 128 );
-                ofRect( 4, 4, w, h );
                 
                 // box
                 ofSetColor( 30, 30, 30 );
