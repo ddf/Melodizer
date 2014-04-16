@@ -10,7 +10,7 @@
 #include "Waves.h"
 #include "Audio.h"
 
-static const float sk_AnimLength = 0.25f;
+static const float sk_AnimLength = 0.5f;
 static const float sk_noteAnimLength = 0.45f;
 
 class Expo
@@ -440,9 +440,9 @@ void SettingsScreen::update( const float dt )
 }
 
 //----------------------------------
-bool SettingsScreen::active() const
+float SettingsScreen::animationTime() const
 {
-    return mState != ST_HIDDEN;
+    return mAnimTimer / sk_AnimLength;
 }
 
 //----------------------------------
@@ -453,11 +453,11 @@ void SettingsScreen::draw()
         float voff = 0.f;
         if ( mState == ST_SHOWING )
         {
-            voff = mAnimTimer / sk_AnimLength;
+            voff = Expo::easeInOut(sk_AnimLength - mAnimTimer, 1, -1, sk_AnimLength);
         }
         else if ( mState == ST_HIDING )
         {
-            voff = 1 - mAnimTimer / sk_AnimLength;
+            voff = Expo::easeInOut(sk_AnimLength - mAnimTimer, 0, 1, sk_AnimLength);
         }
         
         ofPushMatrix();

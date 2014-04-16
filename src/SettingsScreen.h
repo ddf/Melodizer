@@ -100,7 +100,6 @@ public:
     
     void show();
     void hide();
-    bool active() const;
     
     void touchDown(ofTouchEventArgs &touch);
 	void touchMoved(ofTouchEventArgs &touch);
@@ -110,15 +109,25 @@ public:
     
     ofTrueTypeFont& UIFont() { return mToggleFont; }
     
-private:
-    
-    enum
+    enum State
     {
         ST_SHOWING, // animate in
         ST_SHOWN,
         ST_HIDING,
         ST_HIDDEN
-    } mState;
+    };
+    
+    inline State state() const { return mState; }
+    
+    // this is returned normalized
+    float animationTime() const;
+    
+    inline bool visible() const { return mState != ST_HIDDEN; }
+    inline bool transitioning() const { return mState == ST_SHOWING || mState == ST_HIDING; }
+    
+private:
+    
+    State mState;
     
     float mAnimTimer;
     float mMinX, mMaxX, mMinY, mMaxY;

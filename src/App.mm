@@ -172,11 +172,7 @@ void App::update()
         mMelodyBus.volume.setLastValue( Settings::MelodyVolume );
         mBassBus.volume.setLastValue( Settings::BassVolume );
         
-        if ( mSettingsScreen.active() )
-        {
-            mSettingsScreen.update( dt );
-        }
-        
+        mSettingsScreen.update( dt );
         mFlangerControl.update(dt);
         mSampleRepeatControl.update(dt);
         mDelayControl.update(dt);
@@ -219,17 +215,29 @@ void App::draw()
 //        ofPopMatrix();
 //    }
     
-    // SETTINGS
-    if ( mSettingsScreen.active() )
-    {
-        mSettingsScreen.draw();
-    }
-    else
+    // FX Controls
+    if ( mSettingsScreen.state() != SettingsScreen::ST_SHOWN )
     {
         mFlangerControl.draw();
         mSampleRepeatControl.draw();
         mDelayControl.draw();
         mButtonOpenSettings.draw(mSettingsScreen.UIFont(), ofColor(255,128,0), ofColor(200,200,200));
+    }
+    
+    // SCREEN DIM
+    if ( mSettingsScreen.transitioning() )
+    {
+        float alpha = (mSettingsScreen.state() == SettingsScreen::ST_SHOWING ? 1 - mSettingsScreen.animationTime() : mSettingsScreen.animationTime());
+        ofSetColor(0, 255.f*alpha);
+        ofSetRectMode(OF_RECTMODE_CORNER);
+        ofFill();
+        ofRect(0, 0, ofGetWidth(), ofGetHeight());
+    }
+    
+    // SETTINGS
+    if ( mSettingsScreen.visible() )
+    {
+        mSettingsScreen.draw();
     }
     
     ofSetColor(255, 255, 255);

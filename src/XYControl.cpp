@@ -129,6 +129,8 @@ void XYControl::draw()
 {
     const float screenScale = ((float)ofGetHeight() / 768.f);
     
+    ofSetRectMode(OF_RECTMODE_CENTER);
+    
     glEnable(GL_SCISSOR_TEST);
     glScissor(mControlBox.mMinY, mControlBox.mMinX, mControlBox.mH, mControlBox.mW);
     

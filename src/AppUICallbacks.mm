@@ -14,7 +14,7 @@
 //--------------------------------------------------------------
 void App::touchDown(ofTouchEventArgs &touch)
 {
-    if ( mSettingsScreen.active() ) return;
+    if ( mSettingsScreen.visible() ) return;
     
     if ( mFlangerControl.touchDown(touch) )
         return;
@@ -34,7 +34,7 @@ void App::touchDown(ofTouchEventArgs &touch)
 //--------------------------------------------------------------
 void App::touchMoved(ofTouchEventArgs &touch)
 {
-    if ( mSettingsScreen.active() ) return;
+    if ( mSettingsScreen.visible() ) return;
     
     if ( mFlangerControl.touchMoved(touch) )
         return;
@@ -49,7 +49,7 @@ void App::touchMoved(ofTouchEventArgs &touch)
 //--------------------------------------------------------------
 void App::touchUp(ofTouchEventArgs &touch)
 {
-    if ( mSettingsScreen.active() ) return;
+    if ( mSettingsScreen.visible() ) return;
     
     if ( mFlangerControl.touchUp(touch) )
         return;
@@ -64,13 +64,13 @@ void App::touchUp(ofTouchEventArgs &touch)
 //--------------------------------------------------------------
 void App::touchDoubleTap(ofTouchEventArgs &touch)
 {
-    if ( mSettingsScreen.active() ) return;
+    if ( mSettingsScreen.visible() ) return;
 }
 
 //--------------------------------------------------------------
 void App::touchCancelled(ofTouchEventArgs &touch)
 {
-    if ( mSettingsScreen.active() ) return;
+    if ( mSettingsScreen.visible() ) return;
     
     if ( mSampleRepeatControl.touchUp(touch) )
         return;
