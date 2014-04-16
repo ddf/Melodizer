@@ -16,6 +16,7 @@
 #include "KeyChooser.h"
 #include "ScaleChooser.h"
 #include "ofTrueTypeFont.h"
+#include "ValueKnob.h"
 
 // forward declair.
 namespace Minim 
@@ -125,6 +126,8 @@ private:
     std::vector<ValueSlider>    mMelodySliders;
     std::vector<ValueSlider>    mBassSliders;
     std::vector<ValueSlider>    mOtherSliders;
+    
+    std::vector<ValueKnob>      mKnobs;
     
     std::vector<float>          mMelodyAnims;
     std::vector<float>          mBassAnims;

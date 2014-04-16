@@ -32,6 +32,7 @@ public:
     static int          Scale;
     static int          Key;
     static float        Shuffle;
+    static float        Duration;
     static int          PreviousMelodyNoteIndex;
     static int          PreviousBassNoteIndex;
     

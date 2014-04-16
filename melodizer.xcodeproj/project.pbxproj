@@ -38,6 +38,7 @@
 		77DEB7E71490477600C9FB09 /* Instruments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77DEB7E61490477600C9FB09 /* Instruments.cpp */; };
 		77E0741C18FC72730019F799 /* DelayControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E0741A18FC72730019F799 /* DelayControl.cpp */; };
 		77F12D9D14698F3C00F8C32F /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 77F12D9C14698F3C00F8C32F /* Config.xcconfig */; };
+		77F369CE18FF0D720024915D /* ValueKnob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77F369CC18FF0D710024915D /* ValueKnob.cpp */; };
 		BB0ECA6310F55E7900A35406 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0ECA6210F55E7900A35406 /* MapKit.framework */; };
 		BB16EBD20F2B2A9500518274 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
 		BB16EBD90F2B2AB500518274 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
@@ -128,6 +129,8 @@
 		77E0741B18FC72730019F799 /* DelayControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelayControl.h; sourceTree = "<group>"; };
 		77F12D7F14698F0900F8C32F /* MinimTouch.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MinimTouch.xcodeproj; path = "../../../../Developer/Frameworks/minim-cpp/MinimTouch.xcodeproj"; sourceTree = DEVELOPER_DIR; };
 		77F12D9C14698F3C00F8C32F /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		77F369CC18FF0D710024915D /* ValueKnob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueKnob.cpp; sourceTree = "<group>"; };
+		77F369CD18FF0D710024915D /* ValueKnob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueKnob.h; sourceTree = "<group>"; };
 		BB0ECA6210F55E7900A35406 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -270,6 +273,8 @@
 				77903B8614F20E560073280F /* MultitouchControl.cpp */,
 				77E0741A18FC72730019F799 /* DelayControl.cpp */,
 				77E0741B18FC72730019F799 /* DelayControl.h */,
+				77F369CC18FF0D710024915D /* ValueKnob.cpp */,
+				77F369CD18FF0D710024915D /* ValueKnob.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -395,6 +400,7 @@
 				7741E3641496AA6400F660A7 /* Scales.cpp in Sources */,
 				7741E3661496AC5400F660A7 /* Settings.cpp in Sources */,
 				7741E3691496C07F00F660A7 /* SettingsScreen.cpp in Sources */,
+				77F369CE18FF0D720024915D /* ValueKnob.cpp in Sources */,
 				7741E37614995B2300F660A7 /* KeyChooser.cpp in Sources */,
 				77AC9BE214A52D2A0085028B /* ScaleChooser.cpp in Sources */,
 				77AC9C2814A952590085028B /* XYControl.cpp in Sources */,

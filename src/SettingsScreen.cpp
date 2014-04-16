@@ -244,7 +244,7 @@ void SettingsScreen::setup()
     const float melY = mMinY + sh/2 + waveformButtonDim + 40*hs;
     const float basY = melY  + sh   + waveformButtonDim + 60*hs;
     
-    mToggleFont.loadFont("HelveticaBold.ttf", 30.0f*hs);
+    mToggleFont.loadFont("HelveticaBold.ttf", 20.0f*hs);
     
     // sliders for melody and bass control
     {
@@ -319,21 +319,41 @@ void SettingsScreen::setup()
         const float scy = kcy;
         mScaleChooser.setup( scx, scy, scw, sch );
         
+        // slider height here same as slider width for the probability sliders above
+        const float sliderH = sw;
+        
         // shuffle control
-        const float shw = 200*ws;
-        const float shh = sch;
+        const float shw = 300*ws;
+        const float shh = sliderH;
         const float shx = scx + scw/2 + shw/2 + 10*ws;
-        const float shy = mMaxY - shh/2 - 15*hs;
+        const float shy = 2000; // mMaxY - sch - 15*hs + shh/2;
         
         mOtherSliders.push_back( ValueSlider( shx, shy, shw, shh, -1, &Settings::Shuffle ) );
         
-        const float tw = 200*ws;
-        const float th = shh;
-        const float tx = shx + shw/2 + tw/2 + 20*ws;
-        const float ty = shy;
-        ValueSlider volSlider( tx, ty, tw, th, -1, &Settings::Tempo );
-        volSlider.setRange(40, 160);
-        mOtherSliders.push_back(volSlider);
+        const float tw = 300*ws;
+        const float th = sliderH;
+        const float tx = shx; // shx + shw/2 + tw/2 + 20*ws;
+        const float ty = 2000; // shy + th + 15*hs;
+        ValueSlider tempoSlider( tx, ty, tw, th, -1, &Settings::Tempo );
+        tempoSlider.setRange(40, 160);
+        mOtherSliders.push_back(tempoSlider);
+        
+        const float knobDim = kcd;
+        
+        // shuffle knob
+        const float skx = scx + scw/2 + 50*ws + knobDim/2;
+        const float sky = scy;
+        mKnobs.push_back( ValueKnob("Swing", ofPoint(skx,sky), knobDim, 0, 1, &Settings::Shuffle) );
+        
+        // tempo knob
+        const float tkx = skx + knobDim + 50*ws;
+        const float tky = sky;
+        mKnobs.push_back( ValueKnob("Tempo", ofPoint(tkx,tky), knobDim, 40, 160, &Settings::Tempo) );
+        
+        // decay knob
+        const float dkx = tkx + knobDim + 50*ws;
+        const float dky = sky;
+        mKnobs.push_back( ValueKnob("Decay", ofPoint(dkx,dky), knobDim, 0.01f, 0.15f, &Settings::Duration) );
         
         const float fxd = kcd;
         const float fxx = mMaxX - fxd/2 - 15*hs;
@@ -522,7 +542,13 @@ void SettingsScreen::draw()
                 slider.draw();
             }
             
+            for ( auto& knob : mKnobs )
+            {
+                knob.draw(UIFont());
+            }
+            
             // jenky label drawing for swing slider
+            if ( 0 )
             {
                 Box& swingBox = mOtherSliders[0].box();
                 ofTrueTypeFont& font = UIFont();
@@ -533,6 +559,7 @@ void SettingsScreen::draw()
             }
             
             // jenky label drawing for tempo slider
+            if ( 0 )
             {
                 Box& tempoBox = mOtherSliders[1].box();
                 ofTrueTypeFont& font = UIFont();
@@ -654,6 +681,14 @@ void SettingsScreen::touchDown( ofTouchEventArgs& touch )
             }
         }
         
+        for( auto& knob : mKnobs )
+        {
+            if ( knob.handleTouchDown(touch.id, x, y) )
+            {
+                return;
+            }
+        }
+        
         for ( int i = 0; i < mWaveformButtons.size(); ++i )
         {
             if ( mWaveformButtons[i].handleTouch(touch.id, x, y) )
@@ -701,7 +736,15 @@ void SettingsScreen::touchMoved( ofTouchEventArgs& touch )
                 return;
             }
         }
-    }   
+        
+        for( auto& knob : mKnobs )
+        {
+            if ( knob.handleTouchMoved(touch.id, x, y) )
+            {
+                return;
+            }
+        }
+    }
 }
 
 //----------------------------------
@@ -748,6 +791,14 @@ void SettingsScreen::touchUp( ofTouchEventArgs& touch )
             }
         }
         
+        for( auto& knob : mKnobs )
+        {
+            if ( knob.handleTouchUp(touch.id, x, y) )
+            {
+                return;
+            }
+        }
+        
         if ( mButtonFx.mBox.contains(x, y) )
         {
             hide();
@@ -758,5 +809,11 @@ void SettingsScreen::touchUp( ofTouchEventArgs& touch )
 //----------------------------------
 void SettingsScreen::touchCancelled( ofTouchEventArgs& touch )
 {
+    const float x = ofMap(touch.x, mMinX, mMaxX, 0, mMaxX-mMinX);
+    const float y = ofMap(touch.y, mMinY, mMaxY, 0, mMaxY-mMinY);
     
+    for( auto& knob : mKnobs )
+    {
+        knob.handleTouchUp(touch.id, x, y);
+    }
 }

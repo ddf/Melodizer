@@ -14,6 +14,7 @@ float        Settings::Tempo( 120 );
 int          Settings::Scale( 0 );
 int          Settings::Key( 0 );
 float        Settings::Shuffle( 1.0f );
+float        Settings::Duration( 0.1f );
 int          Settings::PreviousMelodyNoteIndex( 0 );
 int          Settings::PreviousBassNoteIndex( 0 );
 

@@ -95,7 +95,6 @@ static void generateNote( Minim::Summer& bus,
     int note          = baseNote + octave * 12;
     float freq        = Minim::Frequency::ofMidiNote( note ).asHz();
     float amp         = ofRandom(0.41f, 0.61f);
-    float dur         = ofRandom(1) > 0.2f ? 0.04f : 0.25f;
     float pan         = 0.f;
     
     if ( panRange != 0 )
@@ -106,6 +105,9 @@ static void generateNote( Minim::Summer& bus,
             pan *= -1;
         }
     }
+    
+    // we want note duration to be the same regardless of tempo, so we have to adjust for tempo
+    const float dur = Settings::Duration * (Settings::Tempo/60.f);
     
     tone( &bus, tick, time, type, freq, amp, dur, ofRandom(-pan, pan) );
     
