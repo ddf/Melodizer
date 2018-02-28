@@ -1,10 +1,49 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
 *.exe
+*.out
+*.app
+
+# xcode project files
+xcuserdata/
+
+# VS Garbage
 *.sdf
-*.opensdf
-*.zip
+*.opendb
+*.user
+win/.vs
+win/Win32
+*.aps
 *.suo
 *.ncb
 *.vcproj.*
+
+# wdl-ol recommends
+*.zip
 *.pkg
 *.dmg
 *.depend
