@@ -48,7 +48,7 @@ enum ELayout
 	kProbabilityKnob_X = kFirstKnobColumnX - kProbabilityKnob_W / 2,
 	kProbabilityKnob_Y = kKnobLED_Y + kKnobLED_H + 10,
 
-	kProbabilityLabel_X = 10,
+	kProbabilityLabel_X = 0,
 	kProbabilityLabel_Y = kProbabilityKnob_Y + kProbabilityKnob_H / 2,
 	kProbabilityLabel_W = kFirstKnobColumnX - kProbabilityLabel_X,
 	kProbabilityLabel_H = 10,
@@ -79,14 +79,14 @@ namespace TextStyles
 	char * Font = 0;
 #endif
 	// can't be const because of stupid ITextControl constructor
-	IText  Label(TextSize, &Color::Label, Font, IText::kStyleNormal, IText::kAlignNear);
+	IText  Label(TextSize, &Color::Label, Font, IText::kStyleBold, IText::kAlignCenter);
 	IText  Enum(TextSize, &Color::Label, Font, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
 }
 
 namespace Strings
 {
 	// again, these can't be const because of non-const method args :(
-	char * ProbabilityLabel = "Probability";
+	char * ProbabilityLabel = "P(N)";
 }
 
 Interface::Interface(Melodizer* inPlug)
