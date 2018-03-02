@@ -10,6 +10,9 @@
     <Filter Include="app\ASIO_SDK">
       <UniqueIdentifier>{b91b9db4-5584-4959-a395-7394ba3cf5a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="minim">
+      <UniqueIdentifier>{01c21a6c-a842-46ab-b790-ea1a1f4f345d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\WDL\rtaudiomidi\RtAudio.h">
@@ -45,6 +48,34 @@
       <Filter>app</Filter>
     </ClInclude>
     <ClInclude Include="app_wrapper\app_resource.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Oscil.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Summer.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\UGen.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Waveform.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Waves.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Wavetable.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\AudioSource.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\Logging.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Params.h" />
+    <ClInclude Include="src\Interface.h" />
+    <ClInclude Include="src\KnobLineCoronaControl.h" />
+    <ClInclude Include="src\LED.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
@@ -72,6 +103,30 @@
     <ClCompile Include="..\..\WDL\IPlug\IPlugStandalone.cpp">
       <Filter>app</Filter>
     </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Oscil.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Summer.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\UGen.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Waves.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Wavetable.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\AudioSource.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\Logging.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Interface.cpp" />
+    <ClCompile Include="src\KnobLineCoronaControl.cpp" />
+    <ClCompile Include="src\LED.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Melodizer.rc" />
