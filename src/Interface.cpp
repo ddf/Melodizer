@@ -69,7 +69,7 @@ namespace Color
 	const IColor EnumBorder = KnobLine;
 }
 
-namespace TextStyle
+namespace TextStyles
 {
 	// can't be const because of stupid ITextControl constructor
 	IText  Label(DEFAULT_TEXT_SIZE, &Color::Label, 0, IText::kStyleNormal, IText::kAlignNear);
@@ -96,20 +96,20 @@ void Interface::CreateControls(IGraphics* pGraphics)
 {
 	pGraphics->AttachPanelBackground(&Color::Background);
 
-	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kWaveformControl), kWaveform, &TextStyle::Enum));
-	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kScaleControl), kScale, &TextStyle::Enum));
-	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kKeyControl), kKey, &TextStyle::Enum));
+	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kWaveformControl), kWaveform, &TextStyles::Enum));
+	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kScaleControl), kScale, &TextStyles::Enum));
+	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kKeyControl), kKey, &TextStyles::Enum));
 
 	// tempo
 	{
 		IRECT tempoRect = MakeIRect(kTempoControl);
 		IRECT tempoTextRect = MakeIRect(kTempoControl);
 		tempoTextRect.GetPadded(-1);
-		pGraphics->MeasureIText(&TextStyle::Enum, "000.00", &tempoTextRect);
+		pGraphics->MeasureIText(&TextStyles::Enum, "000.00", &tempoTextRect);
 		const int offset = (tempoRect.H() - tempoTextRect.H()) / 2;
 		tempoTextRect.T += offset;
 		tempoTextRect.B += offset;
-		pGraphics->AttachControl(new TextBox(mPlug, tempoRect, kTempo, &TextStyle::Enum, tempoTextRect));
+		pGraphics->AttachControl(new TextBox(mPlug, tempoRect, kTempo, &TextStyles::Enum, tempoTextRect));
 	}
 
 	mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
@@ -131,11 +131,11 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 	// row labels
 	IRECT labelRect = MakeIRect(kProbabilityLabel);
-	pGraphics->MeasureIText(&TextStyle::Label, Strings::ProbabilityLabel, &labelRect);
+	pGraphics->MeasureIText(&TextStyles::Label, Strings::ProbabilityLabel, &labelRect);
 	const int offset = labelRect.H() / 2;
 	labelRect.T -= offset;
 	labelRect.B -= offset;
-	pGraphics->AttachControl(new ITextControl(mPlug, labelRect, &TextStyle::Label, Strings::ProbabilityLabel));
+	pGraphics->AttachControl(new ITextControl(mPlug, labelRect, &TextStyles::Label, Strings::ProbabilityLabel));
 }
 
 void Interface::OnTick(const unsigned int tick)
