@@ -1,6 +1,6 @@
 #include "KnobLineCoronaControl.h"
 
-#include "..\Melodizer.h"
+#include "Melodizer.h"
 
 #pragma  region KnobLineCoronaControl
 KnobLineCoronaControl::KnobLineCoronaControl(IPlugBase* pPlug, IRECT pR, int paramIdx,

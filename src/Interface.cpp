@@ -1,6 +1,6 @@
 #include "Interface.h"
 
-#include "..\Melodizer.h"
+#include "Melodizer.h"
 #include "Params.h"
 
 #include "KnobLineCoronaControl.h"
