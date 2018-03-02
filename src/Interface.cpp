@@ -5,11 +5,17 @@
 
 #include "KnobLineCoronaControl.h"
 #include "LED.h"
+#include "EnumControl.h"
 
 enum ELayout
 {
 	kWidth = GUI_WIDTH,
 	kHeight = GUI_HEIGHT,
+
+	kWaveformControl_X = 70,
+	kWaveformControl_Y = 10,
+	kWaveformControl_W = 50,
+	kWaveformControl_H = 20,
 
 	kFirstKnobColumnX = 95,
 	kColumnSpacing = 45,
@@ -17,7 +23,7 @@ enum ELayout
 	kKnobLED_W = 8,
 	kKnobLED_H = kKnobLED_W,
 	kKnobLED_X = kFirstKnobColumnX - kKnobLED_W / 2,
-	kKnobLED_Y = 40 - kKnobLED_H / 2,
+	kKnobLED_Y = 50 - kKnobLED_H / 2,
 
 	kProbabilityKnob_W = 30,
 	kProbabilityKnob_H = kProbabilityKnob_W,
@@ -40,12 +46,16 @@ namespace Color
 	const IColor KnobCorona(255, 89, 196, 255);
 	
 	const IColor Label(255, 208, 208, 216);
+
+	const IColor EnumBackground(255, 9, 66, 125);
+	const IColor EnumBorder = KnobLine;
 }
 
 namespace TextStyle
 {
 	// can't be const because of stupid ITextControl constructor
 	IText  Label(DEFAULT_TEXT_SIZE, &Color::Label, 0, IText::kStyleNormal, IText::kAlignNear);
+	IText  Waveform(DEFAULT_TEXT_SIZE, &Color::Label, 0, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
 }
 
 namespace Strings
@@ -67,6 +77,8 @@ Interface::~Interface()
 void Interface::CreateControls(IGraphics* pGraphics)
 {
 	pGraphics->AttachPanelBackground(&Color::Background);
+
+	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kWaveformControl), kWaveform, &TextStyle::Waveform));
 
 	mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
 

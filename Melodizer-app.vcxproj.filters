@@ -16,6 +16,9 @@
     <Filter Include="dsp">
       <UniqueIdentifier>{fe848cd7-7662-4c35-a4f7-1713a16e6b53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="interface">
+      <UniqueIdentifier>{92938d68-f8f5-4bd5-91c4-02f18ae00cc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\WDL\rtaudiomidi\RtAudio.h">
@@ -74,9 +77,6 @@
       <Filter>minim</Filter>
     </ClInclude>
     <ClInclude Include="src\Params.h" />
-    <ClInclude Include="src\Interface.h" />
-    <ClInclude Include="src\KnobLineCoronaControl.h" />
-    <ClInclude Include="src\LED.h" />
     <ClInclude Include="src\Melodizer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Instruments.h">
@@ -90,6 +90,18 @@
     </ClInclude>
     <ClInclude Include="..\minim-cpp\src\ugens\ADSR.h">
       <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Interface.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KnobLineCoronaControl.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LED.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EnumControl.h">
+      <Filter>interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +150,6 @@
     <ClCompile Include="..\minim-cpp\src\Logging.cpp">
       <Filter>minim</Filter>
     </ClCompile>
-    <ClCompile Include="src\Interface.cpp" />
-    <ClCompile Include="src\KnobLineCoronaControl.cpp" />
-    <ClCompile Include="src\LED.cpp" />
     <ClCompile Include="src\Melodizer.cpp" />
     <ClCompile Include="src\Instruments.cpp">
       <Filter>dsp</Filter>
@@ -153,6 +162,18 @@
     </ClCompile>
     <ClCompile Include="..\minim-cpp\src\ugens\ADSR.cpp">
       <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Interface.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KnobLineCoronaControl.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LED.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnumControl.cpp">
+      <Filter>interface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,8 @@
 #include "Waves.h"
 #include "Instruments.h" // contains Tone
 
+using namespace Minim;
+
 const int kNumPrograms = 1;
 
 Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
@@ -19,7 +21,59 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 {
 	TRACE;
 
-  mWaveforms.push_back(Minim::Waves::SINE());
+	// setup Waveforms
+	{
+		IParam* param = GetParam(kWaveform);
+		param->InitEnum("Waveform", WT_Saw, WT_Count);
+
+		for (int i = 0; i < WT_Count; ++i)
+		{
+			WaveformType type = (WaveformType)i;
+			switch (type)
+			{
+			case WT_Sine:
+				param->SetDisplayText(i, "SIN");
+				mWaveforms.push_back(Waves::SINE());
+				break;
+			case WT_Triangle:
+				param->SetDisplayText(i, "TRI");
+				mWaveforms.push_back(Waves::TRIANGLE());
+				break;
+			case WT_Saw:
+				param->SetDisplayText(i, "SAW");
+				mWaveforms.push_back(Waves::SAW());
+				break;
+			case WT_Square:
+				param->SetDisplayText(i, "SQR");
+				mWaveforms.push_back(Waves::SQUARE());
+				break;
+			case WT_Quarterpulse:
+				param->SetDisplayText(i, "PULSE");
+				mWaveforms.push_back(Waves::pulse(0.25f));
+				break;
+			case WT_Sine4:
+				param->SetDisplayText(i, "SIN4");
+				mWaveforms.push_back(Waves::randomNHarms(4));
+				break;
+			case WT_Sine8:
+				param->SetDisplayText(i, "SIN8");
+				mWaveforms.push_back(Waves::randomNHarms(8));
+				break;
+			case WT_Sine16:
+				param->SetDisplayText(i, "SIN16");
+				mWaveforms.push_back(Waves::randomNHarms(16));
+				break;
+			case WT_Sine32:
+				param->SetDisplayText(i, "SIN32");
+				mWaveforms.push_back(Waves::randomNHarms(32));
+				break;
+			case WT_Count:
+				break;
+			default:
+				break;
+			}
+		}
+	}
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
   char paramName[32];
@@ -60,6 +114,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 {
 	// Mutex is already locked for us.
 	const unsigned int samplesPerTick = (unsigned int)GetSamplesPerBeat() / 2;
+	const unsigned int waveformIdx = GetParam(kWaveform)->Int();
 
 	double* out1 = outputs[0];
 	double* out2 = outputs[1];
@@ -71,20 +126,20 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		*out1 = result[0];
 		*out2 = result[1];
 
-		++mSampleCount;
+		--mSampleCount;
 
-		if (mSampleCount == samplesPerTick)
+		if (mSampleCount == 0)
 		{
 			mTones[mTick]->noteOff();
 
 			mTick = (mTick + 1) % 16;
-			mSampleCount = 0;
+			mSampleCount = samplesPerTick;
 
 			const double prob = GetParam(kProbabilityFirst + mTick)->Value();
 			if (mRandomDist(mRandomGen) <= prob)
 			{				
 				mInterface.OnTick(mTick);
-				mTones[mTick]->noteOn(0.5f, mWaveforms[0], mTick, 440, 1, 0);
+				mTones[mTick]->noteOn(0.5f, mWaveforms[waveformIdx], mTick, 440, 1, 0);
 			}
 		}
 	}
@@ -105,7 +160,7 @@ void Melodizer::Reset()
   mRandomGen.seed(rd());
 
   mTick = 0;
-  mSampleCount = 0;
+  mSampleCount = (unsigned int)GetSamplesPerBeat() / 2;
   mInterface.OnTick(0);
   mMelodyBus.setAudioChannelCount(2);
   mMelodyBus.setSampleRate(GetSampleRate());
