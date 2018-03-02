@@ -296,6 +296,7 @@
     <ClInclude Include="src\Melodizer.h" />
     <ClInclude Include="src\Params.h" />
     <ClInclude Include="src\Scales.h" />
+    <ClInclude Include="src\TextBox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ASIO_SDK\asio.cpp" />
@@ -323,6 +324,7 @@
     <ClCompile Include="src\LED.cpp" />
     <ClCompile Include="src\Melodizer.cpp" />
     <ClCompile Include="src\Scales.cpp" />
+    <ClCompile Include="src\TextBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Melodizer.rc" />

@@ -5,11 +5,18 @@ enum EParams
 	kWaveform,
 	kScale,
 	kKey,
+	kTempo,
 
 	kProbabilityFirst,
 	kProbabilityLast = kProbabilityFirst + 15,
 
 	kNumParams
+};
+
+enum EParamSettings
+{
+	kTempoMin = 1,
+	kTempoMax = 960,
 };
 
 enum WaveformType

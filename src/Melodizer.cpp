@@ -110,6 +110,11 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		}
 	}
 
+	// tempo
+	{
+		GetParam(kTempo)->InitDouble("Tempo", DEFAULT_TEMPO, kTempoMin, kTempoMax, 0.01, "bpm");
+	}
+
 	//arguments are: name, defaultVal, minVal, maxVal, step, label
 	char paramName[32];
 	const int toneCount = kProbabilityLast - kProbabilityFirst + 1;
@@ -148,7 +153,7 @@ Melodizer::~Melodizer()
 void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
 	// Mutex is already locked for us.
-	const unsigned int samplesPerTick = (unsigned int)GetSamplesPerBeat() / 2;
+	const unsigned int samplesPerTick = (unsigned int)(GetSampleRate() * 60.0 / GetParam(kTempo)->Value()) / 2;
 	const unsigned int waveformIdx = GetParam(kWaveform)->Int();
 	const unsigned int scaleIdx = GetParam(kScale)->Int();
 	const unsigned int keyIdx = GetParam(kKey)->Int();
@@ -198,7 +203,7 @@ void Melodizer::Reset()
 
 	mTick = 0;
 	mPreviousNoteIndex = 0;
-	mSampleCount = (unsigned int)GetSamplesPerBeat() / 2;
+	mSampleCount = (unsigned int)(GetSampleRate() * 60.0 / GetParam(kTempo)->Value()) / 2;
 	mInterface.OnTick(0);
 	mMelodyBus.setAudioChannelCount(2);
 	mMelodyBus.setSampleRate(GetSampleRate());

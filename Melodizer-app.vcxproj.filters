@@ -106,6 +106,9 @@
     <ClInclude Include="..\minim-cpp\src\ugens\Frequency.h">
       <Filter>minim</Filter>
     </ClInclude>
+    <ClInclude Include="src\TextBox.h">
+      <Filter>interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
@@ -180,6 +183,9 @@
     </ClCompile>
     <ClCompile Include="..\minim-cpp\src\ugens\Frequency.cpp">
       <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextBox.cpp">
+      <Filter>interface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

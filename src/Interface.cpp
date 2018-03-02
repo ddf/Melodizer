@@ -6,6 +6,7 @@
 #include "KnobLineCoronaControl.h"
 #include "LED.h"
 #include "EnumControl.h"
+#include "TextBox.h"
 
 enum ELayout
 {
@@ -28,6 +29,11 @@ enum ELayout
 	kWaveformControl_Y = 10,
 	kWaveformControl_W = 50,
 	kWaveformControl_H = kEnumHeight,
+
+	kTempoControl_X = kWaveformControl_X + kWaveformControl_W + 10,
+	kTempoControl_Y = 10,
+	kTempoControl_W = 50,
+	kTempoControl_H = kEnumHeight,
 
 	kFirstKnobColumnX = 95,
 	kColumnSpacing = 45,
@@ -93,6 +99,18 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kWaveformControl), kWaveform, &TextStyle::Enum));
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kScaleControl), kScale, &TextStyle::Enum));
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kKeyControl), kKey, &TextStyle::Enum));
+
+	// tempo
+	{
+		IRECT tempoRect = MakeIRect(kTempoControl);
+		IRECT tempoTextRect = MakeIRect(kTempoControl);
+		tempoTextRect.GetPadded(-1);
+		pGraphics->MeasureIText(&TextStyle::Enum, "000.00", &tempoTextRect);
+		const int offset = (tempoRect.H() - tempoTextRect.H()) / 2;
+		tempoTextRect.T += offset;
+		tempoTextRect.B += offset;
+		pGraphics->AttachControl(new TextBox(mPlug, tempoRect, kTempo, &TextStyle::Enum, tempoTextRect));
+	}
 
 	mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
 
