@@ -23,6 +23,17 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 
 	// setup Waveforms
 	{
+		const unsigned int kWaveformLength = 8192;
+		// seed the random gen with 0 so we always get the same harmonics
+		mRandomGen.seed(0);
+		std::uniform_real_distribution<> dist(-0.5f, 0.5f);
+		// generate 32 harmonic amplitudes that will be used to generate some of our waveforms.
+		float harmonics[32];
+		for (int i = 0; i < 32; ++i)
+		{
+			harmonics[i] = dist(mRandomGen);
+		}
+
 		IParam* param = GetParam(kWaveform);
 		param->InitEnum("Waveform", WT_Saw, WT_Count);
 
@@ -49,23 +60,23 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 				break;
 			case WT_Quarterpulse:
 				param->SetDisplayText(i, "PULSE");
-				mWaveforms.push_back(Waves::pulse(0.25f));
+				mWaveforms.push_back(Waves::QUARTERPULSE());
 				break;
 			case WT_Sine4:
 				param->SetDisplayText(i, "SIN4");
-				mWaveforms.push_back(Waves::randomNHarms(4));
+				mWaveforms.push_back(Waves::gen10(kWaveformLength, harmonics, 4));
 				break;
 			case WT_Sine8:
 				param->SetDisplayText(i, "SIN8");
-				mWaveforms.push_back(Waves::randomNHarms(8));
+				mWaveforms.push_back(Waves::gen10(kWaveformLength, harmonics, 8));
 				break;
 			case WT_Sine16:
 				param->SetDisplayText(i, "SIN16");
-				mWaveforms.push_back(Waves::randomNHarms(16));
+				mWaveforms.push_back(Waves::gen10(kWaveformLength, harmonics, 16));
 				break;
 			case WT_Sine32:
 				param->SetDisplayText(i, "SIN32");
-				mWaveforms.push_back(Waves::randomNHarms(32));
+				mWaveforms.push_back(Waves::gen10(kWaveformLength, harmonics, 32));
 				break;
 			case WT_Count:
 				break;
