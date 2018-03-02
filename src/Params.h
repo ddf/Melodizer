@@ -4,6 +4,7 @@ enum EParams
 {
 	kWaveform,
 	kScale,
+	kKey,
 
 	kProbabilityFirst,
 	kProbabilityLast = kProbabilityFirst + 15,

@@ -12,15 +12,22 @@ enum ELayout
 	kWidth = GUI_WIDTH,
 	kHeight = GUI_HEIGHT,
 
-	kWaveformControl_X = 70,
+	kEnumHeight = 20,
+
+	kKeyControl_X = 80,
+	kKeyControl_Y = 10,
+	kKeyControl_W = 25,
+	kKeyControl_H = kEnumHeight,
+
+	kScaleControl_X = kKeyControl_X + kKeyControl_W + 10,
+	kScaleControl_Y = kKeyControl_Y,
+	kScaleControl_W = 100,
+	kScaleControl_H = kEnumHeight,
+
+	kWaveformControl_X = kScaleControl_X + kScaleControl_W + 10,
 	kWaveformControl_Y = 10,
 	kWaveformControl_W = 50,
-	kWaveformControl_H = 20,
-
-	kScaleControl_X = kWaveformControl_X + kWaveformControl_W + 10,
-	kScaleControl_Y = kWaveformControl_Y,
-	kScaleControl_W = 100,
-	kScaleControl_H = kWaveformControl_H,
+	kWaveformControl_H = kEnumHeight,
 
 	kFirstKnobColumnX = 95,
 	kColumnSpacing = 45,
@@ -85,6 +92,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kWaveformControl), kWaveform, &TextStyle::Enum));
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kScaleControl), kScale, &TextStyle::Enum));
+	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kKeyControl), kKey, &TextStyle::Enum));
 
 	mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
 

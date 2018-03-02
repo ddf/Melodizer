@@ -98,6 +98,18 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		}
 	}
 
+	// key (ie root note)
+	{
+		const char * keys[] = { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
+		const int keyCount = 12;
+		IParam* param = GetParam(kKey);
+		param->InitEnum("Key", 0, keyCount);
+		for (int i = 0; i < keyCount; ++i)
+		{
+			param->SetDisplayText(i, keys[i]);
+		}
+	}
+
 	//arguments are: name, defaultVal, minVal, maxVal, step, label
 	char paramName[32];
 	const int toneCount = kProbabilityLast - kProbabilityFirst + 1;
@@ -139,6 +151,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	const unsigned int samplesPerTick = (unsigned int)GetSamplesPerBeat() / 2;
 	const unsigned int waveformIdx = GetParam(kWaveform)->Int();
 	const unsigned int scaleIdx = GetParam(kScale)->Int();
+	const unsigned int keyIdx = GetParam(kKey)->Int();
 
 	double* out1 = outputs[0];
 	double* out2 = outputs[1];
@@ -163,7 +176,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			if (RandomRange(0.f, 100.f) <= prob)
 			{
 				mInterface.OnTick(mTick);
-				GenerateNote(mTick, waveformIdx, Scales[scaleIdx], 4, 5, 0, mPreviousNoteIndex);				
+				GenerateNote(mTick, waveformIdx, Scales[scaleIdx], keyIdx, 4, 5, 0, mPreviousNoteIndex);				
 			}
 		}
 	}
@@ -209,6 +222,7 @@ void Melodizer::OnParamChange(int paramIdx)
 void Melodizer::GenerateNote( int tick,
                           unsigned int waveformIdx, 
                           const Scale* notes, 
+                          unsigned int key, 
                           int lowOctave, 
                           int hiOctave, 
                           float panRange, 
@@ -226,7 +240,7 @@ void Melodizer::GenerateNote( int tick,
 		}
 		nextNoteIndex = nextNoteList[RandomRange(1, listLen)];
 	}
-	int baseNote = notes->scale[nextNoteIndex][0]; // +Settings::Key;
+	int baseNote = notes->scale[nextNoteIndex][0] + key;
 	int octave = RandomRange(lowOctave, hiOctave);
     int note = baseNote + octave * 12;
     float freq = Frequency::ofMidiNote( note ).asHz();
