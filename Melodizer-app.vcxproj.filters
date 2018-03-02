@@ -13,6 +13,9 @@
     <Filter Include="minim">
       <UniqueIdentifier>{01c21a6c-a842-46ab-b790-ea1a1f4f345d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dsp">
+      <UniqueIdentifier>{fe848cd7-7662-4c35-a4f7-1713a16e6b53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\WDL\rtaudiomidi\RtAudio.h">
@@ -76,6 +79,18 @@
     <ClInclude Include="src\LED.h" />
     <ClInclude Include="src\Melodizer.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\Instruments.h">
+      <Filter>dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Pan.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scales.h">
+      <Filter>dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\ADSR.h">
+      <Filter>minim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
@@ -127,6 +142,18 @@
     <ClCompile Include="src\KnobLineCoronaControl.cpp" />
     <ClCompile Include="src\LED.cpp" />
     <ClCompile Include="src\Melodizer.cpp" />
+    <ClCompile Include="src\Instruments.cpp">
+      <Filter>dsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Pan.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scales.cpp">
+      <Filter>dsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\ADSR.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Melodizer.rc" />

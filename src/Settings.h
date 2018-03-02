@@ -9,20 +9,6 @@
 #ifndef melodizer_Settings_h
 #define melodizer_Settings_h
 
-enum WaveformType
-{
-    WT_Sine = 0,
-    WT_Triangle,
-    WT_Saw,
-    WT_Square,
-    WT_Quarterpulse,
-    WT_Sine4,
-    WT_Sine8,
-    WT_Sine16,
-    WT_Sine32,
-    WT_Count,
-};
-
 class Settings
 {
 public:

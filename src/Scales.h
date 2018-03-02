@@ -9,8 +9,6 @@
 #ifndef melodizer_Scales_h
 #define melodizer_Scales_h
 
-#include "ofMain.h"
-
 struct Scale
 {
     Scale( const char* scaleName, int** scaleDegrees, int numScaleDegrees )
@@ -38,7 +36,8 @@ struct Scale
             ++listLen;
         }
         
-        return nextNoteList[ (int)ofRandom(1, listLen) ];
+        //return nextNoteList[ (int)ofRandom(1, listLen) ];
+		return 0;
     }
 };
 

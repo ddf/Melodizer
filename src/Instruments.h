@@ -9,64 +9,48 @@
 #ifndef melodizer_Instruments_h
 #define melodizer_Instruments_h
 
-#include "Instrument.h"
-#include "Line.h"
+#include "Waveform.h"
 #include "Oscil.h"
-#include "Multiplier.h"
-#include "Noise.h"
-#include "MoogFilter.h"
 #include "Summer.h"
 #include "Pan.h"
 #include "ADSR.h"
 
-#include <list>
+using namespace Minim;
 
-void SetupInstruments();
-void ClearInstruments();
-int  CurrentTick();
-
-class Looper : public Minim::Instrument
+class Tone
 {
 public:
-    Looper();
-    
-    void noteOn( float dur );
-    void noteOff();
-    
-    int currentTick() const { return tick; }
-    
-private:
-    int  tick;
-};
+    Tone( Summer& out );
+	~Tone();
+       
+	void noteOn(float dur, Waveform* waveform, int tick, float freq, float amp, float pan);
+	void noteOff();
 
-class Tone : public Minim::Instrument
-{
-public:
-    Tone( Minim::Waveform* waveform );
-    
-    void init( Minim::Summer* out, int tick, float freq, float amp, float pan );
-    void noteOn( float dur );
-    void noteOff();
     int  getTick() const { return tick; }
     
 private:
+
+	// Waveform implementation that wraps another Waveform.
+	// This allows us to construct an Oscil with an instance of this
+	// and be able to swap the *actual* waveform without making a new Oscil.
+	class Wave : public Waveform
+	{
+	public:
+		Wave() : source(nullptr) {}
+
+		Waveform* source;
+
+		// Waveform
+		float value(const float at) const override;
+	};
     
-    struct ToneParams
-    {
-        ToneParams( Minim::Summer* o, int t, float f, float a, float p ) : out(o), tick(t), freq(f), amp(a), pan(p) {}
-        
-        Minim::Summer* out;
-        int   tick;
-        float freq, amp, pan;
-    };
-    
-    std::list< ToneParams > params;
-    
-    Minim::Summer*  out;
-    Minim::Oscil    wave;
-    Minim::ADSR     adsr;
-    Minim::Pan      panner;
-    int             tick;
+    Summer&		out;
+	// we need to make a new one of these because, stupidly, Oscil deletes the Waveform it is constructed with
+	Wave*		wave;
+    Oscil		oscil;
+    ADSR		adsr;
+    Pan			panner;
+    int			tick;
 };
 
 #endif
