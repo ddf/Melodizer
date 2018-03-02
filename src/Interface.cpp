@@ -63,7 +63,7 @@ namespace Color
 	const IColor KnobLine(255, 89, 196, 255);
 	const IColor KnobCorona(255, 89, 196, 255);
 	
-	const IColor Label(255, 208, 208, 216);
+	const IColor Label = KnobLine; // (255, 208, 208, 216);
 
 	const IColor EnumBackground(255, 9, 66, 125);
 	const IColor EnumBorder = KnobLine;
@@ -71,9 +71,16 @@ namespace Color
 
 namespace TextStyles
 {
+#ifdef OS_WIN
+	const int TextSize = 12;
+	char * Font = 0;
+#else
+	const int TextSize = 14;
+	char * Font = 0;
+#endif
 	// can't be const because of stupid ITextControl constructor
-	IText  Label(DEFAULT_TEXT_SIZE, &Color::Label, 0, IText::kStyleNormal, IText::kAlignNear);
-	IText  Enum(DEFAULT_TEXT_SIZE, &Color::Label, 0, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
+	IText  Label(TextSize, &Color::Label, Font, IText::kStyleNormal, IText::kAlignNear);
+	IText  Enum(TextSize, &Color::Label, Font, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
 }
 
 namespace Strings
@@ -105,7 +112,10 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		IRECT tempoRect = MakeIRect(kTempoControl);
 		IRECT tempoTextRect = MakeIRect(kTempoControl);
 		tempoTextRect.GetPadded(-1);
-		pGraphics->MeasureIText(&TextStyles::Enum, "000.00", &tempoTextRect);
+		pGraphics->MeasureIText(&TextStyles::Enum, "000.000", &tempoTextRect);
+#ifdef OS_OSX
+		tempoTextRect.B -= 4;
+#endif
 		const int offset = (tempoRect.H() - tempoTextRect.H()) / 2;
 		tempoTextRect.T += offset;
 		tempoTextRect.B += offset;

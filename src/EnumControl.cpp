@@ -17,6 +17,9 @@ bool EnumControl::Draw(IGraphics* pGraphics)
 	IRECT textRect = mRECT;
 	// vertically center the text
 	pGraphics->MeasureIText(&mText, display, &textRect);
+#ifdef OS_OSX
+	textRect.B -= 4;
+#endif
 	int offset = (mRECT.H() - textRect.H()) / 2;
 	textRect.T += offset;
 	textRect.B += offset;
