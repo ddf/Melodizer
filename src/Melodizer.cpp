@@ -86,27 +86,27 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		}
 	}
 
-  //arguments are: name, defaultVal, minVal, maxVal, step, label
-  char paramName[32];
-  const int toneCount = kProbabilityLast - kProbabilityFirst + 1;
-  for (int i = 0; i < toneCount; ++i)
-  {
-	  sprintf(paramName, "Probability %d", i);
-	  const int paramIdx = kProbabilityFirst + i;
-	  GetParam(paramIdx)->InitDouble(paramName, 50, 0, 100, 1, "%");
+	//arguments are: name, defaultVal, minVal, maxVal, step, label
+	char paramName[32];
+	const int toneCount = kProbabilityLast - kProbabilityFirst + 1;
+	for (int i = 0; i < toneCount; ++i)
+	{
+		sprintf(paramName, "Probability %d", i);
+		const int paramIdx = kProbabilityFirst + i;
+		GetParam(paramIdx)->InitDouble(paramName, 50, 0, 100, 1, "%");
 
-	  mTones.push_back(new Tone(mMelodyBus));
-  }
+		mTones.push_back(new Tone(mMelodyBus));
+	}
 
-  IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
-  mInterface.CreateControls(pGraphics);
-  AttachGraphics(pGraphics);
+	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
+	mInterface.CreateControls(pGraphics);
+	AttachGraphics(pGraphics);
 
-  //MakePreset("preset 1", ... );
-  MakeDefaultPreset((char *) "-", kNumPrograms);
+	//MakePreset("preset 1", ... );
+	MakeDefaultPreset((char *) "-", kNumPrograms);
 }
 
-Melodizer::~Melodizer() 
+Melodizer::~Melodizer()
 {
 	for (int i = 0; i < mWaveforms.size(); ++i)
 	{
@@ -148,7 +148,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 			const double prob = GetParam(kProbabilityFirst + mTick)->Value();
 			if (mRandomDist(mRandomGen) <= prob)
-			{				
+			{
 				mInterface.OnTick(mTick);
 				mTones[mTick]->noteOn(0.5f, mWaveforms[waveformIdx], mTick, 440, 1, 0);
 			}
@@ -163,27 +163,27 @@ void Melodizer::BeginMIDILearn(int param1, int param2, int x, int y)
 
 void Melodizer::Reset()
 {
-  TRACE;
-  IMutexLock lock(this);
+	TRACE;
+	IMutexLock lock(this);
 
-  // reseed the random generator
-  std::random_device rd;
-  mRandomGen.seed(rd());
+	// reseed the random generator
+	std::random_device rd;
+	mRandomGen.seed(rd());
 
-  mTick = 0;
-  mSampleCount = (unsigned int)GetSamplesPerBeat() / 2;
-  mInterface.OnTick(0);
-  mMelodyBus.setAudioChannelCount(2);
-  mMelodyBus.setSampleRate(GetSampleRate());
+	mTick = 0;
+	mSampleCount = (unsigned int)GetSamplesPerBeat() / 2;
+	mInterface.OnTick(0);
+	mMelodyBus.setAudioChannelCount(2);
+	mMelodyBus.setSampleRate(GetSampleRate());
 }
 
 void Melodizer::OnParamChange(int paramIdx)
 {
-  IMutexLock lock(this);
+	IMutexLock lock(this);
 
-  switch (paramIdx)
-  {
-    default:
-      break;
-  }
+	switch (paramIdx)
+	{
+	default:
+		break;
+	}
 }
