@@ -255,12 +255,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\WDL\IPlug\IPlugVST.h" />
-    <ClInclude Include="Melodizer.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\IPlug\IPlugVST.cpp" />
-    <ClCompile Include="Melodizer.cpp" />
+    <ClCompile Include="src\Interface.cpp" />
+    <ClCompile Include="src\KnobLineCoronaControl.cpp" />
+    <ClCompile Include="src\LED.cpp" />
+    <ClCompile Include="src\Melodizer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Melodizer.rc" />

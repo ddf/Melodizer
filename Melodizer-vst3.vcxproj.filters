@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Melodizer.cpp" />
     <ClCompile Include="..\..\VST3_SDK\pluginterfaces\base\funknown.cpp">
       <Filter>vst3\VST3SDK\pluginterfaces\base</Filter>
     </ClCompile>
@@ -41,9 +40,12 @@
     <ClCompile Include="..\..\WDL\IPlug\IPlugVST3.cpp">
       <Filter>vst3</Filter>
     </ClCompile>
+    <ClCompile Include="src\Interface.cpp" />
+    <ClCompile Include="src\KnobLineCoronaControl.cpp" />
+    <ClCompile Include="src\LED.cpp" />
+    <ClCompile Include="src\Melodizer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Melodizer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="..\..\VST3_SDK\pluginterfaces\base\falignpop.h">
       <Filter>vst3\VST3SDK\pluginterfaces\base</Filter>
