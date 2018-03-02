@@ -1,6 +1,8 @@
 #pragma  once
 
 #include "IPlug_include_in_plug_hdr.h"
+
+#include "Params.h"
 #include "Interface.h"
 
 #include <vector>
@@ -9,6 +11,7 @@
 #include "Summer.h"
 
 class Tone;
+class Scale;
 
 namespace Minim
 {
@@ -28,17 +31,19 @@ public:
   void BeginMIDILearn(int param1, int param2, int x, int y);
 
 private:
+	void GenerateNote(int tick, unsigned int waveformIdx, const Scale* notes, int lowOctave, int hiOctave, float panRange, unsigned int& previousNoteIndex);
+	int RandomRange(int low, int hi);
+	float RandomRange(float low, float hi);
+
 	Interface mInterface;
 
 	// count how many samples so we know when to increment mTick
 	unsigned long int mSampleCount;
 	unsigned int mTick;
+	unsigned int mPreviousNoteIndex;
 
-	// random number generation for testing against probabilities
-	std::default_random_engine		 mRandomGen;
-	std::uniform_real_distribution<> mRandomDist;
-
-
+	// random number generation for testing against probabilities and generating random numbers for tones, used by RandomRange methods
+	std::default_random_engine mRandomGen;
 
 	Minim::Summer mMelodyBus;
 

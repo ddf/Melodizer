@@ -20,28 +20,11 @@ struct Scale
     }
     
     const char *  scaleName;
-    int**         scale;
-    int           scaleLength;  
-    
-    const char * name() const { return scaleName; }
-    
-    int length() const { return scaleLength; }
-    
-    int nextNoteIndex( int fromNote ) const
-    {
-        int  listLen = 1;
-        int* nextNoteList = scale[fromNote];
-        while( nextNoteList[listLen] != -1 )
-        {
-            ++listLen;
-        }
-        
-        //return nextNoteList[ (int)ofRandom(1, listLen) ];
-		return 0;
-    }
+    const int* const * const scale;
+    const int scaleLength;   
 };
 
-extern const Scale* Scales[]; 
-extern const int    ScalesLength; 
+extern const Scale* const Scales[]; 
+extern const int		  ScalesLength; 
 
 #endif

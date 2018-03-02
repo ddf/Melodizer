@@ -277,6 +277,7 @@
     <ClInclude Include="..\minim-cpp\src\AudioSource.h" />
     <ClInclude Include="..\minim-cpp\src\Logging.h" />
     <ClInclude Include="..\minim-cpp\src\ugens\ADSR.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Frequency.h" />
     <ClInclude Include="..\minim-cpp\src\ugens\Oscil.h" />
     <ClInclude Include="..\minim-cpp\src\ugens\Pan.h" />
     <ClInclude Include="..\minim-cpp\src\ugens\Summer.h" />
@@ -306,6 +307,7 @@
     <ClCompile Include="..\minim-cpp\src\AudioSource.cpp" />
     <ClCompile Include="..\minim-cpp\src\Logging.cpp" />
     <ClCompile Include="..\minim-cpp\src\ugens\ADSR.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Frequency.cpp" />
     <ClCompile Include="..\minim-cpp\src\ugens\Oscil.cpp" />
     <ClCompile Include="..\minim-cpp\src\ugens\Pan.cpp" />
     <ClCompile Include="..\minim-cpp\src\ugens\Summer.cpp" />

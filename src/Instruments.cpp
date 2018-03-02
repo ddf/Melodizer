@@ -11,42 +11,6 @@
 #include "Wavetable.h"
 #include "Scales.h"
 
-//static void generateNote( Minim::Summer& bus,
-//                          int   tick,
-//                          float time,
-//                          WaveformType type, 
-//                          const Scale* notes, 
-//                          int lowOctave, 
-//                          int hiOctave, 
-//                          float panRange, 
-//                          int& previousNoteIndex
-//                         )
-//{
-//    int nextNoteIndex = notes->nextNoteIndex( previousNoteIndex );
-//    int baseNote      = notes->scale[nextNoteIndex][0] + Settings::Key;
-//    int octave        = (int)ofRandom(lowOctave, hiOctave);
-//    int note          = baseNote + octave * 12;
-//    float freq        = Minim::Frequency::ofMidiNote( note ).asHz();
-//    float amp         = ofRandom(0.41f, 0.61f);
-//    float pan         = 0.f;
-//    
-//    if ( panRange != 0 )
-//    {
-//        pan = ofRandom(panRange) + 0.2f;
-//        if ( ofRandom(1) < 0.5f )
-//        {
-//            pan *= -1;
-//        }
-//    }
-//    
-//    // we want note duration to be the same regardless of tempo, so we have to adjust for tempo
-//    const float dur = Settings::Duration * (Settings::Tempo/60.f);
-//    
-//    tone( &bus, tick, time, type, freq, amp, dur, ofRandom(-pan, pan) );
-//    
-//    previousNoteIndex = nextNoteIndex;    
-//}
-
 //---------------------------------------
 //-- TONE
 //---------------------------------------

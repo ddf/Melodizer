@@ -17,6 +17,11 @@ enum ELayout
 	kWaveformControl_W = 50,
 	kWaveformControl_H = 20,
 
+	kScaleControl_X = kWaveformControl_X + kWaveformControl_W + 10,
+	kScaleControl_Y = kWaveformControl_Y,
+	kScaleControl_W = 100,
+	kScaleControl_H = kWaveformControl_H,
+
 	kFirstKnobColumnX = 95,
 	kColumnSpacing = 45,
 
@@ -55,7 +60,7 @@ namespace TextStyle
 {
 	// can't be const because of stupid ITextControl constructor
 	IText  Label(DEFAULT_TEXT_SIZE, &Color::Label, 0, IText::kStyleNormal, IText::kAlignNear);
-	IText  Waveform(DEFAULT_TEXT_SIZE, &Color::Label, 0, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
+	IText  Enum(DEFAULT_TEXT_SIZE, &Color::Label, 0, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
 }
 
 namespace Strings
@@ -78,7 +83,8 @@ void Interface::CreateControls(IGraphics* pGraphics)
 {
 	pGraphics->AttachPanelBackground(&Color::Background);
 
-	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kWaveformControl), kWaveform, &TextStyle::Waveform));
+	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kWaveformControl), kWaveform, &TextStyle::Enum));
+	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kScaleControl), kScale, &TextStyle::Enum));
 
 	mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
 
@@ -93,7 +99,8 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		pGraphics->AttachControl(led);
 		
 		IRECT knobRect = MakeIRectHOffset(kProbabilityKnob, offset);
-		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, knobRect, i, &Color::KnobLine, &Color::KnobCorona));
+		const int paramIdx = kProbabilityFirst + i;
+		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, knobRect, paramIdx, &Color::KnobLine, &Color::KnobCorona));
 	}
 
 	// row labels

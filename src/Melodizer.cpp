@@ -3,6 +3,8 @@
 #include "resource.h"
 #include "Params.h"
 
+#include "Scales.h"
+
 #include "Waves.h"
 #include "Instruments.h" // contains Tone
 
@@ -14,10 +16,10 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 	, mInterface(this)
 	, mTick(0)
+	, mPreviousNoteIndex(0)
 	, mSampleCount(0)
 	, mMelodyBus()
 	, mRandomGen(0)
-	, mRandomDist(0, 100)
 {
 	TRACE;
 
@@ -86,6 +88,16 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		}
 	}
 
+	// scales
+	{
+		IParam* param = GetParam(kScale);
+		param->InitEnum("Scale", 0, ScalesLength);
+		for (int i = 0; i < ScalesLength; ++i)
+		{
+			param->SetDisplayText(i, Scales[i]->scaleName);
+		}
+	}
+
 	//arguments are: name, defaultVal, minVal, maxVal, step, label
 	char paramName[32];
 	const int toneCount = kProbabilityLast - kProbabilityFirst + 1;
@@ -126,6 +138,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	// Mutex is already locked for us.
 	const unsigned int samplesPerTick = (unsigned int)GetSamplesPerBeat() / 2;
 	const unsigned int waveformIdx = GetParam(kWaveform)->Int();
+	const unsigned int scaleIdx = GetParam(kScale)->Int();
 
 	double* out1 = outputs[0];
 	double* out2 = outputs[1];
@@ -147,10 +160,10 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			mSampleCount = samplesPerTick;
 
 			const double prob = GetParam(kProbabilityFirst + mTick)->Value();
-			if (mRandomDist(mRandomGen) <= prob)
+			if (RandomRange(0.f, 100.f) <= prob)
 			{
 				mInterface.OnTick(mTick);
-				mTones[mTick]->noteOn(0.5f, mWaveforms[waveformIdx], mTick, 440, 1, 0);
+				GenerateNote(mTick, waveformIdx, Scales[scaleIdx], 4, 5, 0, mPreviousNoteIndex);				
 			}
 		}
 	}
@@ -171,6 +184,7 @@ void Melodizer::Reset()
 	mRandomGen.seed(rd());
 
 	mTick = 0;
+	mPreviousNoteIndex = 0;
 	mSampleCount = (unsigned int)GetSamplesPerBeat() / 2;
 	mInterface.OnTick(0);
 	mMelodyBus.setAudioChannelCount(2);
@@ -183,7 +197,70 @@ void Melodizer::OnParamChange(int paramIdx)
 
 	switch (paramIdx)
 	{
+	case kScale:
+		mPreviousNoteIndex = 0;
+		break;
+
 	default:
 		break;
 	}
+}
+
+void Melodizer::GenerateNote( int tick,
+                          unsigned int waveformIdx, 
+                          const Scale* notes, 
+                          int lowOctave, 
+                          int hiOctave, 
+                          float panRange, 
+                          unsigned int& previousNoteIndex
+                         )
+{
+	int nextNoteIndex = previousNoteIndex;
+	// figure out next note
+	{
+		int listLen = 1;
+		const int* nextNoteList = notes->scale[previousNoteIndex];
+		while (nextNoteList[listLen] != -1)
+		{
+			++listLen;
+		}
+		nextNoteIndex = nextNoteList[RandomRange(1, listLen)];
+	}
+	int baseNote = notes->scale[nextNoteIndex][0]; // +Settings::Key;
+	int octave = RandomRange(lowOctave, hiOctave);
+    int note = baseNote + octave * 12;
+    float freq = Frequency::ofMidiNote( note ).asHz();
+	float amp = RandomRange(0.41f, 0.61f);
+    float pan = 0.f;
+    
+    if ( panRange != 0 )
+    {
+        pan = RandomRange(0.f, panRange) + 0.2f;
+        if ( RandomRange(0.f, 1.f) < 0.5f )
+        {
+            pan *= -1;
+        }
+		pan = RandomRange(-pan, pan);
+    }
+    
+    // we want note duration to be the same regardless of tempo, so we have to adjust for tempo
+    //const float dur = Settings::Duration * (Settings::Tempo/60.f);
+	// #TODO get note envelope from params
+	const float dur = 0.5f;
+    
+	mTones[mTick]->noteOn(dur, mWaveforms[waveformIdx], mTick, freq, amp, pan);
+
+    previousNoteIndex = nextNoteIndex;    
+}
+
+int Melodizer::RandomRange(int low, int hi)
+{
+	std::uniform_int_distribution<> dist(low, hi-1);
+	return dist(mRandomGen);
+}
+
+float Melodizer::RandomRange(float low, float hi)
+{
+	std::uniform_real_distribution<> dist(low, hi);
+	return dist(mRandomGen);
 }
