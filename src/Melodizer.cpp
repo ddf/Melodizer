@@ -114,19 +114,29 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	{
 		GetParam(kTempo)->InitDouble("Tempo", DEFAULT_TEMPO, kTempoMin, kTempoMax, 0.01, "bpm");
 	}
-
-	//arguments are: name, defaultVal, minVal, maxVal, step, label
-	char paramName[32];
-	const int toneCount = kProbabilityLast - kProbabilityFirst + 1;
-	for (int i = 0; i < toneCount; ++i)
+	
+	// octave + range
 	{
-		sprintf(paramName, "Probability %d", i);
-		const int paramIdx = kProbabilityFirst + i;
-		GetParam(paramIdx)->InitDouble(paramName, 50, 0, 100, 1, "%");
-
-		mTones.push_back(new Tone(mMelodyBus));
+		GetParam(kOctave)->InitInt("Octave", 4, 0, 8);
+		GetParam(kRange)->InitInt("Range", 0, 0, 8);
 	}
 
+	// knob bank
+	{
+		//arguments are: name, defaultVal, minVal, maxVal, step, label
+		char paramName[32];
+		const int toneCount = kProbabilityLast - kProbabilityFirst + 1;
+		for (int i = 0; i < toneCount; ++i)
+		{
+			sprintf(paramName, "Probability %d", i);
+			const int paramIdx = kProbabilityFirst + i;
+			GetParam(paramIdx)->InitDouble(paramName, 50, 0, 100, 1, "%");
+
+			mTones.push_back(new Tone(mMelodyBus));
+		}
+	}
+
+	// interface!
 	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
 	mInterface.CreateControls(pGraphics);
 	AttachGraphics(pGraphics);
@@ -157,6 +167,8 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	const unsigned int waveformIdx = GetParam(kWaveform)->Int();
 	const unsigned int scaleIdx = GetParam(kScale)->Int();
 	const unsigned int keyIdx = GetParam(kKey)->Int();
+	const unsigned int lowOctave = GetParam(kOctave)->Int();
+	const unsigned int hiOctave = lowOctave + GetParam(kRange)->Int();
 
 	double* out1 = outputs[0];
 	double* out2 = outputs[1];
@@ -181,7 +193,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			if (RandomRange(0.f, 100.f) <= prob)
 			{
 				mInterface.OnTick(mTick);
-				GenerateNote(mTick, waveformIdx, Scales[scaleIdx], keyIdx, 4, 5, 0, mPreviousNoteIndex);				
+				GenerateNote(mTick, waveformIdx, Scales[scaleIdx], keyIdx, lowOctave, hiOctave, 0, mPreviousNoteIndex);
 			}
 		}
 	}
@@ -243,7 +255,7 @@ void Melodizer::GenerateNote( int tick,
 		{
 			++listLen;
 		}
-		nextNoteIndex = nextNoteList[RandomRange(1, listLen)];
+		nextNoteIndex = nextNoteList[RandomRange(1, listLen-1)];
 	}
 	int baseNote = notes->scale[nextNoteIndex][0] + key;
 	int octave = RandomRange(lowOctave, hiOctave);
@@ -274,7 +286,7 @@ void Melodizer::GenerateNote( int tick,
 
 int Melodizer::RandomRange(int low, int hi)
 {
-	std::uniform_int_distribution<> dist(low, hi-1);
+	std::uniform_int_distribution<> dist(low, hi);
 	return dist(mRandomGen);
 }
 

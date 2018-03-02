@@ -14,26 +14,37 @@ enum ELayout
 	kHeight = GUI_HEIGHT,
 
 	kEnumHeight = 20,
+	kEnumY = 10,
 
 	kKeyControl_X = 80,
-	kKeyControl_Y = 10,
+	kKeyControl_Y = kEnumY,
 	kKeyControl_W = 25,
 	kKeyControl_H = kEnumHeight,
 
 	kScaleControl_X = kKeyControl_X + kKeyControl_W + 10,
-	kScaleControl_Y = kKeyControl_Y,
+	kScaleControl_Y = kEnumY,
 	kScaleControl_W = 100,
 	kScaleControl_H = kEnumHeight,
 
 	kWaveformControl_X = kScaleControl_X + kScaleControl_W + 10,
-	kWaveformControl_Y = 10,
+	kWaveformControl_Y = kEnumY,
 	kWaveformControl_W = 50,
 	kWaveformControl_H = kEnumHeight,
 
 	kTempoControl_X = kWaveformControl_X + kWaveformControl_W + 10,
-	kTempoControl_Y = 10,
+	kTempoControl_Y = kEnumY,
 	kTempoControl_W = 50,
 	kTempoControl_H = kEnumHeight,
+	
+	kOctaveControl_X = kTempoControl_X + kTempoControl_W + 10,
+	kOctaveControl_Y = kEnumY,
+	kOctaveControl_W = 20,
+	kOctaveControl_H = kEnumHeight,
+	
+	kRangeControl_X = kOctaveControl_X + kOctaveControl_W + 10,
+	kRangeControl_Y = kEnumY,
+	kRangeControl_W = 20,
+	kRangeControl_H = kEnumHeight,
 
 	kFirstKnobColumnX = 95,
 	kColumnSpacing = 45,
@@ -108,19 +119,11 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kKeyControl), kKey, &TextStyles::Enum));
 
 	// tempo
-	{
-		IRECT tempoRect = MakeIRect(kTempoControl);
-		IRECT tempoTextRect = MakeIRect(kTempoControl);
-		tempoTextRect.GetPadded(-1);
-		pGraphics->MeasureIText(&TextStyles::Enum, "000.000", &tempoTextRect);
-#ifdef OS_OSX
-		tempoTextRect.B -= 4;
-#endif
-		const int offset = (tempoRect.H() - tempoTextRect.H()) / 2;
-		tempoTextRect.T += offset;
-		tempoTextRect.B += offset;
-		pGraphics->AttachControl(new TextBox(mPlug, tempoRect, kTempo, &TextStyles::Enum, tempoTextRect));
-	}
+	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kTempoControl), kTempo, &TextStyles::Enum, pGraphics, "000.000"));
+	// octave
+	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kOctaveControl), kOctave, &TextStyles::Enum, pGraphics, "00"));
+	// range
+	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kRangeControl), kRange, &TextStyles::Enum, pGraphics, "00"));
 
 	mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
 

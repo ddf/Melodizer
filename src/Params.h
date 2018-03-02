@@ -6,6 +6,8 @@ enum EParams
 	kScale,
 	kKey,
 	kTempo,
+	kOctave,
+	kRange,
 
 	kProbabilityFirst,
 	kProbabilityLast = kProbabilityFirst + 15,

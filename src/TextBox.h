@@ -5,7 +5,7 @@
 class TextBox : public ICaptionControl
 {
 public:
-	TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IRECT textRect, bool showParamUnits = false);
+	TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IGraphics* pGraphics, const char * maxText, bool showParamUnits = false);
 
 	bool Draw(IGraphics* pGraphics) override;
 	void OnMouseDown(int x, int y, IMouseMod* pMod) override;

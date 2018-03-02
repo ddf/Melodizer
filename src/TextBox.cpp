@@ -1,9 +1,36 @@
 #include "TextBox.h"
 
-TextBox::TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IRECT textRect, bool showParamUnits)
+TextBox::TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IGraphics* pGraphics, const char * maxText, bool showParamUnits)
 	: ICaptionControl(pPlug, pR, paramIdx, pText, showParamUnits)
-	, mTextRect(textRect)
+	, mTextRect(pR)
 {
+	mTextRect.GetPadded(-1);
+	pGraphics->MeasureIText(pText, const_cast<char*>(maxText), &mTextRect);
+#ifdef OS_OSX
+	mTextRect.B -= 4;
+#endif
+	const int offset = (mRECT.H() - mTextRect.H()) / 2;
+	mTextRect.T += offset;
+	mTextRect.B += offset;
+	
+	IParam* param = pPlug->GetParam(paramIdx);
+	const double maxVal = param->GetMax();
+	switch(param->Type())
+	{
+		case IParam::kTypeInt:
+			if ( maxVal < 10 ) SetTextEntryLength(1);
+			else if ( maxVal < 100 ) SetTextEntryLength(2);
+			else SetTextEntryLength(3);
+			break;
+			
+		case IParam::kTypeDouble:
+			if ( maxVal < 10 ) SetTextEntryLength(4);
+			else if ( maxVal < 100 ) SetTextEntryLength(5);
+			else if ( maxVal < 1000 ) SetTextEntryLength(6);
+			break;
+			
+		default: break;
+	}
 }
 
 bool TextBox::Draw(IGraphics* pGraphics)

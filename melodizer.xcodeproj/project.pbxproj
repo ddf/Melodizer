@@ -719,6 +719,8 @@
 		089C166AFE841209C02AAC07 /* IPlugExample */ = {
 			isa = PBXGroup;
 			children = (
+				7779E9C92049DAF800AB7ED5 /* Params.h */,
+				7779E9D12049DAF900AB7ED5 /* Melodizer.cpp */,
 				7779E9C52049DAF700AB7ED5 /* EnumControl.cpp */,
 				7779E9D22049DAF900AB7ED5 /* EnumControl.h */,
 				7779E9CC2049DAF800AB7ED5 /* Instruments.cpp */,
@@ -729,9 +731,7 @@
 				7779E9D02049DAF900AB7ED5 /* KnobLineCoronaControl.h */,
 				7779E9C72049DAF800AB7ED5 /* LED.cpp */,
 				7779E9CD2049DAF800AB7ED5 /* LED.h */,
-				7779E9D12049DAF900AB7ED5 /* Melodizer.cpp */,
 				7779E9C62049DAF800AB7ED5 /* Melodizer.h */,
-				7779E9C92049DAF800AB7ED5 /* Params.h */,
 				7779E9C82049DAF800AB7ED5 /* Scales.cpp */,
 				7779E9CA2049DAF800AB7ED5 /* Scales.h */,
 				7779E9CE2049DAF900AB7ED5 /* TextBox.cpp */,
