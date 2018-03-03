@@ -14,6 +14,11 @@ enum EParams
 	kRange,
 	kShuffle,
 
+	kEnvAttack,
+	kEnvDecay,
+	kEnvSustain,
+	kEnvRelease,
+
 	STEP_PARAM(kStepMode), // see: enum StepMode
 	STEP_PARAM(kProbability),
 	STEP_PARAM(kAttack),

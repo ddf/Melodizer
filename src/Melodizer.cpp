@@ -126,12 +126,21 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		GetParam(kShuffle)->InitDouble("Shuffle", 0.5, 0.1, 0.9, 0.01f);
 	}
 
+	// ADSR
+	{
+		const double secondsStep = 0.001f;
+		const double minEnv = 0.005f;
+		GetParam(kEnvAttack)->InitDouble("Attack", minEnv, minEnv, 2, secondsStep, "seconds");
+		GetParam(kEnvDecay)->InitDouble("Decay", minEnv, minEnv, 2, secondsStep, "seconds");
+		GetParam(kEnvSustain)->InitDouble("Sustain", 0.5, minEnv, 1, 0.01);
+		GetParam(kEnvRelease)->InitDouble("Release", 0.25, minEnv, 5, secondsStep, "seconds");
+	}
+
 	// knob bank
 	{
 		//arguments are: name, defaultVal, minVal, maxVal, step, label
 		char paramName[32];
 		const double percentStep = 0.5f;
-		const double secondsStep = 0.01f;
 		for (int i = 0; i < kSequencerSteps; ++i)
 		{
 			sprintf(paramName, "Step Mode %d", i);
@@ -147,20 +156,20 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 				}
 			}
 
-			sprintf(paramName, "Probability %d", i);
+			sprintf(paramName, "Step %d Probability", i);
 			GetParam(kProbabilityFirst + i)->InitDouble(paramName, 50, 0, 100, percentStep, "%");
 
-			sprintf(paramName, "Attack %d", i);
-			GetParam(kAttackFirst + i)->InitDouble(paramName, 0.01, 0.01, 2, secondsStep, "seconds");
+			sprintf(paramName, "Step %d Attack", i);
+			GetParam(kAttackFirst + i)->InitDouble(paramName, 100, 1, 100, percentStep, "%");
 
-			sprintf(paramName, "Decay %d", i);
-			GetParam(kDecayFirst + i)->InitDouble(paramName, 0.01, 0.01, 2, secondsStep, "seconds");
+			sprintf(paramName, "Step %d Decay", i);
+			GetParam(kDecayFirst + i)->InitDouble(paramName, 100, 1, 100, percentStep, "%");
 
-			sprintf(paramName, "Sustain %d", i);
-			GetParam(kSustainFirst + i)->InitDouble(paramName, 25, 0, 100, percentStep, "%");
+			sprintf(paramName, "Step %d Sustain", i);
+			GetParam(kSustainFirst + i)->InitDouble(paramName, 100, 1, 100, percentStep, "%");
 
-			sprintf(paramName, "Release %d", i);
-			GetParam(kReleaseFirst + i)->InitDouble(paramName, 0.25, 0, 5, secondsStep, "seconds");
+			sprintf(paramName, "Step %d Release", i);
+			GetParam(kReleaseFirst + i)->InitDouble(paramName, 100, 1, 100, percentStep, "%");
 
 			mTones.push_back(new Tone(mMelodyBus));
 		}
@@ -344,13 +353,10 @@ void Melodizer::GenerateNote( int tick,
 		pan = RandomRange(-pan, pan);
     }
     
-    // we want note duration to be the same regardless of tempo, so we have to adjust for tempo
-    //const float dur = Settings::Duration * (Settings::Tempo/60.f);
-	// #TODO get note envelope from params
-	const float attack = GetParam(kAttackFirst + tick)->Value();
-	const float decay = GetParam(kDecayFirst + tick)->Value();
-	const float sustain = GetParam(kSustainFirst + tick)->Value() / 100;
-	const float release = GetParam(kReleaseFirst + tick)->Value();
+	const float attack  = GetParam(kEnvAttack)->Value()  * GetParam(kAttackFirst + tick)->Value() / 100;
+	const float decay   = GetParam(kEnvDecay)->Value()   * GetParam(kDecayFirst + tick)->Value() / 100;
+	const float sustain = GetParam(kEnvSustain)->Value() * GetParam(kSustainFirst + tick)->Value() / 100;
+	const float release = GetParam(kEnvRelease)->Value() * GetParam(kReleaseFirst + tick)->Value() / 100;
     
 	mTones[tick]->noteOn(mWaveforms[waveformIdx], tick, freq, amp, attack, decay, sustain, release, pan);
 

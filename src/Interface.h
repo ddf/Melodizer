@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Params.h"
+#include "IPlugStructs.h"
 #include <vector>
 
 class Melodizer;
@@ -20,6 +21,7 @@ public:
 	void OnTick(const unsigned int tick, bool noteOn);
 
 private:	
+	void AttachKnob(IGraphics* pGraphics, IRECT rect, EParams paramIdx, const char * label = nullptr);
 	void AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name);
 	void AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, EParams param);
 
@@ -27,7 +29,6 @@ private:
 
 	// bank of LED graphics above all the knobs
 	std::vector<LED*> mLEDs;
-	std::vector<LED*> mNoteOns;
-	
+	std::vector<LED*> mNoteOns;	
 };
 

@@ -14,8 +14,14 @@ enum ELayout
 	kWidth = GUI_WIDTH,
 	kHeight = GUI_HEIGHT,
 
+	kEnvControl_X = 20,
+	kEnvControl_Y = 20,
+	kEnvControl_W = 30,
+	kEnvControl_H = 30,
+	kEnvControl_S = 45,
+
 	kEnumHeight = 20,
-	kEnumY = 10,
+	kEnumY = kEnvControl_Y + kEnvControl_H + 10,
 
 	kKeyControl_X = 80,
 	kKeyControl_Y = kEnumY,
@@ -57,7 +63,7 @@ enum ELayout
 	kKnobLED_W = 8,
 	kKnobLED_H = kKnobLED_W,
 	kKnobLED_X = kFirstKnobColumnX - kKnobLED_W / 2,
-	kKnobLED_Y = 50 - kKnobLED_H / 2,
+	kKnobLED_Y = kEnumY + kEnumHeight + 25 - kKnobLED_H / 2,
 
 	kStepModeControl_W = 36,
 	kStepModeControl_H = 15,
@@ -92,7 +98,7 @@ namespace Color
 	const IColor KnobLine(255, 89, 196, 255);
 	const IColor KnobCorona(255, 89, 196, 255);
 	
-	const IColor Label = KnobLine; // (255, 208, 208, 216);
+	const IColor Label(255, 208, 208, 216);
 
 	const IColor EnumBackground(255, 9, 66, 125);
 	const IColor EnumBorder = KnobLine;
@@ -134,6 +140,11 @@ Interface::~Interface()
 void Interface::CreateControls(IGraphics* pGraphics)
 {
 	pGraphics->AttachPanelBackground(&Color::Background);
+
+	AttachKnob(pGraphics, MakeIRect(kEnvControl), kEnvAttack, "A");
+	AttachKnob(pGraphics, MakeIRectHOffset(kEnvControl, kEnvControl_S), kEnvDecay, "D");
+	AttachKnob(pGraphics, MakeIRectHOffset(kEnvControl, kEnvControl_S * 2), kEnvSustain, "S");
+	AttachKnob(pGraphics, MakeIRectHOffset(kEnvControl, kEnvControl_S * 3), kEnvRelease, "R");
 
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kWaveformControl), kWaveform, &TextStyles::Enum));
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kScaleControl), kScale, &TextStyles::Enum));
@@ -205,6 +216,18 @@ void Interface::AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, EParam
 {
 	IRECT rect = MakeIRectVOffset(kStepRandomize, kStepKnobRowSpacing*rowNum);
 	pGraphics->AttachControl(new BangControl(mPlug, rect, param, Color::LedOn, Color::LedOff));
+}
+
+void Interface::AttachKnob(IGraphics* pGraphics, IRECT rect, EParams paramIdx, const char * label)
+{
+	pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, rect, paramIdx, &Color::KnobLine, &Color::KnobCorona));
+	
+	if (label != nullptr)
+	{
+		rect.B = rect.T;
+		rect.T -= 15,
+		pGraphics->AttachControl(new ITextControl(mPlug, rect, &TextStyles::Label, const_cast<char*>(label)));
+	}
 }
 
 void Interface::OnTick(const unsigned int tick, bool noteOn)

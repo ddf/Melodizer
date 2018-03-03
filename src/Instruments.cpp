@@ -43,8 +43,11 @@ void ADSR::noteOn(float amp, float attack, float decay, float sustain, float rel
 	mDecay = decay;
 	mSustain = sustain;
 	mRelease = release;
-	mState = kAttack;
 	mAutoRelease = false;
+
+	if (mAttack > 0) mState = kAttack;
+	else if (mDecay > 0) mState = kDecay;
+	else mState = kSustain;
 }
 
 void ADSR::noteOff()
