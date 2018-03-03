@@ -13,9 +13,41 @@
 #include "Oscil.h"
 #include "Summer.h"
 #include "Pan.h"
-#include "ADSR.h"
 
 using namespace Minim;
+
+// Minim's ADSR is kiiiinda fucked, so decided to write our own for now
+class ADSR : public UGen
+{
+public:
+	ADSR();
+
+	bool isOn() const { return mState != kOff; }
+
+	void noteOn(float amp, float attack, float decay, float sustain, float release);
+	void noteOff();
+
+	UGenInput audio;
+
+protected:
+	virtual void uGenerate(float * channels, const int numChannels) override;
+
+	virtual void sampleRateChanged() override;
+
+private:
+	enum
+	{
+		kOff,
+		kAttack,
+		kDecay,
+		kSustain,
+		kRelease
+	} mState;
+
+	bool mAutoRelease;
+	float mAmp, mAttack, mDecay, mSustain, mRelease;
+	float mTime, mStep;
+};
 
 class Tone
 {
@@ -23,7 +55,7 @@ public:
     Tone( Summer& out );
 	~Tone();
        
-	void noteOn(float dur, Waveform* waveform, int tick, float freq, float amp, float pan);
+	void noteOn(Waveform* waveform, int tick, float freq, float amp, float attack, float decay, float sustain, float release, float pan);
 	void noteOff();
 
     int  getTick() const { return tick; }

@@ -125,12 +125,24 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	{
 		//arguments are: name, defaultVal, minVal, maxVal, step, label
 		char paramName[32];
-		const int toneCount = kProbabilityLast - kProbabilityFirst + 1;
-		for (int i = 0; i < toneCount; ++i)
+		const double percentStep = 0.5f;
+		const double secondsStep = 0.01f;
+		for (int i = 0; i < kSequencerSteps; ++i)
 		{
 			sprintf(paramName, "Probability %d", i);
-			const int paramIdx = kProbabilityFirst + i;
-			GetParam(paramIdx)->InitDouble(paramName, 50, 0, 100, 1, "%");
+			GetParam(kProbabilityFirst + i)->InitDouble(paramName, 50, 0, 100, percentStep, "%");
+
+			sprintf(paramName, "Attack %d", i);
+			GetParam(kAttackFirst + i)->InitDouble(paramName, 0.01, 0.01, 2, secondsStep, "seconds");
+
+			sprintf(paramName, "Decay %d", i);
+			GetParam(kDecayFirst + i)->InitDouble(paramName, 0.01, 0.01, 2, secondsStep, "seconds");
+
+			sprintf(paramName, "Sustain %d", i);
+			GetParam(kSustainFirst + i)->InitDouble(paramName, 25, 0, 100, percentStep, "%");
+
+			sprintf(paramName, "Release %d", i);
+			GetParam(kReleaseFirst + i)->InitDouble(paramName, 0.25, 0, 5, secondsStep, "seconds");
 
 			mTones.push_back(new Tone(mMelodyBus));
 		}
@@ -277,9 +289,12 @@ void Melodizer::GenerateNote( int tick,
     // we want note duration to be the same regardless of tempo, so we have to adjust for tempo
     //const float dur = Settings::Duration * (Settings::Tempo/60.f);
 	// #TODO get note envelope from params
-	const float dur = 0.5f;
+	const float attack = GetParam(kAttackFirst + tick)->Value();
+	const float decay = GetParam(kDecayFirst + tick)->Value();
+	const float sustain = GetParam(kSustainFirst + tick)->Value() / 100;
+	const float release = GetParam(kReleaseFirst + tick)->Value();
     
-	mTones[mTick]->noteOn(dur, mWaveforms[waveformIdx], mTick, freq, amp, pan);
+	mTones[tick]->noteOn(mWaveforms[waveformIdx], tick, freq, amp, attack, decay, sustain, release, pan);
 
     previousNoteIndex = nextNoteIndex;    
 }

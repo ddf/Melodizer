@@ -276,7 +276,6 @@
     <ClInclude Include="..\..\WDL\rtaudiomidi\RtMidi.h" />
     <ClInclude Include="..\minim-cpp\src\AudioSource.h" />
     <ClInclude Include="..\minim-cpp\src\Logging.h" />
-    <ClInclude Include="..\minim-cpp\src\ugens\ADSR.h" />
     <ClInclude Include="..\minim-cpp\src\ugens\Frequency.h" />
     <ClInclude Include="..\minim-cpp\src\ugens\Oscil.h" />
     <ClInclude Include="..\minim-cpp\src\ugens\Pan.h" />
@@ -307,7 +306,6 @@
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtMidi.cpp" />
     <ClCompile Include="..\minim-cpp\src\AudioSource.cpp" />
     <ClCompile Include="..\minim-cpp\src\Logging.cpp" />
-    <ClCompile Include="..\minim-cpp\src\ugens\ADSR.cpp" />
     <ClCompile Include="..\minim-cpp\src\ugens\Frequency.cpp" />
     <ClCompile Include="..\minim-cpp\src\ugens\Oscil.cpp" />
     <ClCompile Include="..\minim-cpp\src\ugens\Pan.cpp" />

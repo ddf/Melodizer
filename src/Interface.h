@@ -19,6 +19,8 @@ public:
 	void OnTick(const unsigned int tick);
 
 private:	
+	void AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name);
+
 	Melodizer* const mPlug;
 
 	// bank of LED graphics above all the knobs

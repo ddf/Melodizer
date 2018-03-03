@@ -88,9 +88,6 @@
     <ClInclude Include="src\Scales.h">
       <Filter>dsp</Filter>
     </ClInclude>
-    <ClInclude Include="..\minim-cpp\src\ugens\ADSR.h">
-      <Filter>minim</Filter>
-    </ClInclude>
     <ClInclude Include="src\Interface.h">
       <Filter>interface</Filter>
     </ClInclude>
@@ -165,9 +162,6 @@
     </ClCompile>
     <ClCompile Include="src\Scales.cpp">
       <Filter>dsp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\minim-cpp\src\ugens\ADSR.cpp">
-      <Filter>minim</Filter>
     </ClCompile>
     <ClCompile Include="src\Interface.cpp">
       <Filter>interface</Filter>

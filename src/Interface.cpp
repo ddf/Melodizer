@@ -47,22 +47,24 @@ enum ELayout
 	kRangeControl_H = kEnumHeight,
 
 	kFirstKnobColumnX = 95,
-	kColumnSpacing = 45,
 
 	kKnobLED_W = 8,
 	kKnobLED_H = kKnobLED_W,
 	kKnobLED_X = kFirstKnobColumnX - kKnobLED_W / 2,
 	kKnobLED_Y = 50 - kKnobLED_H / 2,
 
-	kProbabilityKnob_W = 30,
-	kProbabilityKnob_H = kProbabilityKnob_W,
-	kProbabilityKnob_X = kFirstKnobColumnX - kProbabilityKnob_W / 2,
-	kProbabilityKnob_Y = kKnobLED_Y + kKnobLED_H + 10,
+	kStepKnob_W = 30,
+	kStepKnob_H = kStepKnob_W,
+	kStepKnob_X = kFirstKnobColumnX - kStepKnob_W / 2,
+	kStepKnob_Y = kKnobLED_Y + kKnobLED_H + 10,
 
-	kProbabilityLabel_X = 0,
-	kProbabilityLabel_Y = kProbabilityKnob_Y + kProbabilityKnob_H / 2,
-	kProbabilityLabel_W = kFirstKnobColumnX - kProbabilityLabel_X,
-	kProbabilityLabel_H = 10,
+	kStepKnobLabel_X = 10,
+	kStepKnobLabel_Y = kStepKnob_Y + kStepKnob_H / 2,
+	kStepKnobLabel_W = kFirstKnobColumnX - kStepKnobLabel_X,
+	kStepKnobLabel_H = 10,
+
+	kStepKnobColumnSpacing = 45,
+	kStepKnobRowSpacing = 45,
 };
 
 namespace Color
@@ -96,8 +98,11 @@ namespace TextStyles
 
 namespace Strings
 {
-	// again, these can't be const because of non-const method args :(
-	char * ProbabilityLabel = "P(N)";
+	const char * ProbabilityLabel = "P(N)";
+	const char * AttackLabel = "A";
+	const char * DecayLabel = "D";
+	const char * SustainLabel = "S";
+	const char * ReleaseLabel = "R";
 }
 
 Interface::Interface(Melodizer* inPlug)
@@ -128,27 +133,41 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
 
 	// all them knobs
-	const int knobCount = 16;
-	for(int i = 0; i < knobCount; ++i)
+	for(int i = 0; i < kSequencerSteps; ++i)
 	{
-		const int offset = kColumnSpacing*i;
-		IRECT ledRect = MakeIRectHOffset(kKnobLED, offset);
+		const int hoffset = kStepKnobColumnSpacing*i;
+		IRECT ledRect = MakeIRectHOffset(kKnobLED, hoffset);
 		LED* led = new LED(mPlug, ledRect, Color::Background, Color::LedOn, Color::LedOff);
 		mLEDs.push_back(led);
 		pGraphics->AttachControl(led);
 		
-		IRECT knobRect = MakeIRectHOffset(kProbabilityKnob, offset);
-		const int paramIdx = kProbabilityFirst + i;
-		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, knobRect, paramIdx, &Color::KnobLine, &Color::KnobCorona));
+		// probability
+		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHOffset(kStepKnob, hoffset), kProbabilityFirst + i, &Color::KnobLine, &Color::KnobCorona));
+		// attack
+		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*1), kAttackFirst + i, &Color::KnobLine, &Color::KnobCorona));
+		// decay
+		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*2), kDecayFirst + i, &Color::KnobLine, &Color::KnobCorona));
+		// sustain
+		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*3), kSustainFirst + i, &Color::KnobLine, &Color::KnobCorona));
+		// release
+		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*4), kReleaseFirst + i, &Color::KnobLine, &Color::KnobCorona));
 	}
 
-	// row labels
-	IRECT labelRect = MakeIRect(kProbabilityLabel);
-	pGraphics->MeasureIText(&TextStyles::Label, Strings::ProbabilityLabel, &labelRect);
+	AttachStepRowLabel(pGraphics, 0, Strings::ProbabilityLabel);
+	AttachStepRowLabel(pGraphics, 1, Strings::AttackLabel);
+	AttachStepRowLabel(pGraphics, 2, Strings::DecayLabel);
+	AttachStepRowLabel(pGraphics, 3, Strings::SustainLabel);
+	AttachStepRowLabel(pGraphics, 4, Strings::ReleaseLabel);
+}
+
+void Interface::AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name)
+{
+	IRECT labelRect = MakeIRectVOffset(kStepKnobLabel, kStepKnobRowSpacing*rowNum);
+	pGraphics->MeasureIText(&TextStyles::Label, const_cast<char*>(name), &labelRect);
 	const int offset = labelRect.H() / 2;
 	labelRect.T -= offset;
 	labelRect.B -= offset;
-	pGraphics->AttachControl(new ITextControl(mPlug, labelRect, &TextStyles::Label, Strings::ProbabilityLabel));
+	pGraphics->AttachControl(new ITextControl(mPlug, labelRect, &TextStyles::Label, const_cast<char*>(name)));
 }
 
 void Interface::OnTick(const unsigned int tick)
