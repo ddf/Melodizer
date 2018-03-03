@@ -7,6 +7,7 @@
 #include "LED.h"
 #include "EnumControl.h"
 #include "TextBox.h"
+#include "BangControl.h"
 
 enum ELayout
 {
@@ -35,12 +36,12 @@ enum ELayout
 	kTempoControl_Y = kEnumY,
 	kTempoControl_W = 50,
 	kTempoControl_H = kEnumHeight,
-	
+
 	kOctaveControl_X = kTempoControl_X + kTempoControl_W + 10,
 	kOctaveControl_Y = kEnumY,
 	kOctaveControl_W = 20,
 	kOctaveControl_H = kEnumHeight,
-	
+
 	kRangeControl_X = kOctaveControl_X + kOctaveControl_W + 10,
 	kRangeControl_Y = kEnumY,
 	kRangeControl_W = 20,
@@ -51,25 +52,35 @@ enum ELayout
 	kShuffleControl_W = 20,
 	kShuffleControl_H = 20,
 
-	kFirstKnobColumnX = 95,
+	kFirstKnobColumnX = 65,
 
 	kKnobLED_W = 8,
 	kKnobLED_H = kKnobLED_W,
 	kKnobLED_X = kFirstKnobColumnX - kKnobLED_W / 2,
 	kKnobLED_Y = 50 - kKnobLED_H / 2,
 
+	kStepModeControl_W = 36,
+	kStepModeControl_H = 15,
+	kStepModeControl_X = kFirstKnobColumnX - kStepModeControl_W / 2,
+	kStepModeControl_Y = kKnobLED_Y + kKnobLED_H + 10,
+
 	kStepKnob_W = 30,
 	kStepKnob_H = kStepKnob_W,
 	kStepKnob_X = kFirstKnobColumnX - kStepKnob_W / 2,
-	kStepKnob_Y = kKnobLED_Y + kKnobLED_H + 10,
+	kStepKnob_Y = kStepModeControl_Y + kStepModeControl_H + 10,
 
-	kStepKnobLabel_X = 10,
+	kStepKnobLabel_X = 0,
 	kStepKnobLabel_Y = kStepKnob_Y + kStepKnob_H / 2,
-	kStepKnobLabel_W = kFirstKnobColumnX - kStepKnobLabel_X,
+	kStepKnobLabel_W = kFirstKnobColumnX - kStepKnobLabel_X - kStepKnob_W / 2,
 	kStepKnobLabel_H = 10,
 
 	kStepKnobColumnSpacing = 45,
 	kStepKnobRowSpacing = 45,
+
+	kStepRandomize_W = 10,
+	kStepRandomize_H = 10,
+	kStepRandomize_X = kFirstKnobColumnX + kStepKnobColumnSpacing*(kSequencerSteps-1) + 35,
+	kStepRandomize_Y = kStepKnob_Y + kStepKnob_H / 2 - kStepRandomize_H / 2,	
 };
 
 namespace Color
@@ -148,8 +159,15 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		mLEDs.push_back(led);
 		pGraphics->AttachControl(led);
 		
+		// mode
+		pGraphics->AttachControl(new EnumControl(mPlug, MakeIRectHOffset(kStepModeControl, hoffset), kStepModeFirst + i, &TextStyles::Enum));
+		// led behind the probability knob that blinks when a note is actually played
+		ledRect = MakeIRectHOffset(kStepKnob, hoffset).GetPadded(-4);
+		led = new LED(mPlug, ledRect, Color::Background, Color::LedOn, Color::Background);
+		mNoteOns.push_back(led);
+		pGraphics->AttachControl(led);
 		// probability
-		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHOffset(kStepKnob, hoffset), kProbabilityFirst + i, &Color::KnobLine, &Color::KnobCorona));
+		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHOffset(kStepKnob, hoffset), kProbabilityFirst + i, &Color::KnobLine, &Color::KnobCorona));		
 		// attack
 		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*1), kAttackFirst + i, &Color::KnobLine, &Color::KnobCorona));
 		// decay
@@ -165,6 +183,12 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	AttachStepRowLabel(pGraphics, 2, Strings::DecayLabel);
 	AttachStepRowLabel(pGraphics, 3, Strings::SustainLabel);
 	AttachStepRowLabel(pGraphics, 4, Strings::ReleaseLabel);
+
+	AttachStepRowRandomizer(pGraphics, 0, kProbabilityRandomize);
+	AttachStepRowRandomizer(pGraphics, 1, kAttackRandomize);
+	AttachStepRowRandomizer(pGraphics, 2, kDecayRandomize);
+	AttachStepRowRandomizer(pGraphics, 3, kSustainRandomize);
+	AttachStepRowRandomizer(pGraphics, 4, kReleaseRandomize);
 }
 
 void Interface::AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name)
@@ -177,10 +201,20 @@ void Interface::AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char 
 	pGraphics->AttachControl(new ITextControl(mPlug, labelRect, &TextStyles::Label, const_cast<char*>(name)));
 }
 
-void Interface::OnTick(const unsigned int tick)
+void Interface::AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, EParams param)
+{
+	IRECT rect = MakeIRectVOffset(kStepRandomize, kStepKnobRowSpacing*rowNum);
+	pGraphics->AttachControl(new BangControl(mPlug, rect, param, Color::LedOn, Color::LedOff));
+}
+
+void Interface::OnTick(const unsigned int tick, bool noteOn)
 {
 	if ( tick < mLEDs.size() )
 	{
 		mLEDs[tick]->Blink();
+		if (noteOn)
+		{
+			mNoteOns[tick]->Blink();
+		}
 	}
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Params.h"
 #include <vector>
 
 class Melodizer;
@@ -16,14 +17,17 @@ public:
 
 	// called by the plug when the next triggered 16th note happens.
 	// we use this to blink the appropriate LED
-	void OnTick(const unsigned int tick);
+	void OnTick(const unsigned int tick, bool noteOn);
 
 private:	
 	void AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name);
+	void AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, EParams param);
 
 	Melodizer* const mPlug;
 
 	// bank of LED graphics above all the knobs
 	std::vector<LED*> mLEDs;
+	std::vector<LED*> mNoteOns;
+	
 };
 

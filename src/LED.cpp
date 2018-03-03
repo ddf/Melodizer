@@ -26,7 +26,7 @@ bool LED::Draw(IGraphics* pGraphics)
 	IChannelBlend backBlend(IChannelBlend::kBlendClobber);
 
 	pGraphics->FillIRect(&mBackColor, &mRECT, &backBlend);
-	pGraphics->FillCircle(&color, mRECT.MW(), mRECT.MH(), mRECT.W()/2 - 1);
+	pGraphics->FillCircle(&color, mRECT.MW(), mRECT.MH(), mRECT.W()/2 - 1, 0, true);
 
 	if (mColorLerp > 0)
 	{

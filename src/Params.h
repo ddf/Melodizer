@@ -1,6 +1,6 @@
 #pragma once
 
-#define STEP_PARAM(paramName) paramName##First, paramName##Last = paramName##First + kSequencerSteps - 1
+#define STEP_PARAM(paramName) paramName##First, paramName##Last = paramName##First + kSequencerSteps - 1, paramName##Randomize
 
 enum EParams
 {
@@ -14,6 +14,7 @@ enum EParams
 	kRange,
 	kShuffle,
 
+	STEP_PARAM(kStepMode), // see: enum StepMode
 	STEP_PARAM(kProbability),
 	STEP_PARAM(kAttack),
 	STEP_PARAM(kDecay),
@@ -27,6 +28,15 @@ enum EParamSettings
 {
 	kTempoMin = 1,
 	kTempoMax = 960,
+};
+
+enum StepMode
+{
+	SM_Norm = 0,
+	SM_Skip,
+	SM_Loop,
+
+	SM_Count
 };
 
 enum WaveformType

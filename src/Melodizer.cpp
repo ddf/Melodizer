@@ -134,6 +134,19 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		const double secondsStep = 0.01f;
 		for (int i = 0; i < kSequencerSteps; ++i)
 		{
+			sprintf(paramName, "Step Mode %d", i);
+			GetParam(kStepModeFirst + i)->InitEnum(paramName, SM_Norm, SM_Count);
+			for (int mode = SM_Norm; mode < SM_Count; ++mode)
+			{
+				IParam* param = GetParam(kStepModeFirst + i);
+				switch (mode)
+				{
+				case SM_Norm: param->SetDisplayText(mode, "NORM"); break;
+				case SM_Skip: param->SetDisplayText(mode, "SKIP"); break;
+				case SM_Loop: param->SetDisplayText(mode, "LOOP"); break;
+				}
+			}
+
 			sprintf(paramName, "Probability %d", i);
 			GetParam(kProbabilityFirst + i)->InitDouble(paramName, 50, 0, 100, percentStep, "%");
 
@@ -151,6 +164,13 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 
 			mTones.push_back(new Tone(mMelodyBus));
 		}
+	}
+
+	// randomizers
+	{
+		GetParam(kProbabilityRandomize)->InitEnum("Probability Randomize", 0, 2);
+		GetParam(kProbabilityRandomize)->SetDisplayText(0, "Off");
+		GetParam(kProbabilityRandomize)->SetDisplayText(1, "On");
 	}
 
 	// interface!
@@ -194,17 +214,16 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	float result[2];
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		mMelodyBus.tick(result, 2);
-		*out1 = result[0];
-		*out2 = result[1];
-
-		--mSampleCount;
-
 		if (mSampleCount == 0)
 		{
 			mTones[mTick]->noteOff();
 
-			mTick = (mTick + 1) % 16;
+			do
+			{
+				StepMode mode = (StepMode)GetParam(kStepModeFirst + mTick)->Int();
+				mTick = mode == SM_Loop ? 0 : (mTick + 1) % 16;
+			} while (GetParam(kStepModeFirst + mTick)->Int() == SM_Skip);
+
 			if (mTick % 2 == 0)
 			{
 				mSampleCount = (unsigned long)round(samplesPerBeat*GetParam(kShuffle)->Value());
@@ -214,13 +233,19 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 				mSampleCount = (unsigned long)round(samplesPerBeat*(1.0 - GetParam(kShuffle)->Value()));
 			}
 
-			const double prob = GetParam(kProbabilityFirst + mTick)->Value();
-			if (RandomRange(0.f, 100.f) <= prob)
+			const bool noteOn = RandomRange(0.f, 100.f) <= GetParam(kProbabilityFirst + mTick)->Value();
+			mInterface.OnTick(mTick, noteOn);
+			if (noteOn)
 			{
-				mInterface.OnTick(mTick);
 				GenerateNote(mTick, waveformIdx, Scales[scaleIdx], keyIdx, lowOctave, hiOctave, 0, mPreviousNoteIndex);
 			}
 		}
+
+		mMelodyBus.tick(result, 2);
+		*out1 = result[0];
+		*out2 = result[1];
+
+		--mSampleCount;
 	}
 }
 
@@ -239,8 +264,7 @@ void Melodizer::Reset()
 
 	mTick = 0;
 	mPreviousNoteIndex = 0;
-	mSampleCount = (unsigned int)round(GetSampleRate() * 60.0 / GetParam(kTempo)->Value() * GetParam(kShuffle)->Value());
-	mInterface.OnTick(0);
+	mSampleCount = 0;
 	mMelodyBus.setAudioChannelCount(2);
 	mMelodyBus.setSampleRate(GetSampleRate());
 }
@@ -249,10 +273,32 @@ void Melodizer::OnParamChange(int paramIdx)
 {
 	IMutexLock lock(this);
 
+	const IParam* param = GetParam(paramIdx);
 	switch (paramIdx)
 	{
 	case kScale:
 		mPreviousNoteIndex = 0;
+		break;
+
+	case kProbabilityRandomize:
+	case kAttackRandomize:
+	case kDecayRandomize:
+	case kSustainRandomize:
+	case kReleaseRandomize:
+		if (param->Int() == 1)
+		{
+			std::uniform_real_distribution<> dist(0, 1);
+			for (int i = 0; i < kSequencerSteps; ++i)
+			{
+				int pidx = paramIdx - kSequencerSteps + i;
+				BeginInformHostOfParamChange(pidx);
+				double normValue = dist(mRandomGen);
+				GetParam(pidx)->SetNormalized(normValue);
+				GetGUI()->SetParameterFromPlug(pidx, normValue, true);
+				InformHostOfParamChange(pidx, normValue);
+				EndInformHostOfParamChange(pidx);
+			}
+		}
 		break;
 
 	default:

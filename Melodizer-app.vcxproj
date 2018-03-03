@@ -287,6 +287,7 @@
     <ClInclude Include="app_wrapper\app_main.h" />
     <ClInclude Include="app_wrapper\app_resource.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\BangControl.h" />
     <ClInclude Include="src\EnumControl.h" />
     <ClInclude Include="src\Instruments.h" />
     <ClInclude Include="src\KnobLineCoronaControl.h" />
@@ -315,6 +316,7 @@
     <ClCompile Include="..\minim-cpp\src\ugens\Wavetable.cpp" />
     <ClCompile Include="app_wrapper\app_dialog.cpp" />
     <ClCompile Include="app_wrapper\app_main.cpp" />
+    <ClCompile Include="src\BangControl.cpp" />
     <ClCompile Include="src\EnumControl.cpp" />
     <ClCompile Include="src\Instruments.cpp" />
     <ClCompile Include="src\KnobLineCoronaControl.cpp" />
