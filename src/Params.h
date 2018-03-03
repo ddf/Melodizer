@@ -12,6 +12,7 @@ enum EParams
 	kTempo,
 	kOctave,
 	kRange,
+	kShuffle,
 
 	STEP_PARAM(kProbability),
 	STEP_PARAM(kAttack),

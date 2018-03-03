@@ -37,7 +37,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		}
 
 		IParam* param = GetParam(kWaveform);
-		param->InitEnum("Waveform", WT_Saw, WT_Count);
+		param->InitEnum("Waveform", WT_Sine4, WT_Count);
 
 		for (int i = 0; i < WT_Count; ++i)
 		{
@@ -121,6 +121,11 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		GetParam(kRange)->InitInt("Range", 0, 0, 8);
 	}
 
+	// shuffle
+	{
+		GetParam(kShuffle)->InitDouble("Shuffle", 0.5, 0.1, 0.9, 0.01f);
+	}
+
 	// knob bank
 	{
 		//arguments are: name, defaultVal, minVal, maxVal, step, label
@@ -175,7 +180,8 @@ Melodizer::~Melodizer()
 void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
 	// Mutex is already locked for us.
-	const unsigned int samplesPerTick = (unsigned int)(GetSampleRate() * 60.0 / GetParam(kTempo)->Value()) / 2;
+	// one beat is two ticks, which allows us to use kShuffle directly to calculate mSampleCount.
+	const unsigned int samplesPerBeat = (unsigned int)(GetSampleRate() * 60.0 / GetParam(kTempo)->Value());
 	const unsigned int waveformIdx = GetParam(kWaveform)->Int();
 	const unsigned int scaleIdx = GetParam(kScale)->Int();
 	const unsigned int keyIdx = GetParam(kKey)->Int();
@@ -199,7 +205,14 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			mTones[mTick]->noteOff();
 
 			mTick = (mTick + 1) % 16;
-			mSampleCount = samplesPerTick;
+			if (mTick % 2 == 0)
+			{
+				mSampleCount = (unsigned long)round(samplesPerBeat*GetParam(kShuffle)->Value());
+			}
+			else
+			{
+				mSampleCount = (unsigned long)round(samplesPerBeat*(1.0 - GetParam(kShuffle)->Value()));
+			}
 
 			const double prob = GetParam(kProbabilityFirst + mTick)->Value();
 			if (RandomRange(0.f, 100.f) <= prob)
@@ -213,7 +226,6 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 void Melodizer::BeginMIDILearn(int param1, int param2, int x, int y)
 {
-	throw std::logic_error("The method or operation is not implemented.");
 }
 
 void Melodizer::Reset()
@@ -227,7 +239,7 @@ void Melodizer::Reset()
 
 	mTick = 0;
 	mPreviousNoteIndex = 0;
-	mSampleCount = (unsigned int)(GetSampleRate() * 60.0 / GetParam(kTempo)->Value()) / 2;
+	mSampleCount = (unsigned int)round(GetSampleRate() * 60.0 / GetParam(kTempo)->Value() * GetParam(kShuffle)->Value());
 	mInterface.OnTick(0);
 	mMelodyBus.setAudioChannelCount(2);
 	mMelodyBus.setSampleRate(GetSampleRate());
