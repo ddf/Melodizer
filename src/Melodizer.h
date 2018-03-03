@@ -39,6 +39,8 @@ private:
 
 	// count how many samples so we know when to increment mTick
 	unsigned long int mSampleCount;
+	// is the tick even or odd, for the purposes of adjust sample count with shuffle
+	bool mOddTick;
 	unsigned int mTick;
 	unsigned int mPreviousNoteIndex;
 

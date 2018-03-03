@@ -18,6 +18,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mTick(0)
 	, mPreviousNoteIndex(0)
 	, mSampleCount(0)
+	, mOddTick(false)
 	, mMelodyBus()
 	, mRandomGen(0)
 {
@@ -227,13 +228,33 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		{
 			mTones[mTick]->noteOff();
 
-			do
-			{
-				StepMode mode = (StepMode)GetParam(kStepModeFirst + mTick)->Int();
-				mTick = mode == SM_Loop ? 0 : (mTick + 1) % 16;
-			} while (GetParam(kStepModeFirst + mTick)->Int() == SM_Skip);
+			// advance one tick
+			int nextTick = (mTick + 1) % kSequencerSteps;
 
-			if (mTick % 2 == 0)
+			// figure out what the next actual tick should be based on StepModes
+			// if the next tick in sequence is marked Loop we jump back to the beginning instead of processing it
+			if (GetParam(kStepModeFirst + nextTick)->Int() == SM_Loop)
+			{
+				nextTick = 0;
+			}
+
+			// if the next tick in the sequence is marked Skip,
+			// we look at the one after that, stopping if we loop back around to our current tick
+			// in order to prevent an infinite loop.
+			while (GetParam(kStepModeFirst + nextTick)->Int() == SM_Skip && nextTick != mTick)
+			{
+				nextTick = (nextTick + 1) % kSequencerSteps;
+				// again, if we encounter a Loop, we reset the sequence,
+				// we don't break because the first step might be marked Skip
+				if (GetParam(kStepModeFirst + nextTick)->Int() == SM_Loop)
+				{
+					nextTick = 0;
+				}
+			}
+			
+			mTick = nextTick;
+
+			if (mOddTick)
 			{
 				mSampleCount = (unsigned long)round(samplesPerBeat*GetParam(kShuffle)->Value());
 			}
@@ -241,6 +262,8 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			{
 				mSampleCount = (unsigned long)round(samplesPerBeat*(1.0 - GetParam(kShuffle)->Value()));
 			}
+
+			mOddTick = !mOddTick;
 
 			const bool noteOn = RandomRange(0.f, 100.f) <= GetParam(kProbabilityFirst + mTick)->Value();
 			mInterface.OnTick(mTick, noteOn);
@@ -274,6 +297,7 @@ void Melodizer::Reset()
 	mTick = 0;
 	mPreviousNoteIndex = 0;
 	mSampleCount = 0;
+	mOddTick = false;
 	mMelodyBus.setAudioChannelCount(2);
 	mMelodyBus.setSampleRate(GetSampleRate());
 }
