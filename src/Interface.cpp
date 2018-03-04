@@ -54,8 +54,13 @@ enum ELayout
 	kTempoControl_Y = kEnumY,
 	kTempoControl_W = 50,
 	kTempoControl_H = kEnumHeight,
+	
+	kStepLengthControl_X = kTempoControl_X + kTempoControl_W + 10,
+	kStepLengthControl_Y = kEnumY,
+	kStepLengthControl_W = 30,
+	kStepLengthControl_H = kEnumHeight,
 
-	kOctaveControl_X = kTempoControl_X + kTempoControl_W + 10,
+	kOctaveControl_X = kStepLengthControl_X + kStepLengthControl_W + 10,
 	kOctaveControl_Y = kEnumY,
 	kOctaveControl_W = 20,
 	kOctaveControl_H = kEnumHeight,
@@ -169,6 +174,8 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 	// tempo
 	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kTempoControl), kTempo, &TextStyles::Enum, pGraphics, "000.000"));
+	// step length
+	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kStepLengthControl), kStepLength, &TextStyles::Enum));
 	// octave
 	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kOctaveControl), kOctave, &TextStyles::Enum, pGraphics, "00"));
 	// range

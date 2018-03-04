@@ -134,9 +134,22 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		}
 	}
 
-	// tempo
+	// tempo / step
 	{
 		GetParam(kTempo)->InitDouble("Tempo", DEFAULT_TEMPO, kTempoMin, kTempoMax, 0.01, "bpm");
+		IParam* param = GetParam(kStepLength);
+		param->InitEnum("Step Length", SL_8, SL_Count);
+		for(int i = 0; i < SL_Count; ++i)
+		{
+			switch(i)
+			{
+				case SL_4: param->SetDisplayText(i, "1/4"); break;
+				case SL_8: param->SetDisplayText(i, "1/8"); break;
+				case SL_16: param->SetDisplayText(i, "1/16"); break;
+				case SL_32: param->SetDisplayText(i, "1/32"); break;
+				case SL_64: param->SetDisplayText(i, "1/64"); break;
+			}
+		}
 	}
 	
 	// octave + range
@@ -242,8 +255,15 @@ void Melodizer::InitRandomizerParam(const int paramIdx, const char *paramName)
 void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
 	// Mutex is already locked for us.
-	// one beat is two ticks, which allows us to use kShuffle directly to calculate mSampleCount.
-	const unsigned int samplesPerBeat = (unsigned int)(GetSampleRate() * 60.0 / GetParam(kTempo)->Value());
+	// one beat is two steps, which allows us to use kShuffle directly to calculate mSampleCount.
+	unsigned int samplesPerBeat = (unsigned int)(GetSampleRate() * 60.0 / GetParam(kTempo)->Value());
+	switch(GetParam(kStepLength)->Int())
+	{
+		case SL_4:  samplesPerBeat *= 2; break;
+		case SL_16: samplesPerBeat /= 2; break;
+		case SL_32: samplesPerBeat /= 4; break;
+		case SL_64: samplesPerBeat /= 8; break;
+	}
 	const unsigned int waveformIdx = GetParam(kWaveform)->Int();
 	const unsigned int scaleIdx = GetParam(kScale)->Int();
 	const unsigned int keyIdx = GetParam(kKey)->Int();

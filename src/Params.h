@@ -31,6 +31,7 @@ enum EParams
 	kScale,
 	kKey,
 	kTempo,
+	kStepLength,
 	kOctave,
 	kRange,
 	kShuffle,
@@ -54,6 +55,17 @@ enum StepMode
 	SM_Loop,
 
 	SM_Count
+};
+
+enum StepLength
+{
+	SL_4,
+	SL_8,
+	SL_16,
+	SL_32,
+	SL_64,
+	
+	SL_Count,
 };
 
 enum WaveformType
