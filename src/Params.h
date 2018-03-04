@@ -2,23 +2,38 @@
 
 #define STEP_PARAM(paramName) paramName##First, paramName##Last = paramName##First + kSequencerSteps - 1, paramName##Randomize
 
+enum EParamSettings
+{
+	kTempoMin = 1,
+	kTempoMax = 960,
+	
+	kVoicesMin = 1,
+	kVoicesMax = 32,
+	
+	kSequencerSteps = 16,
+};
+
 enum EParams
 {
-	kSequencerSteps = 16,
-
+	// synth params
 	kWaveform = 0,
+	
+	kEnvAttack,
+	kEnvDecay,
+	kEnvSustain,
+	kEnvRelease,
+	
+	kVoices,
+	
+	// global sequence params
 	kScale,
 	kKey,
 	kTempo,
 	kOctave,
 	kRange,
 	kShuffle,
-
-	kEnvAttack,
-	kEnvDecay,
-	kEnvSustain,
-	kEnvRelease,
-
+	
+	// step params
 	STEP_PARAM(kStepMode), // see: enum StepMode
 	STEP_PARAM(kProbability),
 	STEP_PARAM(kPan),
@@ -28,12 +43,6 @@ enum EParams
 	STEP_PARAM(kRelease),
 
 	kNumParams
-};
-
-enum EParamSettings
-{
-	kTempoMin = 1,
-	kTempoMax = 960,
 };
 
 enum StepMode

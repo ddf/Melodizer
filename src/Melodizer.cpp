@@ -21,6 +21,8 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mOddTick(false)
 	, mMelodyBus()
 	, mRandomGen(0)
+	, mTones(kVoicesMax)
+	, mActiveTone(0)
 {
 	TRACE;
 
@@ -86,6 +88,17 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 			default:
 				break;
 			}
+		}
+	}
+	
+	// synth settings
+	{
+		GetParam(kVoices)->InitInt("Max Voices", 16, kVoicesMin, kVoicesMax);
+		
+		// make a Tone for each voice we can have
+		for(int i = 0; i < kVoicesMax; ++i)
+		{
+			mTones[i] = new Tone(mMelodyBus);
 		}
 	}
 
@@ -174,8 +187,6 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 
 			sprintf(paramName, "Step %d Release", i);
 			GetParam(kReleaseFirst + i)->InitDouble(paramName, 100, 1, 100, percentStep, "%");
-
-			mTones.push_back(new Tone(mMelodyBus));
 		}
 	}
 
@@ -237,7 +248,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	{
 		if (mSampleCount == 0)
 		{
-			mTones[mTick]->noteOff();
+			mTones[mActiveTone]->noteOff();
 
 			// advance one tick
 			int nextTick = (mTick + 1) % kSequencerSteps;
@@ -309,6 +320,11 @@ void Melodizer::Reset()
 	mPreviousNoteIndex = 0;
 	mSampleCount = 0;
 	mOddTick = false;
+	mActiveTone = 0;
+	for(int i = 0; i < mTones.size(); ++i)
+	{
+		mTones[i]->noteOff();
+	}
 	mMelodyBus.setAudioChannelCount(2);
 	mMelodyBus.setSampleRate(GetSampleRate());
 }
@@ -382,8 +398,14 @@ void Melodizer::GenerateNote( int tick,
 	const float decay   = GetParam(kEnvDecay)->Value()   * GetParam(kDecayFirst + tick)->Value() / 100;
 	const float sustain = GetParam(kEnvSustain)->Value() * GetParam(kSustainFirst + tick)->Value() / 100;
 	const float release = GetParam(kEnvRelease)->Value() * GetParam(kReleaseFirst + tick)->Value() / 100;
-    
-	mTones[tick]->noteOn(mWaveforms[waveformIdx], tick, freq, amp, attack, decay, sustain, release, pan);
+	
+	// move to the next active tone
+	const int voices = GetParam(kVoices)->Int();
+	if ( voices > 1 )
+	{
+		mActiveTone = (mActiveTone+1)%voices;
+	}
+	mTones[mActiveTone]->noteOn(mWaveforms[waveformIdx], tick, freq, amp, attack, decay, sustain, release, pan);
 
     previousNoteIndex = nextNoteIndex;    
 }

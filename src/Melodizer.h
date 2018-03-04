@@ -50,8 +50,9 @@ private:
 
 	Minim::Summer mMelodyBus;
 
-	// we'll have one Tone for each tick that will be reconfigured before being triggered
+	// we'll have one Tone for each voice that will be reconfigured before being triggered
 	std::vector<Tone*> mTones;
+	unsigned int mActiveTone;
 
 	// we'll have a number of Waveforms to choose from
 	std::vector<Minim::Waveform*> mWaveforms;
