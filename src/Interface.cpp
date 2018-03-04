@@ -121,6 +121,7 @@ namespace TextStyles
 namespace Strings
 {
 	const char * ProbabilityLabel = "P(N)";
+	const char * PanLabel = "L-R";
 	const char * AttackLabel = "A";
 	const char * DecayLabel = "D";
 	const char * SustainLabel = "S";
@@ -178,28 +179,32 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		mNoteOns.push_back(led);
 		pGraphics->AttachControl(led);
 		// probability
-		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHOffset(kStepKnob, hoffset), kProbabilityFirst + i, &Color::KnobLine, &Color::KnobCorona));		
+		AttachKnob(pGraphics, MakeIRectHOffset(kStepKnob, hoffset), kProbabilityFirst + i);
+		// pan
+		AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*1), kPanFirst + i);
 		// attack
-		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*1), kAttackFirst + i, &Color::KnobLine, &Color::KnobCorona));
+		AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*2), kAttackFirst + i);
 		// decay
-		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*2), kDecayFirst + i, &Color::KnobLine, &Color::KnobCorona));
+		AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*3), kDecayFirst + i);
 		// sustain
-		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*3), kSustainFirst + i, &Color::KnobLine, &Color::KnobCorona));
+		AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*4), kSustainFirst + i);
 		// release
-		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*4), kReleaseFirst + i, &Color::KnobLine, &Color::KnobCorona));
+		AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*5), kReleaseFirst + i);
 	}
 
 	AttachStepRowLabel(pGraphics, 0, Strings::ProbabilityLabel);
-	AttachStepRowLabel(pGraphics, 1, Strings::AttackLabel);
-	AttachStepRowLabel(pGraphics, 2, Strings::DecayLabel);
-	AttachStepRowLabel(pGraphics, 3, Strings::SustainLabel);
-	AttachStepRowLabel(pGraphics, 4, Strings::ReleaseLabel);
+	AttachStepRowLabel(pGraphics, 1, Strings::PanLabel);
+	AttachStepRowLabel(pGraphics, 2, Strings::AttackLabel);
+	AttachStepRowLabel(pGraphics, 3, Strings::DecayLabel);
+	AttachStepRowLabel(pGraphics, 4, Strings::SustainLabel);
+	AttachStepRowLabel(pGraphics, 5, Strings::ReleaseLabel);
 
 	AttachStepRowRandomizer(pGraphics, 0, kProbabilityRandomize);
-	AttachStepRowRandomizer(pGraphics, 1, kAttackRandomize);
-	AttachStepRowRandomizer(pGraphics, 2, kDecayRandomize);
-	AttachStepRowRandomizer(pGraphics, 3, kSustainRandomize);
-	AttachStepRowRandomizer(pGraphics, 4, kReleaseRandomize);
+	AttachStepRowRandomizer(pGraphics, 1, kPanRandomize);
+	AttachStepRowRandomizer(pGraphics, 2, kAttackRandomize);
+	AttachStepRowRandomizer(pGraphics, 3, kDecayRandomize);
+	AttachStepRowRandomizer(pGraphics, 4, kSustainRandomize);
+	AttachStepRowRandomizer(pGraphics, 5, kReleaseRandomize);
 }
 
 void Interface::AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name)
@@ -212,13 +217,13 @@ void Interface::AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char 
 	pGraphics->AttachControl(new ITextControl(mPlug, labelRect, &TextStyles::Label, const_cast<char*>(name)));
 }
 
-void Interface::AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, EParams param)
+void Interface::AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, const int param)
 {
 	IRECT rect = MakeIRectVOffset(kStepRandomize, kStepKnobRowSpacing*rowNum);
 	pGraphics->AttachControl(new BangControl(mPlug, rect, param, Color::LedOn, Color::LedOff));
 }
 
-void Interface::AttachKnob(IGraphics* pGraphics, IRECT rect, EParams paramIdx, const char * label)
+void Interface::AttachKnob(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label)
 {
 	pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, rect, paramIdx, &Color::KnobLine, &Color::KnobCorona));
 	

@@ -31,7 +31,8 @@ public:
   void BeginMIDILearn(int param1, int param2, int x, int y);
 
 private:
-	void GenerateNote(int tick, unsigned int waveformIdx, const Scale* notes, unsigned int key, int lowOctave, int hiOctave, float panRange, unsigned int& previousNoteIndex);
+	void InitRandomizerParam(const int paramIdx, const char * paramName);
+	void GenerateNote(int tick, unsigned int waveformIdx, const Scale* notes, unsigned int key, int lowOctave, int hiOctave, unsigned int& previousNoteIndex);
 	int RandomRange(int low, int hi);
 	float RandomRange(float low, float hi);
 

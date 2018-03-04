@@ -159,6 +159,9 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 
 			sprintf(paramName, "Step %d Probability", i);
 			GetParam(kProbabilityFirst + i)->InitDouble(paramName, 50, 0, 100, percentStep, "%");
+			
+			sprintf(paramName, "Step %d Pan", i);
+			GetParam(kPanFirst + i)->InitDouble(paramName, 0, -1, 1, 0.1);
 
 			sprintf(paramName, "Step %d Attack", i);
 			GetParam(kAttackFirst + i)->InitDouble(paramName, 100, 1, 100, percentStep, "%");
@@ -177,11 +180,12 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	}
 
 	// randomizers
-	{
-		GetParam(kProbabilityRandomize)->InitEnum("Probability Randomize", 0, 2);
-		GetParam(kProbabilityRandomize)->SetDisplayText(0, "Off");
-		GetParam(kProbabilityRandomize)->SetDisplayText(1, "On");
-	}
+	InitRandomizerParam(kProbabilityRandomize, "Randomize Probabilities");
+	InitRandomizerParam(kPanRandomize, "Randomize Pans");
+	InitRandomizerParam(kAttackRandomize, "Randomize Attacks");
+	InitRandomizerParam(kDecayRandomize, "Randomize Decays");
+	InitRandomizerParam(kSustainRandomize, "Randomize Sustain");
+	InitRandomizerParam(kReleaseRandomize, "Randomize Releases");
 
 	// interface!
 	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
@@ -205,6 +209,13 @@ Melodizer::~Melodizer()
 		delete mTones[i];
 	}
 	mTones.clear();
+}
+
+void Melodizer::InitRandomizerParam(const int paramIdx, const char *paramName)
+{
+	GetParam(paramIdx)->InitEnum(paramName, 0, 2);
+	GetParam(paramIdx)->SetDisplayText(0, "Off");
+	GetParam(paramIdx)->SetDisplayText(1, "On");
 }
 
 void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
@@ -269,7 +280,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			mInterface.OnTick(mTick, noteOn);
 			if (noteOn)
 			{
-				GenerateNote(mTick, waveformIdx, Scales[scaleIdx], keyIdx, lowOctave, hiOctave, 0, mPreviousNoteIndex);
+				GenerateNote(mTick, waveformIdx, Scales[scaleIdx], keyIdx, lowOctave, hiOctave, mPreviousNoteIndex);
 			}
 		}
 
@@ -314,6 +325,7 @@ void Melodizer::OnParamChange(int paramIdx)
 		break;
 
 	case kProbabilityRandomize:
+	case kPanRandomize:
 	case kAttackRandomize:
 	case kDecayRandomize:
 	case kSustainRandomize:
@@ -344,8 +356,7 @@ void Melodizer::GenerateNote( int tick,
                           const Scale* notes, 
                           unsigned int key, 
                           int lowOctave, 
-                          int hiOctave, 
-                          float panRange, 
+                          int hiOctave,
                           unsigned int& previousNoteIndex
                          )
 {
@@ -363,20 +374,10 @@ void Melodizer::GenerateNote( int tick,
 	int baseNote = notes->scale[nextNoteIndex][0] + key;
 	int octave = RandomRange(lowOctave, hiOctave);
     int note = baseNote + octave * 12;
-    float freq = Frequency::ofMidiNote( note ).asHz();
-	float amp = RandomRange(0.41f, 0.61f);
-    float pan = 0.f;
-    
-    if ( panRange != 0 )
-    {
-        pan = RandomRange(0.f, panRange) + 0.2f;
-        if ( RandomRange(0.f, 1.f) < 0.5f )
-        {
-            pan *= -1;
-        }
-		pan = RandomRange(-pan, pan);
-    }
-    
+	
+    const float freq = Frequency::ofMidiNote( note ).asHz();
+	const float amp = RandomRange(0.41f, 0.61f);
+	const float pan = GetParam(kPanFirst + tick)->Value();
 	const float attack  = GetParam(kEnvAttack)->Value()  * GetParam(kAttackFirst + tick)->Value() / 100;
 	const float decay   = GetParam(kEnvDecay)->Value()   * GetParam(kDecayFirst + tick)->Value() / 100;
 	const float sustain = GetParam(kEnvSustain)->Value() * GetParam(kSustainFirst + tick)->Value() / 100;

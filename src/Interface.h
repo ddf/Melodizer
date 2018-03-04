@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Params.h"
 #include "IPlugStructs.h"
 #include <vector>
 
@@ -21,9 +20,9 @@ public:
 	void OnTick(const unsigned int tick, bool noteOn);
 
 private:	
-	void AttachKnob(IGraphics* pGraphics, IRECT rect, EParams paramIdx, const char * label = nullptr);
+	void AttachKnob(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label = nullptr);
 	void AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name);
-	void AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, EParams param);
+	void AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, const int param);
 
 	Melodizer* const mPlug;
 
