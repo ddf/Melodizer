@@ -134,9 +134,11 @@ Tone::Tone( Summer& inSummer )
 : out( inSummer )
 , wave(new Wave())
 , oscil( 0, 1, wave )
+, frequency(0,0,0)
 , panner( 0 )
 , adsr()
 {
+	frequency.patch( oscil.frequency );
     adsr.setAudioChannelCount( 2 );
     oscil.patch( panner ).patch ( adsr ).patch( out );
 }
@@ -151,10 +153,10 @@ float Tone::Wave::value(const float at) const
 	return source != nullptr ? source->value(at) : 0.0f;
 }
 
-void Tone::noteOn( Waveform* waveform, int tick, float freq, float amp, float attack, float decay, float sustain, float release, float pan )
+void Tone::noteOn( Waveform* waveform, int tick, float fromFreq, float toFreq, float glide, float amp, float attack, float decay, float sustain, float release, float pan )
 {
 	wave->source = waveform;
-    oscil.frequency.setLastValue( freq );
+	frequency.activate(glide, fromFreq, toFreq);
     panner.pan.setLastValue( pan );
     tick = tick;
     

@@ -13,6 +13,7 @@
 #include "Oscil.h"
 #include "Summer.h"
 #include "Pan.h"
+#include "Line.h"
 
 using namespace Minim;
 
@@ -55,10 +56,11 @@ public:
     Tone( Summer& out );
 	~Tone();
        
-	void noteOn(Waveform* waveform, int tick, float freq, float amp, float attack, float decay, float sustain, float release, float pan);
+	void noteOn(Waveform* waveform, int tick, float fromFreq, float toFreq, float glide, float amp, float attack, float decay, float sustain, float release, float pan);
 	void noteOff();
 
     int  getTick() const { return tick; }
+	float getFrequency() const { return oscil.frequency.getLastValue(); }
     
 private:
 
@@ -80,6 +82,7 @@ private:
 	// we need to make a new one of these because, stupidly, Oscil deletes the Waveform it is constructed with
 	Wave*		wave;
     Oscil		oscil;
+	Line 		frequency;
     ADSR		adsr;
     Pan			panner;
     int			tick;

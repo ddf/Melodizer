@@ -26,6 +26,7 @@ enum EParams
 	kVoices,
 	kVolume,
 	kWidth,
+	kGlide,
 	
 	// global sequence params
 	kScale,
