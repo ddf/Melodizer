@@ -242,7 +242,6 @@
 		7779E9ED2049DB0900AB7ED5 /* Melodizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9D12049DAF900AB7ED5 /* Melodizer.cpp */; };
 		7779E9EE2049DB0900AB7ED5 /* Scales.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9C82049DAF800AB7ED5 /* Scales.cpp */; };
 		7779E9EF2049DB0900AB7ED5 /* TextBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9CE2049DAF900AB7ED5 /* TextBox.cpp */; };
-		7779E9FC2049DC2200AB7ED5 /* ADSR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F72049DC1D00AB7ED5 /* ADSR.cpp */; };
 		7779E9FD2049DC2200AB7ED5 /* AudioSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F62049DC1D00AB7ED5 /* AudioSource.cpp */; };
 		7779E9FE2049DC2200AB7ED5 /* Frequency.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F92049DC1D00AB7ED5 /* Frequency.cpp */; };
 		7779E9FF2049DC2200AB7ED5 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F82049DC1D00AB7ED5 /* Logging.cpp */; };
@@ -252,7 +251,6 @@
 		7779EA032049DC2200AB7ED5 /* UGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F52049DC1D00AB7ED5 /* UGen.cpp */; };
 		7779EA042049DC2200AB7ED5 /* Waves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9FB2049DC1E00AB7ED5 /* Waves.cpp */; };
 		7779EA052049DC2200AB7ED5 /* Wavetable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F42049DC1D00AB7ED5 /* Wavetable.cpp */; };
-		7779EA062049DC2200AB7ED5 /* ADSR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F72049DC1D00AB7ED5 /* ADSR.cpp */; };
 		7779EA072049DC2200AB7ED5 /* AudioSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F62049DC1D00AB7ED5 /* AudioSource.cpp */; };
 		7779EA082049DC2200AB7ED5 /* Frequency.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F92049DC1D00AB7ED5 /* Frequency.cpp */; };
 		7779EA092049DC2200AB7ED5 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F82049DC1D00AB7ED5 /* Logging.cpp */; };
@@ -262,7 +260,6 @@
 		7779EA0D2049DC2200AB7ED5 /* UGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F52049DC1D00AB7ED5 /* UGen.cpp */; };
 		7779EA0E2049DC2200AB7ED5 /* Waves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9FB2049DC1E00AB7ED5 /* Waves.cpp */; };
 		7779EA0F2049DC2200AB7ED5 /* Wavetable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F42049DC1D00AB7ED5 /* Wavetable.cpp */; };
-		7779EA102049DC2300AB7ED5 /* ADSR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F72049DC1D00AB7ED5 /* ADSR.cpp */; };
 		7779EA112049DC2300AB7ED5 /* AudioSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F62049DC1D00AB7ED5 /* AudioSource.cpp */; };
 		7779EA122049DC2300AB7ED5 /* Frequency.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F92049DC1D00AB7ED5 /* Frequency.cpp */; };
 		7779EA132049DC2300AB7ED5 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F82049DC1D00AB7ED5 /* Logging.cpp */; };
@@ -272,7 +269,6 @@
 		7779EA172049DC2300AB7ED5 /* UGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F52049DC1D00AB7ED5 /* UGen.cpp */; };
 		7779EA182049DC2300AB7ED5 /* Waves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9FB2049DC1E00AB7ED5 /* Waves.cpp */; };
 		7779EA192049DC2300AB7ED5 /* Wavetable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F42049DC1D00AB7ED5 /* Wavetable.cpp */; };
-		7779EA1A2049DC2300AB7ED5 /* ADSR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F72049DC1D00AB7ED5 /* ADSR.cpp */; };
 		7779EA1B2049DC2300AB7ED5 /* AudioSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F62049DC1D00AB7ED5 /* AudioSource.cpp */; };
 		7779EA1C2049DC2300AB7ED5 /* Frequency.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F92049DC1D00AB7ED5 /* Frequency.cpp */; };
 		7779EA1D2049DC2300AB7ED5 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779E9F82049DC1D00AB7ED5 /* Logging.cpp */; };
@@ -290,6 +286,14 @@
 		7779EA2F204C5F6D00AB7ED5 /* BangControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA2C204C5F6900AB7ED5 /* BangControl.cpp */; };
 		7779EA30204C5F6E00AB7ED5 /* BangControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA2C204C5F6900AB7ED5 /* BangControl.cpp */; };
 		7779EA31204C5F6E00AB7ED5 /* BangControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA2C204C5F6900AB7ED5 /* BangControl.cpp */; };
+		7779EA34204C70BE00AB7ED5 /* Line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA33204C70BA00AB7ED5 /* Line.cpp */; };
+		7779EA35204C70BE00AB7ED5 /* Line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA33204C70BA00AB7ED5 /* Line.cpp */; };
+		7779EA36204C70BF00AB7ED5 /* Line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA33204C70BA00AB7ED5 /* Line.cpp */; };
+		7779EA37204C70BF00AB7ED5 /* Line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA33204C70BA00AB7ED5 /* Line.cpp */; };
+		7779EA38204C70C200AB7ED5 /* Multiplier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA32204C70BA00AB7ED5 /* Multiplier.cpp */; };
+		7779EA39204C70C200AB7ED5 /* Multiplier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA32204C70BA00AB7ED5 /* Multiplier.cpp */; };
+		7779EA3A204C70C300AB7ED5 /* Multiplier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA32204C70BA00AB7ED5 /* Multiplier.cpp */; };
+		7779EA3B204C70C300AB7ED5 /* Multiplier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA32204C70BA00AB7ED5 /* Multiplier.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -659,13 +663,14 @@
 		7779E9F42049DC1D00AB7ED5 /* Wavetable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Wavetable.cpp; path = "../minim-cpp/src/ugens/Wavetable.cpp"; sourceTree = "<group>"; };
 		7779E9F52049DC1D00AB7ED5 /* UGen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UGen.cpp; path = "../minim-cpp/src/ugens/UGen.cpp"; sourceTree = "<group>"; };
 		7779E9F62049DC1D00AB7ED5 /* AudioSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioSource.cpp; path = "../minim-cpp/src/AudioSource.cpp"; sourceTree = "<group>"; };
-		7779E9F72049DC1D00AB7ED5 /* ADSR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ADSR.cpp; path = "../minim-cpp/src/ugens/ADSR.cpp"; sourceTree = "<group>"; };
 		7779E9F82049DC1D00AB7ED5 /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Logging.cpp; path = "../minim-cpp/src/Logging.cpp"; sourceTree = "<group>"; };
 		7779E9F92049DC1D00AB7ED5 /* Frequency.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Frequency.cpp; path = "../minim-cpp/src/ugens/Frequency.cpp"; sourceTree = "<group>"; };
 		7779E9FA2049DC1D00AB7ED5 /* Summer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Summer.cpp; path = "../minim-cpp/src/ugens/Summer.cpp"; sourceTree = "<group>"; };
 		7779E9FB2049DC1E00AB7ED5 /* Waves.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Waves.cpp; path = "../minim-cpp/src/ugens/Waves.cpp"; sourceTree = "<group>"; };
 		7779EA2C204C5F6900AB7ED5 /* BangControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BangControl.cpp; path = src/BangControl.cpp; sourceTree = "<group>"; };
 		7779EA2D204C5F6900AB7ED5 /* BangControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BangControl.h; path = src/BangControl.h; sourceTree = "<group>"; };
+		7779EA32204C70BA00AB7ED5 /* Multiplier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Multiplier.cpp; path = "../minim-cpp/src/ugens/Multiplier.cpp"; sourceTree = "<group>"; };
+		7779EA33204C70BA00AB7ED5 /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Line.cpp; path = "../minim-cpp/src/ugens/Line.cpp"; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -1341,7 +1346,8 @@
 		7779E9F12049DBC900AB7ED5 /* minim */ = {
 			isa = PBXGroup;
 			children = (
-				7779E9F72049DC1D00AB7ED5 /* ADSR.cpp */,
+				7779EA33204C70BA00AB7ED5 /* Line.cpp */,
+				7779EA32204C70BA00AB7ED5 /* Multiplier.cpp */,
 				7779E9F62049DC1D00AB7ED5 /* AudioSource.cpp */,
 				7779E9F92049DC1D00AB7ED5 /* Frequency.cpp */,
 				7779E9F82049DC1D00AB7ED5 /* Logging.cpp */,
@@ -1723,6 +1729,7 @@
 				7779EA0A2049DC2200AB7ED5 /* Oscil.cpp in Sources */,
 				7779EA072049DC2200AB7ED5 /* AudioSource.cpp in Sources */,
 				4FD16D1213B634BF001D0217 /* swell-gdi.mm in Sources */,
+				7779EA35204C70BE00AB7ED5 /* Line.cpp in Sources */,
 				7779E9DB2049DB0800AB7ED5 /* EnumControl.cpp in Sources */,
 				7779EA0D2049DC2200AB7ED5 /* UGen.cpp in Sources */,
 				4F78D9BB13B63BA50032E0F3 /* IPlugBase.cpp in Sources */,
@@ -1737,6 +1744,7 @@
 				7779EA0F2049DC2200AB7ED5 /* Wavetable.cpp in Sources */,
 				7779E9DE2049DB0800AB7ED5 /* KnobLineCoronaControl.cpp in Sources */,
 				4F78D9C113B63BA50032E0F3 /* IGraphicsCarbon.cpp in Sources */,
+				7779EA39204C70C200AB7ED5 /* Multiplier.cpp in Sources */,
 				4F78D9C213B63BA50032E0F3 /* IGraphicsCocoa.mm in Sources */,
 				4F78D9C313B63BA50032E0F3 /* Log.cpp in Sources */,
 				7779E9DF2049DB0800AB7ED5 /* Melodizer.cpp in Sources */,
@@ -1749,7 +1757,6 @@
 				7779E9DC2049DB0800AB7ED5 /* Instruments.cpp in Sources */,
 				4F78D9C913B63BA50032E0F3 /* IControl.cpp in Sources */,
 				4F78D9F313B63C6A0032E0F3 /* IPlugVST.cpp in Sources */,
-				7779EA062049DC2200AB7ED5 /* ADSR.cpp in Sources */,
 				7779E9E12049DB0800AB7ED5 /* TextBox.cpp in Sources */,
 				4FDA440C13F3E4F2000B4551 /* IBitmapMonoText.cpp in Sources */,
 				7779EA2F204C5F6D00AB7ED5 /* BangControl.cpp in Sources */,
@@ -1766,7 +1773,7 @@
 				7779EA272049DDE100AB7ED5 /* LED.cpp in Sources */,
 				4F78D94513B63BA50032E0F3 /* IPlugBase.cpp in Sources */,
 				4F78D94713B63BA50032E0F3 /* IPlugStructs.cpp in Sources */,
-				7779EA1A2049DC2300AB7ED5 /* ADSR.cpp in Sources */,
+				7779EA3B204C70C300AB7ED5 /* Multiplier.cpp in Sources */,
 				7779EA1C2049DC2300AB7ED5 /* Frequency.cpp in Sources */,
 				7779EA212049DC2300AB7ED5 /* UGen.cpp in Sources */,
 				4F78D94B13B63BA50032E0F3 /* Hosts.cpp in Sources */,
@@ -1790,6 +1797,7 @@
 				7779EA1E2049DC2300AB7ED5 /* Oscil.cpp in Sources */,
 				4F78DA0813B63CD90032E0F3 /* IPlugAU.cpp in Sources */,
 				7779E9EB2049DB0900AB7ED5 /* Interface.cpp in Sources */,
+				7779EA37204C70BF00AB7ED5 /* Line.cpp in Sources */,
 				7779E9ED2049DB0900AB7ED5 /* Melodizer.cpp in Sources */,
 				4F78DA0A13B63CD90032E0F3 /* IPlugAU_ViewFactory.mm in Sources */,
 				4FDA440813F3E4F2000B4551 /* IBitmapMonoText.cpp in Sources */,
@@ -1820,7 +1828,7 @@
 				7779E9E42049DB0800AB7ED5 /* Interface.cpp in Sources */,
 				7779E9E52049DB0900AB7ED5 /* KnobLineCoronaControl.cpp in Sources */,
 				4F9828C1140A9EB700F3FCC1 /* IParam.cpp in Sources */,
-				7779EA102049DC2300AB7ED5 /* ADSR.cpp in Sources */,
+				7779EA3A204C70C300AB7ED5 /* Multiplier.cpp in Sources */,
 				4F9828C2140A9EB700F3FCC1 /* IControl.cpp in Sources */,
 				7779EA132049DC2300AB7ED5 /* Logging.cpp in Sources */,
 				4F9828C3140A9EB700F3FCC1 /* IBitmapMonoText.cpp in Sources */,
@@ -1852,6 +1860,7 @@
 				7779EA262049DDE100AB7ED5 /* LED.cpp in Sources */,
 				7779EA172049DC2300AB7ED5 /* UGen.cpp in Sources */,
 				4F9828D6140A9EB700F3FCC1 /* ustring.cpp in Sources */,
+				7779EA36204C70BF00AB7ED5 /* Line.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1892,8 +1901,8 @@
 				4F78D91013B63BA50032E0F3 /* IGraphics.cpp in Sources */,
 				4F78D91113B63BA50032E0F3 /* IGraphicsCarbon.cpp in Sources */,
 				4F78D91213B63BA50032E0F3 /* IGraphicsCocoa.mm in Sources */,
+				7779EA34204C70BE00AB7ED5 /* Line.cpp in Sources */,
 				4F78D91313B63BA50032E0F3 /* Log.cpp in Sources */,
-				7779E9FC2049DC2200AB7ED5 /* ADSR.cpp in Sources */,
 				4F78D91413B63BA50032E0F3 /* IPopupMenu.cpp in Sources */,
 				7779E9D72049DB0700AB7ED5 /* KnobLineCoronaControl.cpp in Sources */,
 				7779E9FD2049DC2200AB7ED5 /* AudioSource.cpp in Sources */,
@@ -1905,6 +1914,7 @@
 				4FD16CA313B6327D001D0217 /* app_dialog.cpp in Sources */,
 				4FB3624F13B648FE00DB6B76 /* main.mm in Sources */,
 				4FDA440E13F3E4F2000B4551 /* IBitmapMonoText.cpp in Sources */,
+				7779EA38204C70C200AB7ED5 /* Multiplier.cpp in Sources */,
 				7779E9DA2049DB0700AB7ED5 /* TextBox.cpp in Sources */,
 				7779E9D52049DB0700AB7ED5 /* Instruments.cpp in Sources */,
 			);

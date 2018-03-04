@@ -20,11 +20,19 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mSampleCount(0)
 	, mOddTick(false)
 	, mMelodyBus()
+	, mMelodyVolume(0)
+	, mMelodyVolumeLine(0,0,0)
 	, mRandomGen(0)
 	, mTones(kVoicesMax)
 	, mActiveTone(0)
 {
 	TRACE;
+	
+	// setup dsp chain
+	{
+		mMelodyBus.patch( mMelodyVolume );
+		mMelodyVolumeLine.patch( mMelodyVolume.amplitude );
+	}
 
 	// setup Waveforms
 	{
@@ -94,6 +102,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	// synth settings
 	{
 		GetParam(kVoices)->InitInt("Max Voices", 16, kVoicesMin, kVoicesMax);
+		GetParam(kVolume)->InitDouble("Volume", -6, -48, 6, 0.1f, "db");
 		
 		// make a Tone for each voice we can have
 		for(int i = 0; i < kVoicesMax; ++i)
@@ -239,6 +248,11 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	const unsigned int keyIdx = GetParam(kKey)->Int();
 	const unsigned int lowOctave = GetParam(kOctave)->Int();
 	const unsigned int hiOctave = lowOctave + GetParam(kRange)->Int();
+	
+	// change the volume smoothly over the course of this output frame
+	const float volume = GetParam(kVolume)->DBToAmp();
+	const float frameDuration = (float)nFrames / GetSampleRate();
+	mMelodyVolumeLine.activate(frameDuration, mMelodyVolume.amplitude.getLastValue(), volume);
 
 	double* out1 = outputs[0];
 	double* out2 = outputs[1];
@@ -295,7 +309,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			}
 		}
 
-		mMelodyBus.tick(result, 2);
+		mMelodyVolume.tick(result, 2);
 		*out1 = result[0];
 		*out2 = result[1];
 
@@ -325,8 +339,8 @@ void Melodizer::Reset()
 	{
 		mTones[i]->noteOff();
 	}
-	mMelodyBus.setAudioChannelCount(2);
-	mMelodyBus.setSampleRate(GetSampleRate());
+	mMelodyVolume.setAudioChannelCount(2);
+	mMelodyVolume.setSampleRate(GetSampleRate());
 }
 
 void Melodizer::OnParamChange(int paramIdx)
@@ -392,7 +406,7 @@ void Melodizer::GenerateNote( int tick,
     int note = baseNote + octave * 12;
 	
     const float freq = Frequency::ofMidiNote( note ).asHz();
-	const float amp = RandomRange(0.41f, 0.61f);
+	const float amp = 1.0f;
 	const float pan = GetParam(kPanFirst + tick)->Value();
 	const float attack  = GetParam(kEnvAttack)->Value()  * GetParam(kAttackFirst + tick)->Value() / 100;
 	const float decay   = GetParam(kEnvDecay)->Value()   * GetParam(kDecayFirst + tick)->Value() / 100;

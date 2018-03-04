@@ -24,6 +24,7 @@ enum EParams
 	kEnvRelease,
 	
 	kVoices,
+	kVolume,
 	
 	// global sequence params
 	kScale,

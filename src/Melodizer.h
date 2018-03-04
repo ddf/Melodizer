@@ -9,6 +9,8 @@
 #include <random>
 
 #include "Summer.h"
+#include "Multiplier.h"
+#include "Line.h"
 
 class Tone;
 class Scale;
@@ -49,6 +51,8 @@ private:
 	std::default_random_engine mRandomGen;
 
 	Minim::Summer mMelodyBus;
+	Minim::Multiplier mMelodyVolume;
+	Minim::Line mMelodyVolumeLine;
 
 	// we'll have one Tone for each voice that will be reconfigured before being triggered
 	std::vector<Tone*> mTones;
