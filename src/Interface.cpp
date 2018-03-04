@@ -11,9 +11,6 @@
 
 enum ELayout
 {
-	kWidth = GUI_WIDTH,
-	kHeight = GUI_HEIGHT,
-
 	kEnvControl_X = 20,
 	kEnvControl_Y = 20,
 	kEnvControl_W = 30,
@@ -29,6 +26,11 @@ enum ELayout
 	kVolumeControl_Y = kVoiceControl_Y,
 	kVolumeControl_W = 30,
 	kVolumeControl_H = 30,
+	
+	kWidthControl_X = kVolumeControl_X + kVolumeControl_W + 10,
+	kWidthControl_Y = kEnvControl_Y,
+	kWidthControl_W = 30,
+	kWidthControl_H = 30,
 
 	kEnumHeight = 20,
 	kEnumY = kEnvControl_Y + kEnvControl_H + 10,
@@ -158,7 +160,8 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	AttachKnob(pGraphics, MakeIRectHOffset(kEnvControl, kEnvControl_S * 3), kEnvRelease, "R");
 	
 	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kVoiceControl), kVoices, &TextStyles::Enum, pGraphics, "000"));
-	AttachKnob(pGraphics, MakeIRect(kVolumeControl), kVolume, "VOL");
+	AttachKnob(pGraphics, MakeIRect(kVolumeControl), kVolume, "Gain");
+	AttachKnob(pGraphics, MakeIRect(kWidthControl), kWidth, "Width");
 
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kWaveformControl), kWaveform, &TextStyles::Enum));
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kScaleControl), kScale, &TextStyles::Enum));

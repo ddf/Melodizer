@@ -103,6 +103,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	{
 		GetParam(kVoices)->InitInt("Max Voices", 16, kVoicesMin, kVoicesMax);
 		GetParam(kVolume)->InitDouble("Volume", -6, -48, 6, 0.1f, "db");
+		GetParam(kWidth)->InitDouble("Width", 100, 0, 100, 0.5, "%");
 		
 		// make a Tone for each voice we can have
 		for(int i = 0; i < kVoicesMax; ++i)
@@ -405,9 +406,9 @@ void Melodizer::GenerateNote( int tick,
 	int octave = RandomRange(lowOctave, hiOctave);
     int note = baseNote + octave * 12;
 	
-    const float freq = Frequency::ofMidiNote( note ).asHz();
-	const float amp = 1.0f;
-	const float pan = GetParam(kPanFirst + tick)->Value();
+    const float freq 	= Frequency::ofMidiNote( note ).asHz();
+	const float amp 	= 1.0f;
+	const float pan 	= GetParam(kPanFirst + tick)->Value() * GetParam(kWidth)->Value() / 100;
 	const float attack  = GetParam(kEnvAttack)->Value()  * GetParam(kAttackFirst + tick)->Value() / 100;
 	const float decay   = GetParam(kEnvDecay)->Value()   * GetParam(kDecayFirst + tick)->Value() / 100;
 	const float sustain = GetParam(kEnvSustain)->Value() * GetParam(kSustainFirst + tick)->Value() / 100;
