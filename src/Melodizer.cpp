@@ -105,6 +105,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		GetParam(kVolume)->InitDouble("Volume", -6, -48, 6, 0.1f, "db");
 		GetParam(kWidth)->InitDouble("Width", 100, 0, 100, 0.5, "%");
 		GetParam(kGlide)->InitDouble("Glide", 0, 0, 2, 0.01, "seconds");
+		GetParam(kMovement)->InitDouble("Movement", 0, 0, 2, 0.01, "seconds");
 		
 		// make a Tone for each voice we can have
 		for(int i = 0; i < kVoicesMax; ++i)
@@ -431,7 +432,9 @@ void Melodizer::GenerateNote( int tick,
     const float toFreq 	= Frequency::ofMidiNote( note ).asHz();
 	const float glide   = GetParam(kGlide)->Value();
 	const float amp 	= 1.0f;
-	const float pan 	= GetParam(kPanFirst + tick)->Value() * GetParam(kWidth)->Value() / 100;
+	const float fromPan = mTones[mActiveTone]->getPan();
+	const float toPan 	= GetParam(kPanFirst + tick)->Value() * GetParam(kWidth)->Value() / 100;
+	const float panDur = GetParam(kMovement)->Value();
 	const float attack  = GetParam(kEnvAttack)->Value()  * GetParam(kAttackFirst + tick)->Value() / 100;
 	const float decay   = GetParam(kEnvDecay)->Value()   * GetParam(kDecayFirst + tick)->Value() / 100;
 	const float sustain = GetParam(kEnvSustain)->Value() * GetParam(kSustainFirst + tick)->Value() / 100;
@@ -443,7 +446,7 @@ void Melodizer::GenerateNote( int tick,
 	{
 		mActiveTone = (mActiveTone+1)%voices;
 	}
-	mTones[mActiveTone]->noteOn(mWaveforms[waveformIdx], tick, fromFreq, toFreq, glide, amp, attack, decay, sustain, release, pan);
+	mTones[mActiveTone]->noteOn(mWaveforms[waveformIdx], tick, fromFreq, toFreq, glide, amp, attack, decay, sustain, release, fromPan, toPan, panDur);
 
     previousNoteIndex = nextNoteIndex;    
 }

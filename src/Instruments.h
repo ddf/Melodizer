@@ -56,11 +56,12 @@ public:
     Tone( Summer& out );
 	~Tone();
        
-	void noteOn(Waveform* waveform, int tick, float fromFreq, float toFreq, float glide, float amp, float attack, float decay, float sustain, float release, float pan);
+	void noteOn(Waveform* waveform, int tick, float fromFreq, float toFreq, float glide, float amp, float attack, float decay, float sustain, float release, float fromPan, float toPan, float panDur);
 	void noteOff();
 
     int  getTick() const { return tick; }
 	float getFrequency() const { return oscil.frequency.getLastValue(); }
+	float getPan() const { return panner.pan.getLastValue(); }
     
 private:
 
@@ -85,6 +86,7 @@ private:
 	Line 		frequency;
     ADSR		adsr;
     Pan			panner;
+	Line		pan;
     int			tick;
 };
 

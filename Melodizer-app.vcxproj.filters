@@ -109,6 +109,12 @@
     <ClInclude Include="src\BangControl.h">
       <Filter>interface</Filter>
     </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Line.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Multiplier.h">
+      <Filter>minim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
@@ -186,6 +192,12 @@
     </ClCompile>
     <ClCompile Include="src\BangControl.cpp">
       <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Line.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Multiplier.cpp">
+      <Filter>minim</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

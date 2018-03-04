@@ -16,26 +16,31 @@ enum ELayout
 	kEnvControl_W = 30,
 	kEnvControl_H = 30,
 	kEnvControl_S = 45,
-	
-	kVoiceControl_X = kEnvControl_X + 4*kEnvControl_S,
+
+	kVoiceControl_X = kEnvControl_X + 4 * kEnvControl_S,
 	kVoiceControl_Y = kEnvControl_Y,
 	kVoiceControl_H = 20,
 	kVoiceControl_W = 20,
-	
+
 	kVolumeControl_X = kVoiceControl_X + kVoiceControl_W + 10,
 	kVolumeControl_Y = kVoiceControl_Y,
 	kVolumeControl_W = 30,
 	kVolumeControl_H = 30,
-	
+
 	kWidthControl_X = kVolumeControl_X + kVolumeControl_W + 10,
 	kWidthControl_Y = kEnvControl_Y,
 	kWidthControl_W = 30,
 	kWidthControl_H = 30,
-	
+
 	kGlideControl_X = kWidthControl_X + kWidthControl_W + 10,
 	kGlideControl_Y = kEnvControl_Y,
 	kGlideControl_W = 30,
 	kGlideControl_H = 30,
+
+	kMovementControl_X = kGlideControl_X + kGlideControl_W + 10,
+	kMovementControl_Y = kEnvControl_Y,
+	kMovementControl_W = 30,
+	kMovementControl_H = 30,
 
 	kEnumHeight = 20,
 	kEnumY = kEnvControl_Y + kEnvControl_H + 10,
@@ -173,6 +178,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	AttachKnob(pGraphics, MakeIRect(kVolumeControl), kVolume, "Gain");
 	AttachKnob(pGraphics, MakeIRect(kWidthControl), kWidth, "Width");
 	AttachKnob(pGraphics, MakeIRect(kGlideControl), kGlide, "Glide");
+	AttachKnob(pGraphics, MakeIRect(kMovementControl), kMovement, "Move");
 
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kWaveformControl), kWaveform, &TextStyles::Enum));
 	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kScaleControl), kScale, &TextStyles::Enum));
