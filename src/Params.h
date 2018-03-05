@@ -37,6 +37,7 @@ enum EParams
 	kOctave,
 	kRange,
 	kShuffle,
+	kSeed,
 	
 	// step params
 	STEP_PARAM(kStepMode), // see: enum StepMode

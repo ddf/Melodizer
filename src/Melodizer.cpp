@@ -165,6 +165,11 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		GetParam(kShuffle)->InitDouble("Shuffle", 0.5, 0.1, 0.9, 0.01f);
 	}
 
+	// seed
+	{
+		GetParam(kSeed)->InitInt("Seed", 0, 0, 32768);
+	}
+
 	// ADSR
 	{
 		const double secondsStep = 0.001f;
@@ -349,9 +354,18 @@ void Melodizer::Reset()
 	TRACE;
 	IMutexLock lock(this);
 
-	// reseed the random generator
-	std::random_device rd;
-	mRandomGen.seed(rd());
+	// reseed the random generator.
+	// when Seed is zero, we use a random seed, other wise we seed with the param
+	const int seedParam = GetParam(kSeed)->Int();
+	if ( seedParam == 0)
+	{
+		std::random_device rd;
+		mRandomGen.seed(rd());
+	}
+	else
+	{
+		mRandomGen.seed(seedParam);
+	}
 
 	mTick = 0;
 	mPreviousNoteIndex = 0;
@@ -375,6 +389,13 @@ void Melodizer::OnParamChange(int paramIdx)
 	{
 	case kScale:
 		mPreviousNoteIndex = 0;
+		break;
+
+	case kSeed:
+		// reset the plug when the seed changes because 
+		// we want to have deterministic output,
+		// which means we should start from the beginning of the sequence.
+		Reset();
 		break;
 
 	case kProbabilityRandomize:

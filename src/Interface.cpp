@@ -85,6 +85,11 @@ enum ELayout
 	kShuffleControl_W = 20,
 	kShuffleControl_H = 20,
 
+	kSeedControl_X = kShuffleControl_X + kShuffleControl_W + 10,
+	kSeedControl_Y = kEnumY,
+	kSeedControl_W = 50,
+	kSeedControl_H = kEnumHeight,
+
 	kFirstKnobColumnX = 65,
 
 	kKnobLED_W = 8,
@@ -194,6 +199,8 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kRangeControl), kRange, &TextStyles::Enum, pGraphics, "00"));
 	// shuffle
 	pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRect(kShuffleControl), kShuffle, &Color::KnobLine, &Color::KnobCorona));
+	// seed
+	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kSeedControl), kSeed, &TextStyles::Enum, pGraphics, "000000"));
 
 	mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
 
