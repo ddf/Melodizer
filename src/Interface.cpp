@@ -8,94 +8,126 @@
 #include "EnumControl.h"
 #include "TextBox.h"
 #include "BangControl.h"
+#include "ControlGroup.h"
 
 enum ELayout
 {
-	kEnvControl_X = 20,
-	kEnvControl_Y = 20,
-	kEnvControl_W = 30,
-	kEnvControl_H = 30,
-	kEnvControl_S = 45,
-
-	kVoiceControl_X = kEnvControl_X + 4 * kEnvControl_S,
-	kVoiceControl_Y = kEnvControl_Y,
-	kVoiceControl_H = 20,
-	kVoiceControl_W = 20,
-
-	kVolumeControl_X = kVoiceControl_X + kVoiceControl_W + 10,
-	kVolumeControl_Y = kVoiceControl_Y,
-	kVolumeControl_W = 30,
-	kVolumeControl_H = 30,
-
-	kWidthControl_X = kVolumeControl_X + kVolumeControl_W + 10,
-	kWidthControl_Y = kEnvControl_Y,
-	kWidthControl_W = 30,
-	kWidthControl_H = 30,
-
-	kGlideControl_X = kWidthControl_X + kWidthControl_W + 10,
-	kGlideControl_Y = kEnvControl_Y,
-	kGlideControl_W = 30,
-	kGlideControl_H = 30,
-
-	kMovementControl_X = kGlideControl_X + kGlideControl_W + 10,
-	kMovementControl_Y = kEnvControl_Y,
-	kMovementControl_W = 30,
-	kMovementControl_H = 30,
-
 	kEnumHeight = 20,
-	kEnumY = kEnvControl_Y + kEnvControl_H + 10,
+	kLargeKnobSize = 30,
+	kSmallKnobSize = 20,
 
-	kKeyControl_X = 80,
-	kKeyControl_Y = kEnumY,
-	kKeyControl_W = 25,
-	kKeyControl_H = kEnumHeight,
+	kOscGroup_X = 10,
+	kOscGroup_Y = 10,
+	kOscGroup_W = 150,
+	kOscGroup_H = 75,
 
-	kScaleControl_X = kKeyControl_X + kKeyControl_W + 10,
-	kScaleControl_Y = kEnumY,
-	kScaleControl_W = 100,
-	kScaleControl_H = kEnumHeight,
-
-	kWaveformControl_X = kScaleControl_X + kScaleControl_W + 10,
-	kWaveformControl_Y = kEnumY,
+	kWaveformControl_X = 0,
+	kWaveformControl_Y = 20,
 	kWaveformControl_W = 50,
 	kWaveformControl_H = kEnumHeight,
 
-	kTempoControl_X = kWaveformControl_X + kWaveformControl_W + 10,
-	kTempoControl_Y = kEnumY,
-	kTempoControl_W = 50,
-	kTempoControl_H = kEnumHeight,
-	
-	kStepLengthControl_X = kTempoControl_X + kTempoControl_W + 10,
-	kStepLengthControl_Y = kEnumY,
-	kStepLengthControl_W = 30,
-	kStepLengthControl_H = kEnumHeight,
+	kGlideControl_X = 0,
+	kGlideControl_Y = 15,
+	kGlideControl_W = kLargeKnobSize,
+	kGlideControl_H = kLargeKnobSize,
 
-	kOctaveControl_X = kStepLengthControl_X + kStepLengthControl_W + 10,
-	kOctaveControl_Y = kEnumY,
-	kOctaveControl_W = 20,
-	kOctaveControl_H = kEnumHeight,
+	kMovementControl_X = 0,
+	kMovementControl_Y = 15,
+	kMovementControl_W = kLargeKnobSize,
+	kMovementControl_H = kLargeKnobSize,
 
-	kRangeControl_X = kOctaveControl_X + kOctaveControl_W + 10,
-	kRangeControl_Y = kEnumY,
-	kRangeControl_W = 20,
-	kRangeControl_H = kEnumHeight,
+	kEnvGroup_X = kOscGroup_X + kOscGroup_W + 20,
+	kEnvGroup_Y = kOscGroup_Y,
+	kEnvGroup_H = kOscGroup_H,
+	kEnvGroup_W = 170,
 
-	kShuffleControl_X = kRangeControl_X + kRangeControl_W + 10,
-	kShuffleControl_Y = kEnumY,
-	kShuffleControl_W = 20,
-	kShuffleControl_H = 20,
+	kEnvControl_X = 0,
+	kEnvControl_Y = 15,
+	kEnvControl_W = kLargeKnobSize,
+	kEnvControl_H = kLargeKnobSize,
+	kEnvControl_S = kLargeKnobSize + 10,
 
-	kSeedControl_X = kShuffleControl_X + kShuffleControl_W + 10,
-	kSeedControl_Y = kEnumY,
+	kMasterGroup_W = 190,
+	kMasterGroup_X = GUI_WIDTH - kMasterGroup_W - 10,
+	kMasterGroup_Y = kOscGroup_Y,
+	kMasterGroup_H = kOscGroup_H,
+
+	kVoiceControl_X = 0,
+	kVoiceControl_Y = 20,
+	kVoiceControl_H = 20,
+	kVoiceControl_W = 30,
+
+	kVolumeControl_X = 0,
+	kVolumeControl_Y = 15,
+	kVolumeControl_W = kLargeKnobSize,
+	kVolumeControl_H = kLargeKnobSize,
+
+	kWidthControl_X = 0,
+	kWidthControl_Y = 15,
+	kWidthControl_W = kLargeKnobSize,
+	kWidthControl_H = kLargeKnobSize,
+
+	kSeedControl_X = 0,
+	kSeedControl_Y = 20,
 	kSeedControl_W = 50,
 	kSeedControl_H = kEnumHeight,
 
-	kFirstKnobColumnX = 65,
+	kTimeGroup_X = 10,
+	kTimeGroup_Y = kOscGroup_Y + kOscGroup_H + 20,
+	kTimeGroup_W = 150,
+	kTimeGroup_H = kOscGroup_H,
+
+	kTempoControl_X = 0,
+	kTempoControl_Y = 20,
+	kTempoControl_W = 50,
+	kTempoControl_H = kEnumHeight,
+
+	kStepLengthControl_X = 0,
+	kStepLengthControl_Y = 20,
+	kStepLengthControl_W = 30,
+	kStepLengthControl_H = kEnumHeight,
+
+	kShuffleControl_X = 0,
+	kShuffleControl_Y = 15,
+	kShuffleControl_W = kLargeKnobSize,
+	kShuffleControl_H = kLargeKnobSize,
+
+	kPitchGroup_X = kTimeGroup_X + kTimeGroup_W + 20,
+	kPitchGroup_Y = kTimeGroup_Y,
+	kPitchGroup_W = 220,
+	kPitchGroup_H = kOscGroup_H,
+
+	kKeyControl_X = 0,
+	kKeyControl_Y = 20,
+	kKeyControl_W = 25,
+	kKeyControl_H = kEnumHeight,
+
+	kScaleControl_X = 0,
+	kScaleControl_Y = 20,
+	kScaleControl_W = 100,
+	kScaleControl_H = kEnumHeight,
+
+	kOctaveControl_X = 0,
+	kOctaveControl_Y = 20,
+	kOctaveControl_W = 20,
+	kOctaveControl_H = kEnumHeight,
+
+	kRangeControl_X = 0,
+	kRangeControl_Y = 20,
+	kRangeControl_W = 20,
+	kRangeControl_H = kEnumHeight,
+
+	kSequenceGroup_X = 10,
+	kSequenceGroup_Y = kTimeGroup_Y + kTimeGroup_H + 20,
+	kSequenceGroup_W = 760,
+	kSequenceGroup_H = 340,
+
+	kFirstKnobColumnX = kSequenceGroup_X + 55,
 
 	kKnobLED_W = 8,
 	kKnobLED_H = kKnobLED_W,
 	kKnobLED_X = kFirstKnobColumnX - kKnobLED_W / 2,
-	kKnobLED_Y = kEnumY + kEnumHeight + 25 - kKnobLED_H / 2,
+	kKnobLED_Y = kSequenceGroup_Y + 25,
 
 	kStepModeControl_W = 36,
 	kStepModeControl_H = 15,
@@ -107,7 +139,7 @@ enum ELayout
 	kStepKnob_X = kFirstKnobColumnX - kStepKnob_W / 2,
 	kStepKnob_Y = kStepModeControl_Y + kStepModeControl_H + 10,
 
-	kStepKnobLabel_X = 0,
+	kStepKnobLabel_X = kSequenceGroup_X,
 	kStepKnobLabel_Y = kStepKnob_Y + kStepKnob_H / 2,
 	kStepKnobLabel_W = kFirstKnobColumnX - kStepKnobLabel_X - kStepKnob_W / 2,
 	kStepKnobLabel_H = 10,
@@ -115,9 +147,14 @@ enum ELayout
 	kStepKnobColumnSpacing = 45,
 	kStepKnobRowSpacing = 45,
 
+	kStepRandomizeGroup_X = kSequenceGroup_X + kSequenceGroup_W + 10,
+	kStepRandomizeGroup_Y = kSequenceGroup_Y,
+	kStepRandomizeGroup_W = 30,
+	kStepRandomizeGroup_H = kSequenceGroup_H,
+
 	kStepRandomize_W = 10,
 	kStepRandomize_H = 10,
-	kStepRandomize_X = kFirstKnobColumnX + kStepKnobColumnSpacing*(kSequencerSteps-1) + 35,
+	kStepRandomize_X = kStepRandomizeGroup_X + 10,
 	kStepRandomize_Y = kStepKnob_Y + kStepKnob_H / 2 - kStepRandomize_H / 2,	
 };
 
@@ -134,6 +171,9 @@ namespace Color
 
 	const IColor EnumBackground(255, 9, 66, 125);
 	const IColor EnumBorder = KnobLine;
+
+	const IColor GroupOutline = KnobLine;
+	const IColor GroupLabel = Background;
 }
 
 namespace TextStyles
@@ -147,11 +187,31 @@ namespace TextStyles
 #endif
 	// can't be const because of stupid ITextControl constructor
 	IText  Label(TextSize, &Color::Label, Font, IText::kStyleBold, IText::kAlignCenter);
+	IText  GroupLabel(TextSize, &Color::GroupLabel, Font, IText::kStyleBold, IText::kAlignNear);
 	IText  Enum(TextSize, &Color::Label, Font, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
+	IText  TextBox(TextSize, &Color::Label, Font, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
 }
 
 namespace Strings
 {
+	const char * OscLabel = "Oscil";
+	const char * EnvLabel = "Envelope";
+	const char * MasterLabel = "Master";
+	const char * TimeLabel = "Clock";
+	const char * PitchLabel = "Pitch";
+	const char * SequenceLabel = "Sequence";
+	const char * RandomizeLabel = "RND";
+
+	const char * VoicesLabel = "Voices";
+	const char * SeedLabel = "Seed";
+	const char * TempoLabel = "BPM";
+	const char * StepLabel = "Step";
+	const char * ShuffleLabel = "Swing";
+	const char * KeyLabel = "Key";
+	const char * ScaleLabel = "Scale";
+	const char * OctaveLabel = "Oct.";
+	const char * RangeLabel = "Range";
+
 	const char * ProbabilityLabel = "P(N)";
 	const char * PanLabel = "L-R";
 	const char * AttackLabel = "A";
@@ -174,64 +234,136 @@ void Interface::CreateControls(IGraphics* pGraphics)
 {
 	pGraphics->AttachPanelBackground(&Color::Background);
 
-	AttachKnob(pGraphics, MakeIRect(kEnvControl), kEnvAttack, "A");
-	AttachKnob(pGraphics, MakeIRectHOffset(kEnvControl, kEnvControl_S), kEnvDecay, "D");
-	AttachKnob(pGraphics, MakeIRectHOffset(kEnvControl, kEnvControl_S * 2), kEnvSustain, "S");
-	AttachKnob(pGraphics, MakeIRectHOffset(kEnvControl, kEnvControl_S * 3), kEnvRelease, "R");
-	
-	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kVoiceControl), kVoices, &TextStyles::Enum, pGraphics, "000"));
-	AttachKnob(pGraphics, MakeIRect(kVolumeControl), kVolume, "Gain");
-	AttachKnob(pGraphics, MakeIRect(kWidthControl), kWidth, "Width");
-	AttachKnob(pGraphics, MakeIRect(kGlideControl), kGlide, "Glide");
-	AttachKnob(pGraphics, MakeIRect(kMovementControl), kMovement, "Move");
-
-	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kWaveformControl), kWaveform, &TextStyles::Enum));
-	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kScaleControl), kScale, &TextStyles::Enum));
-	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kKeyControl), kKey, &TextStyles::Enum));
-
-	// tempo
-	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kTempoControl), kTempo, &TextStyles::Enum, pGraphics, "000.000"));
-	// step length
-	pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kStepLengthControl), kStepLength, &TextStyles::Enum));
-	// octave
-	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kOctaveControl), kOctave, &TextStyles::Enum, pGraphics, "00"));
-	// range
-	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kRangeControl), kRange, &TextStyles::Enum, pGraphics, "00"));
-	// shuffle
-	pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRect(kShuffleControl), kShuffle, &Color::KnobLine, &Color::KnobCorona));
-	// seed
-	pGraphics->AttachControl(new TextBox(mPlug, MakeIRect(kSeedControl), kSeed, &TextStyles::Enum, pGraphics, "000000"));
-
-	mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
-
-	// all them knobs
-	for(int i = 0; i < kSequencerSteps; ++i)
+	// Osc section
 	{
-		const int hoffset = kStepKnobColumnSpacing*i;
-		IRECT ledRect = MakeIRectHOffset(kKnobLED, hoffset);
-		LED* led = new LED(mPlug, ledRect, Color::Background, Color::LedOn, Color::LedOff);
-		mLEDs.push_back(led);
-		pGraphics->AttachControl(led);
-		
-		// mode
-		pGraphics->AttachControl(new EnumControl(mPlug, MakeIRectHOffset(kStepModeControl, hoffset), kStepModeFirst + i, &TextStyles::Enum));
-		// led behind the probability knob that blinks when a note is actually played
-		ledRect = MakeIRectHOffset(kStepKnob, hoffset).GetPadded(-4);
-		led = new LED(mPlug, ledRect, Color::Background, Color::LedOn, Color::Background);
-		mNoteOns.push_back(led);
-		pGraphics->AttachControl(led);
-		// probability
-		AttachKnob(pGraphics, MakeIRectHOffset(kStepKnob, hoffset), kProbabilityFirst + i);
-		// pan
-		AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*1), kPanFirst + i);
-		// attack
-		AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*2), kAttackFirst + i);
-		// decay
-		AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*3), kDecayFirst + i);
-		// sustain
-		AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*4), kSustainFirst + i);
-		// release
-		AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing*5), kReleaseFirst + i);
+		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kOscGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::OscLabel);
+		pGraphics->AttachControl(group);
+
+		IRECT rect = group->GetControlRect(MakeIRect(kWaveformControl));
+		AttachEnum(pGraphics, rect, kWaveform, "Wave");
+
+		int hoff = rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kGlideControl, hoff));
+		AttachKnob(pGraphics, rect, kGlide, "Glide");
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kMovementControl, hoff));
+		AttachKnob(pGraphics, rect, kMovement, "Move");
+	}
+
+	// Env section
+	{
+		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kEnvGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::EnvLabel);
+		pGraphics->AttachControl(group);
+
+		IRECT rect = group->GetControlRect(MakeIRect(kEnvControl));
+		AttachKnob(pGraphics, rect, kEnvAttack, "A");
+
+		rect = group->GetControlRect(MakeIRectHOffset(kEnvControl, kEnvControl_S));
+		AttachKnob(pGraphics, rect, kEnvDecay, "D");
+
+		rect = group->GetControlRect(MakeIRectHOffset(kEnvControl, kEnvControl_S * 2));
+		AttachKnob(pGraphics, rect, kEnvSustain, "S");
+
+		rect = group->GetControlRect(MakeIRectHOffset(kEnvControl, kEnvControl_S * 3));
+		AttachKnob(pGraphics, rect, kEnvRelease, "R");
+	}
+
+	// Master section
+	{
+		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kMasterGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::MasterLabel);
+		pGraphics->AttachControl(group);
+
+		IRECT rect = group->GetControlRect(MakeIRect(kVolumeControl));
+		AttachKnob(pGraphics, rect, kVolume, "Vol");
+
+		int hoff = rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kWidthControl, hoff));
+		AttachKnob(pGraphics, rect, kWidth, "Width");
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kVoiceControl, hoff));
+		AttachTextBox(pGraphics, rect, kVoices, "000", Strings::VoicesLabel);
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kSeedControl, hoff));
+		AttachTextBox(pGraphics, rect, kSeed, "000000", Strings::SeedLabel);
+	}
+
+	// Time section
+	{
+		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kTimeGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::TimeLabel);
+		pGraphics->AttachControl(group);
+
+		IRECT rect = group->GetControlRect(MakeIRect(kTempoControl));
+		AttachTextBox(pGraphics, rect, kTempo, "000.000", Strings::TempoLabel);
+
+		int hoff = rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kStepLengthControl, hoff));
+		AttachEnum(pGraphics, rect, kStepLength, Strings::StepLabel);
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kShuffleControl, hoff));
+		AttachKnob(pGraphics, rect, kShuffle, Strings::ShuffleLabel);
+	}
+
+	// Pitch section
+	{
+		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kPitchGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::PitchLabel);
+		pGraphics->AttachControl(group);
+
+		IRECT rect = group->GetControlRect(MakeIRect(kKeyControl));
+		AttachEnum(pGraphics, rect, kKey, Strings::KeyLabel);
+
+		int hoff = rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kScaleControl, hoff));
+		AttachEnum(pGraphics, rect, kScale, Strings::ScaleLabel);
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kOctaveControl, hoff));
+		AttachTextBox(pGraphics, rect, kOctave, "00", Strings::OctaveLabel);
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kRangeControl, hoff));
+		AttachTextBox(pGraphics, rect, kRange, "00", Strings::RangeLabel);
+	}
+
+	// sequence 
+	{
+		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kSequenceGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::SequenceLabel);
+		pGraphics->AttachControl(group);
+
+		mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
+
+		// all them knobs
+		for (int i = 0; i < kSequencerSteps; ++i)
+		{
+			const int hoffset = kStepKnobColumnSpacing*i;
+			IRECT ledRect = MakeIRectHOffset(kKnobLED, hoffset);
+			LED* led = new LED(mPlug, ledRect, Color::Background, Color::LedOn, Color::LedOff);
+			mLEDs.push_back(led);
+			pGraphics->AttachControl(led);
+
+			// mode
+			pGraphics->AttachControl(new EnumControl(mPlug, MakeIRectHOffset(kStepModeControl, hoffset), kStepModeFirst + i, &TextStyles::Enum));
+			// led behind the probability knob that blinks when a note is actually played
+			ledRect = MakeIRectHOffset(kStepKnob, hoffset).GetPadded(-4);
+			led = new LED(mPlug, ledRect, Color::Background, Color::LedOn, Color::Background);
+			mNoteOns.push_back(led);
+			pGraphics->AttachControl(led);
+			// probability
+			AttachKnob(pGraphics, MakeIRectHOffset(kStepKnob, hoffset), kProbabilityFirst + i);
+			// pan
+			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 1), kPanFirst + i);
+			// attack
+			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 2), kAttackFirst + i);
+			// decay
+			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 3), kDecayFirst + i);
+			// sustain
+			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 4), kSustainFirst + i);
+			// release
+			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 5), kReleaseFirst + i);
+		}
 	}
 
 	AttachStepRowLabel(pGraphics, 0, Strings::ProbabilityLabel);
@@ -241,12 +373,18 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	AttachStepRowLabel(pGraphics, 4, Strings::SustainLabel);
 	AttachStepRowLabel(pGraphics, 5, Strings::ReleaseLabel);
 
-	AttachStepRowRandomizer(pGraphics, 0, kProbabilityRandomize);
-	AttachStepRowRandomizer(pGraphics, 1, kPanRandomize);
-	AttachStepRowRandomizer(pGraphics, 2, kAttackRandomize);
-	AttachStepRowRandomizer(pGraphics, 3, kDecayRandomize);
-	AttachStepRowRandomizer(pGraphics, 4, kSustainRandomize);
-	AttachStepRowRandomizer(pGraphics, 5, kReleaseRandomize);
+	// randomizers
+	{
+		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kStepRandomizeGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::RandomizeLabel);
+		pGraphics->AttachControl(group);
+
+		AttachStepRowRandomizer(pGraphics, 0, kProbabilityRandomize);
+		AttachStepRowRandomizer(pGraphics, 1, kPanRandomize);
+		AttachStepRowRandomizer(pGraphics, 2, kAttackRandomize);
+		AttachStepRowRandomizer(pGraphics, 3, kDecayRandomize);
+		AttachStepRowRandomizer(pGraphics, 4, kSustainRandomize);
+		AttachStepRowRandomizer(pGraphics, 5, kReleaseRandomize);
+	}
 }
 
 void Interface::AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name)
@@ -263,6 +401,31 @@ void Interface::AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, const 
 {
 	IRECT rect = MakeIRectVOffset(kStepRandomize, kStepKnobRowSpacing*rowNum);
 	pGraphics->AttachControl(new BangControl(mPlug, rect, param, Color::LedOn, Color::LedOff));
+}
+
+void Interface::AttachEnum(IGraphics* pGraphics, IRECT rect, int paramIdx, const char * label)
+{
+	pGraphics->AttachControl(new EnumControl(mPlug, rect, paramIdx, &TextStyles::Enum));
+
+	if (label != nullptr)
+	{
+		rect.B = rect.T;
+		rect.T -= 20;
+		pGraphics->AttachControl(new ITextControl(mPlug, rect, &TextStyles::Label, const_cast<char*>(label)));
+	}
+}
+
+void Interface::AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * maxValue, const char * label /*= nullptr*/)
+{
+	pGraphics->AttachControl(new TextBox(mPlug, rect, paramIdx, &TextStyles::TextBox, pGraphics, maxValue));
+
+	if (label != nullptr)
+	{
+		rect.B = rect.T;
+		rect.T -= 20;
+		pGraphics->AttachControl(new ITextControl(mPlug, rect, &TextStyles::Label, const_cast<char*>(label)));
+	}
+
 }
 
 void Interface::AttachKnob(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label)

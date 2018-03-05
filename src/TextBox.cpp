@@ -12,25 +12,8 @@ TextBox::TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IGraphi
 	const int offset = (mRECT.H() - mTextRect.H()) / 2;
 	mTextRect.T += offset;
 	mTextRect.B += offset;
-	
-	IParam* param = pPlug->GetParam(paramIdx);
-	const double maxVal = param->GetMax();
-	switch(param->Type())
-	{
-		case IParam::kTypeInt:
-			if ( maxVal < 10 ) SetTextEntryLength(1);
-			else if ( maxVal < 100 ) SetTextEntryLength(2);
-			else SetTextEntryLength(3);
-			break;
-			
-		case IParam::kTypeDouble:
-			if ( maxVal < 10 ) SetTextEntryLength(4);
-			else if ( maxVal < 100 ) SetTextEntryLength(5);
-			else if ( maxVal < 1000 ) SetTextEntryLength(6);
-			break;
-			
-		default: break;
-	}
+
+	SetTextEntryLength(strlen(maxText) - 1);
 }
 
 bool TextBox::Draw(IGraphics* pGraphics)

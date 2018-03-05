@@ -20,6 +20,8 @@ public:
 	void OnTick(const unsigned int tick, bool noteOn);
 
 private:	
+	void AttachEnum(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label = nullptr);
+	void AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * maxValue, const char * label = nullptr);
 	void AttachKnob(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label = nullptr);
 	void AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name);
 	void AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, const int param);
@@ -29,5 +31,6 @@ private:
 	// bank of LED graphics above all the knobs
 	std::vector<LED*> mLEDs;
 	std::vector<LED*> mNoteOns;	
+	
 };
 
