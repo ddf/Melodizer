@@ -159,7 +159,7 @@ enum ELayout
 	kStepKnobColumnSpacing = 45,
 	kStepKnobRowSpacing = 45,
 
-	kStepRandomize_W = 18,
+	kStepRandomize_W = 22,
 	kStepRandomize_H = 12,
 	kStepRandomize_X = kStepKnobLabel_X + kStepKnobLabel_W / 2 - kStepRandomize_W / 2,
 	kStepRandomize_Y = kStepKnobLabel_Y + kStepKnobLabel_H,
@@ -187,7 +187,7 @@ namespace TextStyles
 {
 #ifdef OS_WIN
 	const int ControlTextSize = 12;
-	const int LabelTextSize = 14;
+	const int LabelTextSize = 12;
 	char * ControlFont = 0;
 	char * LabelFont = 0;
 #else
@@ -213,7 +213,7 @@ namespace Strings
 	const char * TimeLabel = "Clock";
 	const char * PitchLabel = "Pitch";
 	const char * SequenceLabel = "Sequence";
-	const char * RandomizeLabel = "rng";
+	const char * RandomizeLabel = "rand";
 
 	const char * VoicesLabel = "Voices";
 	const char * SeedLabel = "Seed";

@@ -298,7 +298,9 @@
     <ClInclude Include="src\LED.h" />
     <ClInclude Include="src\Melodizer.h" />
     <ClInclude Include="src\Params.h" />
+    <ClInclude Include="src\PlayStateControl.h" />
     <ClInclude Include="src\Scales.h" />
+    <ClInclude Include="src\StepModeControl.h" />
     <ClInclude Include="src\TextBox.h" />
   </ItemGroup>
   <ItemGroup>
@@ -329,7 +331,9 @@
     <ClCompile Include="src\Interface.cpp" />
     <ClCompile Include="src\LED.cpp" />
     <ClCompile Include="src\Melodizer.cpp" />
+    <ClCompile Include="src\PlayStateControl.cpp" />
     <ClCompile Include="src\Scales.cpp" />
+    <ClCompile Include="src\StepModeControl.cpp" />
     <ClCompile Include="src\TextBox.cpp" />
   </ItemGroup>
   <ItemGroup>

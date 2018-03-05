@@ -13,7 +13,7 @@ PlayStateControl::PlayStateControl(IPlugBase* pPlug, IRECT rect, const IColor& b
 
 PlayState PlayStateControl::GetPlayState()
 {
-	return (PlayState)GetParam()->GetNonNormalized(mValue);
+	return (PlayState)((int)GetParam()->GetNonNormalized(mValue));
 }
 
 void PlayStateControl::SetPlayState(PlayState state)

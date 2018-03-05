@@ -118,6 +118,12 @@
     <ClInclude Include="src\ControlGroup.h">
       <Filter>interface</Filter>
     </ClInclude>
+    <ClInclude Include="src\PlayStateControl.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StepModeControl.h">
+      <Filter>interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
@@ -203,6 +209,12 @@
       <Filter>minim</Filter>
     </ClCompile>
     <ClCompile Include="src\ControlGroup.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayStateControl.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StepModeControl.cpp">
       <Filter>interface</Filter>
     </ClCompile>
   </ItemGroup>
