@@ -18,27 +18,32 @@ enum EParams
 	// synth params
 	kWaveform = 0,
 	kPulseWidth,
+	kGlide,
+	kMovement,
 	
+	// envelope
 	kEnvAttack,
 	kEnvDecay,
 	kEnvSustain,
 	kEnvRelease,
 	
+	// master params
 	kVoices,
 	kVolume,
 	kWidth,
-	kGlide,
-	kMovement,
+	kSeed,
 	
-	// global sequence params
-	kScale,
-	kKey,
+	// sequenc time params
 	kTempo,
 	kStepLength,
+	kShuffle,
+	kPlayState,
+	
+	// sequence pitch params
+	kKey,
+	kScale,
 	kOctave,
 	kRange,
-	kShuffle,
-	kSeed,
 	
 	// step params
 	STEP_PARAM(kStepMode), // see: enum StepMode
@@ -71,6 +76,15 @@ enum StepLength
 	SL_64,
 	
 	SL_Count,
+};
+
+enum PlayState
+{
+	PS_Stop,
+	PS_Pause,
+	PS_Play,
+	
+	PS_Count,
 };
 
 enum WaveformType

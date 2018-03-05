@@ -151,6 +151,17 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 				case SL_64: param->SetDisplayText(i, "1/64"); break;
 			}
 		}
+		param = GetParam(kPlayState);
+		param->InitEnum("Play State", PS_Stop, PS_Count);
+		for(int i = 0; i < PS_Count; ++i)
+		{
+			switch(i)
+			{
+				case PS_Stop: param->SetDisplayText(i, "Stop"); break;
+				case PS_Pause: param->SetDisplayText(i, "Pause"); break;
+				case PS_Play: param->SetDisplayText(i, "Play"); break;
+			}
+		}
 	}
 	
 	// octave + range
@@ -274,6 +285,9 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		case SL_32: samplesPerBeat /= 4; break;
 		case SL_64: samplesPerBeat /= 8; break;
 	}
+	
+	const bool bPlay = PS_Play == (PlayState)GetParam(kPlayState)->Int();
+	
 	const unsigned int waveformIdx = GetParam(kWaveform)->Int();
 	const unsigned int scaleIdx = GetParam(kScale)->Int();
 	const unsigned int keyIdx = GetParam(kKey)->Int();
@@ -291,7 +305,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	float result[2];
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		if (mSampleCount == 0)
+		if (mSampleCount == 0 && bPlay)
 		{
 			mTones[mActiveTone]->noteOff();
 
@@ -344,7 +358,10 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		*out1 = result[0];
 		*out2 = result[1];
 
-		--mSampleCount;
+		if ( mSampleCount > 0 )
+		{
+			--mSampleCount;
+		}
 	}
 }
 
@@ -370,7 +387,7 @@ void Melodizer::Reset()
 		mRandomGen.seed(seedParam);
 	}
 
-	mTick = 0;
+	mTick = -1;
 	mPreviousNoteIndex = 0;
 	mSampleCount = 0;
 	mOddTick = false;
@@ -399,6 +416,20 @@ void Melodizer::OnParamChange(int paramIdx)
 		// we want to have deterministic output,
 		// which means we should start from the beginning of the sequence.
 		Reset();
+		break;
+	
+	case kPlayState:
+		{
+			const PlayState state = (PlayState)param->Int();
+			if (state == PS_Stop)
+			{
+				Reset();
+			}
+			else if ( state == PS_Pause )
+			{
+				mTones[mActiveTone]->noteOff();
+			}
+		}
 		break;
 
 	case kProbabilityRandomize:

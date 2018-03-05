@@ -10,6 +10,7 @@
 #include "BangControl.h"
 #include "ControlGroup.h"
 #include "StepModeControl.h"
+#include "PlayStateControl.h"
 
 enum ELayout
 {
@@ -80,7 +81,7 @@ enum ELayout
 
 	kTimeGroup_X = 10,
 	kTimeGroup_Y = kOscGroup_Y + kOscGroup_H + 10,
-	kTimeGroup_W = 150,
+	kTimeGroup_W = 260,
 	kTimeGroup_H = kOscGroup_H,
 
 	kTempoControl_X = 0,
@@ -97,6 +98,11 @@ enum ELayout
 	kShuffleControl_Y = 15,
 	kShuffleControl_W = kLargeKnobSize,
 	kShuffleControl_H = kLargeKnobSize,
+	
+	kPlayStateControl_X = 0,
+	kPlayStateControl_Y = 15,
+	kPlayStateControl_W = 100,
+	kPlayStateControl_H = kLargeKnobSize,
 
 	kPitchGroup_X = kTimeGroup_X + kTimeGroup_W + 10,
 	kPitchGroup_Y = kTimeGroup_Y,
@@ -317,6 +323,10 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kShuffleControl, hoff));
 		AttachKnob(pGraphics, rect, kShuffle, Strings::ShuffleLabel);
+		
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kPlayStateControl, hoff));
+		pGraphics->AttachControl(new PlayStateControl(mPlug, rect, Color::LedOff, Color::LedOn));
 	}
 
 	// Pitch section
