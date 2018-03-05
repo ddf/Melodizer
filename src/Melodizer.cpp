@@ -205,6 +205,9 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 			
 			sprintf(paramName, "Step %d Pan", i);
 			GetParam(kPanFirst + i)->InitDouble(paramName, 0, -1, 1, 0.1);
+			
+			sprintf(paramName, "Step %d Velocity", i);
+			GetParam(kVelocityFirst + i)->InitDouble(paramName, 100, 0, 100, percentStep, "%");
 
 			sprintf(paramName, "Step %d Attack", i);
 			GetParam(kAttackFirst + i)->InitDouble(paramName, 100, 1, 100, percentStep, "%");
@@ -400,6 +403,7 @@ void Melodizer::OnParamChange(int paramIdx)
 
 	case kProbabilityRandomize:
 	case kPanRandomize:
+	case kVelocityRandomize:
 	case kAttackRandomize:
 	case kDecayRandomize:
 	case kSustainRandomize:
@@ -452,7 +456,7 @@ void Melodizer::GenerateNote( int tick,
 	const float fromFreq = mTones[mActiveTone]->getFrequency();
     const float toFreq 	= Frequency::ofMidiNote( note ).asHz();
 	const float glide   = GetParam(kGlide)->Value();
-	const float amp 	= 1.0f;
+	const float amp 	= GetParam(kVelocityFirst + tick)->Value() / 100;
 	const float fromPan = mTones[mActiveTone]->getPan();
 	const float toPan 	= GetParam(kPanFirst + tick)->Value() * GetParam(kWidth)->Value() / 100;
 	const float panDur = GetParam(kMovement)->Value();

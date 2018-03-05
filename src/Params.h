@@ -43,6 +43,7 @@ enum EParams
 	STEP_PARAM(kStepMode), // see: enum StepMode
 	STEP_PARAM(kProbability),
 	STEP_PARAM(kPan),
+	STEP_PARAM(kVelocity),
 	STEP_PARAM(kAttack),
 	STEP_PARAM(kDecay),
 	STEP_PARAM(kSustain),

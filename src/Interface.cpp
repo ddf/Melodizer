@@ -37,7 +37,7 @@ enum ELayout
 	kMovementControl_W = kLargeKnobSize,
 	kMovementControl_H = kLargeKnobSize,
 
-	kEnvGroup_X = kOscGroup_X + kOscGroup_W + 20,
+	kEnvGroup_X = kOscGroup_X + kOscGroup_W + 10,
 	kEnvGroup_Y = kOscGroup_Y,
 	kEnvGroup_H = kOscGroup_H,
 	kEnvGroup_W = 170,
@@ -74,7 +74,7 @@ enum ELayout
 	kSeedControl_H = kEnumHeight,
 
 	kTimeGroup_X = 10,
-	kTimeGroup_Y = kOscGroup_Y + kOscGroup_H + 20,
+	kTimeGroup_Y = kOscGroup_Y + kOscGroup_H + 10,
 	kTimeGroup_W = 150,
 	kTimeGroup_H = kOscGroup_H,
 
@@ -93,7 +93,7 @@ enum ELayout
 	kShuffleControl_W = kLargeKnobSize,
 	kShuffleControl_H = kLargeKnobSize,
 
-	kPitchGroup_X = kTimeGroup_X + kTimeGroup_W + 20,
+	kPitchGroup_X = kTimeGroup_X + kTimeGroup_W + 10,
 	kPitchGroup_Y = kTimeGroup_Y,
 	kPitchGroup_W = 220,
 	kPitchGroup_H = kOscGroup_H,
@@ -119,9 +119,9 @@ enum ELayout
 	kRangeControl_H = kEnumHeight,
 
 	kSequenceGroup_X = 10,
-	kSequenceGroup_Y = kTimeGroup_Y + kTimeGroup_H + 20,
+	kSequenceGroup_Y = kTimeGroup_Y + kTimeGroup_H + 10,
 	kSequenceGroup_W = 760,
-	kSequenceGroup_H = 340,
+	kSequenceGroup_H = GUI_HEIGHT - 10 - kSequenceGroup_Y,
 
 	kFirstKnobColumnX = kSequenceGroup_X + 60,
 
@@ -216,6 +216,7 @@ namespace Strings
 
 	const char * ProbabilityLabel = "P(N)";
 	const char * PanLabel = "L-R";
+	const char * VelocityLabel = "V";
 	const char * AttackLabel = "A";
 	const char * DecayLabel = "D";
 	const char * SustainLabel = "S";
@@ -359,31 +360,35 @@ void Interface::CreateControls(IGraphics* pGraphics)
 			AttachKnob(pGraphics, MakeIRectHOffset(kStepKnob, hoffset), kProbabilityFirst + i);
 			// pan
 			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 1), kPanFirst + i);
+			// velocity
+			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 2), kVelocityFirst + i);
 			// attack
-			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 2), kAttackFirst + i);
+			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 3), kAttackFirst + i);
 			// decay
-			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 3), kDecayFirst + i);
+			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 4), kDecayFirst + i);
 			// sustain
-			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 4), kSustainFirst + i);
+			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 5), kSustainFirst + i);
 			// release
-			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 5), kReleaseFirst + i);
+			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 6), kReleaseFirst + i);
 		}
 	}
 
 	AttachStepRowLabel(pGraphics, 0, Strings::ProbabilityLabel);
 	AttachStepRowLabel(pGraphics, 1, Strings::PanLabel);
-	AttachStepRowLabel(pGraphics, 2, Strings::AttackLabel);
-	AttachStepRowLabel(pGraphics, 3, Strings::DecayLabel);
-	AttachStepRowLabel(pGraphics, 4, Strings::SustainLabel);
-	AttachStepRowLabel(pGraphics, 5, Strings::ReleaseLabel);
+	AttachStepRowLabel(pGraphics, 2, Strings::VelocityLabel);
+	AttachStepRowLabel(pGraphics, 3, Strings::AttackLabel);
+	AttachStepRowLabel(pGraphics, 4, Strings::DecayLabel);
+	AttachStepRowLabel(pGraphics, 5, Strings::SustainLabel);
+	AttachStepRowLabel(pGraphics, 6, Strings::ReleaseLabel);
 
 	// randomizers
 	AttachStepRowRandomizer(pGraphics, 0, kProbabilityRandomize);
 	AttachStepRowRandomizer(pGraphics, 1, kPanRandomize);
-	AttachStepRowRandomizer(pGraphics, 2, kAttackRandomize);
-	AttachStepRowRandomizer(pGraphics, 3, kDecayRandomize);
-	AttachStepRowRandomizer(pGraphics, 4, kSustainRandomize);
-	AttachStepRowRandomizer(pGraphics, 5, kReleaseRandomize);
+	AttachStepRowRandomizer(pGraphics, 2, kVelocityRandomize);
+	AttachStepRowRandomizer(pGraphics, 3, kAttackRandomize);
+	AttachStepRowRandomizer(pGraphics, 4, kDecayRandomize);
+	AttachStepRowRandomizer(pGraphics, 5, kSustainRandomize);
+	AttachStepRowRandomizer(pGraphics, 6, kReleaseRandomize);
 }
 
 void Interface::AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name)
