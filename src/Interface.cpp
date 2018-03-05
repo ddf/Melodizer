@@ -140,22 +140,17 @@ enum ELayout
 	kStepKnob_Y = kStepModeControl_Y + kStepModeControl_H + 10,
 
 	kStepKnobLabel_X = kSequenceGroup_X,
-	kStepKnobLabel_Y = kStepKnob_Y + kStepKnob_H / 2,
+	kStepKnobLabel_Y = kStepKnob_Y + kStepKnob_H / 4,
 	kStepKnobLabel_W = kFirstKnobColumnX - kStepKnobLabel_X - kStepKnob_W / 2,
-	kStepKnobLabel_H = 10,
+	kStepKnobLabel_H = 8,
 
 	kStepKnobColumnSpacing = 45,
 	kStepKnobRowSpacing = 45,
 
-	kStepRandomizeGroup_X = kSequenceGroup_X + kSequenceGroup_W + 10,
-	kStepRandomizeGroup_Y = kSequenceGroup_Y,
-	kStepRandomizeGroup_W = 30,
-	kStepRandomizeGroup_H = kSequenceGroup_H,
-
-	kStepRandomize_W = 10,
-	kStepRandomize_H = 10,
-	kStepRandomize_X = kStepRandomizeGroup_X + 10,
-	kStepRandomize_Y = kStepKnob_Y + kStepKnob_H / 2 - kStepRandomize_H / 2,	
+	kStepRandomize_W = 18,
+	kStepRandomize_H = 12,
+	kStepRandomize_X = kStepKnobLabel_X + kStepKnobLabel_W / 2 - kStepRandomize_W / 2,
+	kStepRandomize_Y = kStepKnobLabel_Y + kStepKnobLabel_H,
 };
 
 namespace Color
@@ -194,6 +189,7 @@ namespace TextStyles
 	IText  GroupLabel(LabelTextSize, &Color::GroupLabel, LabelFont, IText::kStyleBold, IText::kAlignNear);
 	IText  Enum(ControlTextSize, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
 	IText  TextBox(ControlTextSize, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
+	IText  RandLabel(ControlTextSize-2, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter);
 }
 
 namespace Strings
@@ -204,7 +200,7 @@ namespace Strings
 	const char * TimeLabel = "Clock";
 	const char * PitchLabel = "Pitch";
 	const char * SequenceLabel = "Sequence";
-	const char * RandomizeLabel = "RND";
+	const char * RandomizeLabel = "rng";
 
 	const char * VoicesLabel = "Voices";
 	const char * SeedLabel = "Seed";
@@ -378,17 +374,12 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	AttachStepRowLabel(pGraphics, 5, Strings::ReleaseLabel);
 
 	// randomizers
-	{
-		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kStepRandomizeGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::RandomizeLabel);
-		pGraphics->AttachControl(group);
-
-		AttachStepRowRandomizer(pGraphics, 0, kProbabilityRandomize);
-		AttachStepRowRandomizer(pGraphics, 1, kPanRandomize);
-		AttachStepRowRandomizer(pGraphics, 2, kAttackRandomize);
-		AttachStepRowRandomizer(pGraphics, 3, kDecayRandomize);
-		AttachStepRowRandomizer(pGraphics, 4, kSustainRandomize);
-		AttachStepRowRandomizer(pGraphics, 5, kReleaseRandomize);
-	}
+	AttachStepRowRandomizer(pGraphics, 0, kProbabilityRandomize);
+	AttachStepRowRandomizer(pGraphics, 1, kPanRandomize);
+	AttachStepRowRandomizer(pGraphics, 2, kAttackRandomize);
+	AttachStepRowRandomizer(pGraphics, 3, kDecayRandomize);
+	AttachStepRowRandomizer(pGraphics, 4, kSustainRandomize);
+	AttachStepRowRandomizer(pGraphics, 5, kReleaseRandomize);
 }
 
 void Interface::AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name)
@@ -404,7 +395,7 @@ void Interface::AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char 
 void Interface::AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, const int param)
 {
 	IRECT rect = MakeIRectVOffset(kStepRandomize, kStepKnobRowSpacing*rowNum);
-	pGraphics->AttachControl(new BangControl(mPlug, rect, param, Color::LedOn, Color::LedOff));
+	pGraphics->AttachControl(new BangControl(mPlug, rect, param, Color::LedOn, Color::LedOff, &TextStyles::RandLabel, Strings::RandomizeLabel));
 }
 
 void Interface::AttachEnum(IGraphics* pGraphics, IRECT rect, int paramIdx, const char * label)
