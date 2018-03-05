@@ -9,6 +9,7 @@
 #include "TextBox.h"
 #include "BangControl.h"
 #include "ControlGroup.h"
+#include "StepModeControl.h"
 
 enum ELayout
 {
@@ -122,17 +123,17 @@ enum ELayout
 	kSequenceGroup_W = 760,
 	kSequenceGroup_H = 340,
 
-	kFirstKnobColumnX = kSequenceGroup_X + 55,
+	kFirstKnobColumnX = kSequenceGroup_X + 60,
 
 	kKnobLED_W = 8,
 	kKnobLED_H = kKnobLED_W,
 	kKnobLED_X = kFirstKnobColumnX - kKnobLED_W / 2,
 	kKnobLED_Y = kSequenceGroup_Y + 25,
 
-	kStepModeControl_W = 36,
-	kStepModeControl_H = 15,
+	kStepModeControl_W = 10,
+	kStepModeControl_H = 30,
 	kStepModeControl_X = kFirstKnobColumnX - kStepModeControl_W / 2,
-	kStepModeControl_Y = kKnobLED_Y + kKnobLED_H + 10,
+	kStepModeControl_Y = kKnobLED_Y + kKnobLED_H + 12,
 
 	kStepKnob_W = 30,
 	kStepKnob_H = kStepKnob_W,
@@ -189,6 +190,7 @@ namespace TextStyles
 	IText  GroupLabel(LabelTextSize, &Color::GroupLabel, LabelFont, IText::kStyleBold, IText::kAlignNear);
 	IText  Enum(ControlTextSize, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
 	IText  TextBox(ControlTextSize, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
+	IText  StepMode(ControlTextSize-2, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
 	IText  RandLabel(ControlTextSize-2, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter);
 }
 
@@ -345,7 +347,9 @@ void Interface::CreateControls(IGraphics* pGraphics)
 			pGraphics->AttachControl(led);
 
 			// mode
-			pGraphics->AttachControl(new EnumControl(mPlug, MakeIRectHOffset(kStepModeControl, hoffset), kStepModeFirst + i, &TextStyles::Enum));
+			//pGraphics->AttachControl(new EnumControl(mPlug, MakeIRectHOffset(kStepModeControl, hoffset), kStepModeFirst + i, &TextStyles::Enum));
+			pGraphics->AttachControl(new StepModeControl(mPlug, MakeIRectHOffset(kStepModeControl, hoffset), kStepModeFirst + i, &TextStyles::StepMode));
+			
 			// led behind the probability knob that blinks when a note is actually played
 			ledRect = MakeIRectHOffset(kStepKnob, hoffset).GetPadded(-4);
 			led = new LED(mPlug, ledRect, Color::Background, Color::LedOn, Color::Background);

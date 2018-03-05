@@ -298,6 +298,12 @@
 		7779EA3F204DB6E300AB7ED5 /* ControlGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA3C204DB6BE00AB7ED5 /* ControlGroup.cpp */; };
 		7779EA40204DB6E400AB7ED5 /* ControlGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA3C204DB6BE00AB7ED5 /* ControlGroup.cpp */; };
 		7779EA41204DB6E400AB7ED5 /* ControlGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA3C204DB6BE00AB7ED5 /* ControlGroup.cpp */; };
+		7779EA4C204DBF8300AB7ED5 /* StepModeControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA4A204DBF8300AB7ED5 /* StepModeControl.cpp */; };
+		7779EA4D204DBF8300AB7ED5 /* StepModeControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA4A204DBF8300AB7ED5 /* StepModeControl.cpp */; };
+		7779EA4E204DBF8300AB7ED5 /* StepModeControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA4A204DBF8300AB7ED5 /* StepModeControl.cpp */; };
+		7779EA4F204DBF8300AB7ED5 /* StepModeControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA4A204DBF8300AB7ED5 /* StepModeControl.cpp */; };
+		7779EA50204DBF8300AB7ED5 /* StepModeControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 7779EA4B204DBF8300AB7ED5 /* StepModeControl.h */; };
+		7779EA51204DBF8300AB7ED5 /* StepModeControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 7779EA4B204DBF8300AB7ED5 /* StepModeControl.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -677,6 +683,8 @@
 		7779EA33204C70BA00AB7ED5 /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Line.cpp; path = "../minim-cpp/src/ugens/Line.cpp"; sourceTree = "<group>"; };
 		7779EA3C204DB6BE00AB7ED5 /* ControlGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ControlGroup.cpp; path = src/ControlGroup.cpp; sourceTree = "<group>"; };
 		7779EA3D204DB6BE00AB7ED5 /* ControlGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ControlGroup.h; path = src/ControlGroup.h; sourceTree = "<group>"; };
+		7779EA4A204DBF8300AB7ED5 /* StepModeControl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StepModeControl.cpp; path = src/StepModeControl.cpp; sourceTree = "<group>"; };
+		7779EA4B204DBF8300AB7ED5 /* StepModeControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StepModeControl.h; path = src/StepModeControl.h; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -736,6 +744,8 @@
 		089C166AFE841209C02AAC07 /* IPlugExample */ = {
 			isa = PBXGroup;
 			children = (
+				7779EA4A204DBF8300AB7ED5 /* StepModeControl.cpp */,
+				7779EA4B204DBF8300AB7ED5 /* StepModeControl.h */,
 				7779EA3C204DB6BE00AB7ED5 /* ControlGroup.cpp */,
 				7779EA3D204DB6BE00AB7ED5 /* ControlGroup.h */,
 				7779E9C92049DAF800AB7ED5 /* Params.h */,
@@ -1379,6 +1389,7 @@
 				4F3AE17B12C0E5E2001FD7A4 /* resource.h in Headers */,
 				4FF016F7134E14E2001447BA /* mutex.h in Headers */,
 				4FF016F8134E14E2001447BA /* ptrlist.h in Headers */,
+				7779EA51204DBF8300AB7ED5 /* StepModeControl.h in Headers */,
 				4FF016F9134E14E2001447BA /* wdlstring.h in Headers */,
 				4FD16D1913B634E5001D0217 /* swell.h in Headers */,
 				4FD16D2413B6351C001D0217 /* swell-functions.h in Headers */,
@@ -1435,6 +1446,7 @@
 				4F78DA9213B640050032E0F3 /* swell-types.h in Headers */,
 				4F78DA9313B640050032E0F3 /* aeffect.h in Headers */,
 				4F78DA9413B640050032E0F3 /* aeffectx.h in Headers */,
+				7779EA50204DBF8300AB7ED5 /* StepModeControl.h in Headers */,
 				4F78DA9513B640050032E0F3 /* IPlug_include_in_plug_hdr.h in Headers */,
 				4F78DA9613B640050032E0F3 /* IPlug_include_in_plug_src.h in Headers */,
 				4F78DA9713B640050032E0F3 /* IControl.h in Headers */,
@@ -1768,6 +1780,7 @@
 				4F78D9F313B63C6A0032E0F3 /* IPlugVST.cpp in Sources */,
 				7779E9E12049DB0800AB7ED5 /* TextBox.cpp in Sources */,
 				4FDA440C13F3E4F2000B4551 /* IBitmapMonoText.cpp in Sources */,
+				7779EA4D204DBF8300AB7ED5 /* StepModeControl.cpp in Sources */,
 				7779EA2F204C5F6D00AB7ED5 /* BangControl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1790,6 +1803,7 @@
 				7779EA41204DB6E400AB7ED5 /* ControlGroup.cpp in Sources */,
 				7779EA1F2049DC2300AB7ED5 /* Pan.cpp in Sources */,
 				4F78D94E13B63BA50032E0F3 /* IGraphics.cpp in Sources */,
+				7779EA4F204DBF8300AB7ED5 /* StepModeControl.cpp in Sources */,
 				4F78D94F13B63BA50032E0F3 /* IGraphicsCarbon.cpp in Sources */,
 				7779E9EC2049DB0900AB7ED5 /* KnobLineCoronaControl.cpp in Sources */,
 				4F78D95013B63BA50032E0F3 /* IGraphicsCocoa.mm in Sources */,
@@ -1830,6 +1844,7 @@
 				4F9828BC140A9EB700F3FCC1 /* IGraphics.cpp in Sources */,
 				4F9828BD140A9EB700F3FCC1 /* IGraphicsCarbon.cpp in Sources */,
 				7779E9E32049DB0800AB7ED5 /* Instruments.cpp in Sources */,
+				7779EA4E204DBF8300AB7ED5 /* StepModeControl.cpp in Sources */,
 				4F9828BE140A9EB700F3FCC1 /* IGraphicsCocoa.mm in Sources */,
 				4F9828BF140A9EB700F3FCC1 /* Log.cpp in Sources */,
 				7779EA182049DC2300AB7ED5 /* Waves.cpp in Sources */,
@@ -1889,6 +1904,7 @@
 				4FD16D3C13B6358C001D0217 /* swell-miscdlg.mm in Sources */,
 				4FD16D3E13B63595001D0217 /* swell-menu.mm in Sources */,
 				7779EA012049DC2200AB7ED5 /* Pan.cpp in Sources */,
+				7779EA4C204DBF8300AB7ED5 /* StepModeControl.cpp in Sources */,
 				7779EA242049DDE000AB7ED5 /* LED.cpp in Sources */,
 				4FD16D4013B635A0001D0217 /* swell-misc.mm in Sources */,
 				7779EA052049DC2200AB7ED5 /* Wavetable.cpp in Sources */,
