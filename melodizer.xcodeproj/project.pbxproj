@@ -294,6 +294,10 @@
 		7779EA39204C70C200AB7ED5 /* Multiplier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA32204C70BA00AB7ED5 /* Multiplier.cpp */; };
 		7779EA3A204C70C300AB7ED5 /* Multiplier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA32204C70BA00AB7ED5 /* Multiplier.cpp */; };
 		7779EA3B204C70C300AB7ED5 /* Multiplier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA32204C70BA00AB7ED5 /* Multiplier.cpp */; };
+		7779EA3E204DB6E300AB7ED5 /* ControlGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA3C204DB6BE00AB7ED5 /* ControlGroup.cpp */; };
+		7779EA3F204DB6E300AB7ED5 /* ControlGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA3C204DB6BE00AB7ED5 /* ControlGroup.cpp */; };
+		7779EA40204DB6E400AB7ED5 /* ControlGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA3C204DB6BE00AB7ED5 /* ControlGroup.cpp */; };
+		7779EA41204DB6E400AB7ED5 /* ControlGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA3C204DB6BE00AB7ED5 /* ControlGroup.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -671,6 +675,8 @@
 		7779EA2D204C5F6900AB7ED5 /* BangControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BangControl.h; path = src/BangControl.h; sourceTree = "<group>"; };
 		7779EA32204C70BA00AB7ED5 /* Multiplier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Multiplier.cpp; path = "../minim-cpp/src/ugens/Multiplier.cpp"; sourceTree = "<group>"; };
 		7779EA33204C70BA00AB7ED5 /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Line.cpp; path = "../minim-cpp/src/ugens/Line.cpp"; sourceTree = "<group>"; };
+		7779EA3C204DB6BE00AB7ED5 /* ControlGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ControlGroup.cpp; path = src/ControlGroup.cpp; sourceTree = "<group>"; };
+		7779EA3D204DB6BE00AB7ED5 /* ControlGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ControlGroup.h; path = src/ControlGroup.h; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -730,6 +736,8 @@
 		089C166AFE841209C02AAC07 /* IPlugExample */ = {
 			isa = PBXGroup;
 			children = (
+				7779EA3C204DB6BE00AB7ED5 /* ControlGroup.cpp */,
+				7779EA3D204DB6BE00AB7ED5 /* ControlGroup.h */,
 				7779E9C92049DAF800AB7ED5 /* Params.h */,
 				7779E9C62049DAF800AB7ED5 /* Melodizer.h */,
 				7779E9D12049DAF900AB7ED5 /* Melodizer.cpp */,
@@ -1734,6 +1742,7 @@
 				7779EA0D2049DC2200AB7ED5 /* UGen.cpp in Sources */,
 				4F78D9BB13B63BA50032E0F3 /* IPlugBase.cpp in Sources */,
 				4F78D9BC13B63BA50032E0F3 /* IPlugStructs.cpp in Sources */,
+				7779EA3F204DB6E300AB7ED5 /* ControlGroup.cpp in Sources */,
 				7779EA0B2049DC2200AB7ED5 /* Pan.cpp in Sources */,
 				4F78D9BD13B63BA50032E0F3 /* Hosts.cpp in Sources */,
 				4F78D9BF13B63BA50032E0F3 /* IGraphicsMac.mm in Sources */,
@@ -1778,6 +1787,7 @@
 				7779EA212049DC2300AB7ED5 /* UGen.cpp in Sources */,
 				4F78D94B13B63BA50032E0F3 /* Hosts.cpp in Sources */,
 				4F78D94D13B63BA50032E0F3 /* IGraphicsMac.mm in Sources */,
+				7779EA41204DB6E400AB7ED5 /* ControlGroup.cpp in Sources */,
 				7779EA1F2049DC2300AB7ED5 /* Pan.cpp in Sources */,
 				4F78D94E13B63BA50032E0F3 /* IGraphics.cpp in Sources */,
 				4F78D94F13B63BA50032E0F3 /* IGraphicsCarbon.cpp in Sources */,
@@ -1861,6 +1871,7 @@
 				7779EA172049DC2300AB7ED5 /* UGen.cpp in Sources */,
 				4F9828D6140A9EB700F3FCC1 /* ustring.cpp in Sources */,
 				7779EA36204C70BF00AB7ED5 /* Line.cpp in Sources */,
+				7779EA40204DB6E400AB7ED5 /* ControlGroup.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1881,6 +1892,7 @@
 				7779EA242049DDE000AB7ED5 /* LED.cpp in Sources */,
 				4FD16D4013B635A0001D0217 /* swell-misc.mm in Sources */,
 				7779EA052049DC2200AB7ED5 /* Wavetable.cpp in Sources */,
+				7779EA3E204DB6E300AB7ED5 /* ControlGroup.cpp in Sources */,
 				4FD16D4213B635AB001D0217 /* swell-wnd.mm in Sources */,
 				4FD16D4413B635B2001D0217 /* swell.cpp in Sources */,
 				4FD16D4713B635C8001D0217 /* swellappmain.mm in Sources */,

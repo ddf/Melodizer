@@ -179,17 +179,21 @@ namespace Color
 namespace TextStyles
 {
 #ifdef OS_WIN
-	const int TextSize = 12;
-	char * Font = 0;
+	const int ControlTextSize = 12;
+	const int LabelTextSize = 14;
+	char * ControlFont = 0;
+	char * LabelFont = 0;
 #else
-	const int TextSize = 14;
-	char * Font = 0;
+	const int ControlTextSize = 14;
+	const int LabelTextSize = 12;
+	char * ControlFont = 0;
+	char * LabelFont = "Helvetica Neue";
 #endif
 	// can't be const because of stupid ITextControl constructor
-	IText  Label(TextSize, &Color::Label, Font, IText::kStyleBold, IText::kAlignCenter);
-	IText  GroupLabel(TextSize, &Color::GroupLabel, Font, IText::kStyleBold, IText::kAlignNear);
-	IText  Enum(TextSize, &Color::Label, Font, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
-	IText  TextBox(TextSize, &Color::Label, Font, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
+	IText  Label(LabelTextSize, &Color::Label, LabelFont, IText::kStyleBold, IText::kAlignCenter);
+	IText  GroupLabel(LabelTextSize, &Color::GroupLabel, LabelFont, IText::kStyleBold, IText::kAlignNear);
+	IText  Enum(ControlTextSize, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
+	IText  TextBox(ControlTextSize, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
 }
 
 namespace Strings
