@@ -150,9 +150,18 @@ Tone::~Tone()
 	// we don't delete wave because Oscil will do it.
 }
 
+void Tone::setPulseWidth(float pw)
+{
+	wave->pw = pw;
+	wave->invpw = 1.0f / pw;
+	wave->invwp = 1.0f / (1-pw);
+}
+
 float Tone::Wave::value(const float at) const
 {
-	return source != nullptr ? source->value(at) : 0.0f;
+	if ( source == nullptr ) return 0;
+	const float lu = at <= pw ? at*invpw*0.5f : 0.5f + (at-pw)*invwp*0.5f;
+	return source->value(lu);
 }
 
 void Tone::noteOn( Waveform* waveform, int tick, float fromFreq, float toFreq, float glide, float amp, float attack, float decay, float sustain, float release, float fromPan, float toPan, float panDur )

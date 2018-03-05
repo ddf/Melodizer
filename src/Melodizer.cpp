@@ -30,6 +30,8 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	
 	// setup dsp chain
 	{
+		mMelodyVolume.setAudioChannelCount(2);
+		mMelodyVolume.setSampleRate(44100);
 		mMelodyBus.patch( mMelodyVolume );
 		mMelodyVolumeLine.patch( mMelodyVolume.amplitude );
 	}
@@ -71,10 +73,6 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 				param->SetDisplayText(i, "SQR");
 				mWaveforms.push_back(Waves::SQUARE());
 				break;
-			case WT_Quarterpulse:
-				param->SetDisplayText(i, "PULSE");
-				mWaveforms.push_back(Waves::QUARTERPULSE());
-				break;
 			case WT_Sine4:
 				param->SetDisplayText(i, "SIN4");
 				mWaveforms.push_back(Waves::gen10(kWaveformLength, harmonics, 4));
@@ -101,6 +99,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	
 	// synth settings
 	{
+		GetParam(kPulseWidth)->InitDouble("Pulse Width", 0.5, 0.01, 0.5, 0.01);
 		GetParam(kVoices)->InitInt("Max Voices", 16, kVoicesMin, kVoicesMax);
 		GetParam(kVolume)->InitDouble("Volume", -6, -48, 6, 0.1f, "db");
 		GetParam(kWidth)->InitDouble("Width", 100, 0, 100, 0.5, "%");
@@ -226,6 +225,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	// randomizers
 	InitRandomizerParam(kProbabilityRandomize, "Randomize Probabilities");
 	InitRandomizerParam(kPanRandomize, "Randomize Pans");
+	InitRandomizerParam(kVelocityRandomize, "Randomize Velocities");
 	InitRandomizerParam(kAttackRandomize, "Randomize Attacks");
 	InitRandomizerParam(kDecayRandomize, "Randomize Decays");
 	InitRandomizerParam(kSustainRandomize, "Randomize Sustain");
@@ -452,7 +452,7 @@ void Melodizer::GenerateNote( int tick,
 	int baseNote = notes->scale[nextNoteIndex][0] + key;
 	int octave = RandomRange(lowOctave, hiOctave);
     int note = baseNote + octave * 12;
-	
+	const float pulseWidth = GetParam(kPulseWidth)->Value();
 	const float fromFreq = mTones[mActiveTone]->getFrequency();
     const float toFreq 	= Frequency::ofMidiNote( note ).asHz();
 	const float glide   = GetParam(kGlide)->Value();
@@ -471,6 +471,7 @@ void Melodizer::GenerateNote( int tick,
 	{
 		mActiveTone = (mActiveTone+1)%voices;
 	}
+	mTones[mActiveTone]->setPulseWidth(pulseWidth);
 	mTones[mActiveTone]->noteOn(mWaveforms[waveformIdx], tick, fromFreq, toFreq, glide, amp, attack, decay, sustain, release, fromPan, toPan, panDur);
 
     previousNoteIndex = nextNoteIndex;    

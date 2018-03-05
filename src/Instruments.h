@@ -55,6 +55,8 @@ class Tone
 public:
     Tone( Summer& out );
 	~Tone();
+	
+	void setPulseWidth(float pw);
        
 	void noteOn(Waveform* waveform, int tick, float fromFreq, float toFreq, float glide, float amp, float attack, float decay, float sustain, float release, float fromPan, float toPan, float panDur);
 	void noteOff();
@@ -74,6 +76,10 @@ private:
 		Wave() : source(nullptr) {}
 
 		Waveform* source;
+		float 	  pw;
+		// these are used in value, so we precompute whenever pw is set
+		float 	  invpw; // 1/pw
+		float     invwp; // 1/(1 - pw)
 
 		// Waveform
 		float value(const float at) const override;

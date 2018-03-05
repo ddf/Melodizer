@@ -17,6 +17,7 @@ enum EParams
 {
 	// synth params
 	kWaveform = 0,
+	kPulseWidth,
 	
 	kEnvAttack,
 	kEnvDecay,
@@ -78,7 +79,6 @@ enum WaveformType
 	WT_Triangle,
 	WT_Saw,
 	WT_Square,
-	WT_Quarterpulse,
 	WT_Sine4,
 	WT_Sine8,
 	WT_Sine16,

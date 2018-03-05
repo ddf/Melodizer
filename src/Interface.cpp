@@ -19,13 +19,18 @@ enum ELayout
 
 	kOscGroup_X = 10,
 	kOscGroup_Y = 10,
-	kOscGroup_W = 150,
+	kOscGroup_W = 190,
 	kOscGroup_H = 75,
 
 	kWaveformControl_X = 0,
 	kWaveformControl_Y = 20,
 	kWaveformControl_W = 50,
 	kWaveformControl_H = kEnumHeight,
+	
+	kPulseWidthControl_X = 0,
+	kPulseWidthControl_Y = 15,
+	kPulseWidthControl_W = kLargeKnobSize,
+	kPulseWidthControl_H = kLargeKnobSize,
 
 	kGlideControl_X = 0,
 	kGlideControl_Y = 15,
@@ -244,8 +249,12 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 		IRECT rect = group->GetControlRect(MakeIRect(kWaveformControl));
 		AttachEnum(pGraphics, rect, kWaveform, "Wave");
-
+		
 		int hoff = rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kPulseWidthControl, hoff));
+		AttachKnob(pGraphics, rect, kPulseWidth, "P/W");
+
+		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kGlideControl, hoff));
 		AttachKnob(pGraphics, rect, kGlide, "Glide");
 
