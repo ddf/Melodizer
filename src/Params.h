@@ -70,10 +70,20 @@ enum StepMode
 enum StepLength
 {
 	SL_4,
+	SL_4T,
+	SL_4D,
 	SL_8,
+	SL_8T,
+	SL_8D,
 	SL_16,
+	SL_16T,
+	SL_16D,
 	SL_32,
+	SL_32T,
+	SL_32D,
 	SL_64,
+	SL_64T,
+	SL_64D,
 	
 	SL_Count,
 };

@@ -12,6 +12,16 @@ using namespace Minim;
 
 const int kNumPrograms = 1;
 
+#define STEP_DISPLAY(S) S, S"T", S".",
+
+const char * kStepLengthDisplay[SL_Count] = {
+	STEP_DISPLAY("1/4")
+	STEP_DISPLAY("1/8")
+	STEP_DISPLAY("1/16")
+	STEP_DISPLAY("1/32")
+	STEP_DISPLAY("1/64")
+};
+
 Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 	, mInterface(this)
@@ -142,14 +152,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		param->InitEnum("Step Length", SL_8, SL_Count);
 		for(int i = 0; i < SL_Count; ++i)
 		{
-			switch(i)
-			{
-				case SL_4: param->SetDisplayText(i, "1/4"); break;
-				case SL_8: param->SetDisplayText(i, "1/8"); break;
-				case SL_16: param->SetDisplayText(i, "1/16"); break;
-				case SL_32: param->SetDisplayText(i, "1/32"); break;
-				case SL_64: param->SetDisplayText(i, "1/64"); break;
-			}
+			param->SetDisplayText(i, kStepLengthDisplay[i]);
 		}
 		param = GetParam(kPlayState);
 		param->InitEnum("Play State", PS_Stop, PS_Count);
@@ -281,9 +284,22 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	switch(GetParam(kStepLength)->Int())
 	{
 		case SL_4:  samplesPerBeat *= 2; break;
+		case SL_8:  break;
 		case SL_16: samplesPerBeat /= 2; break;
 		case SL_32: samplesPerBeat /= 4; break;
 		case SL_64: samplesPerBeat /= 8; break;
+
+		case SL_4T:  samplesPerBeat = samplesPerBeat * 2 * 2 / 3; break;
+		case SL_8T:  samplesPerBeat = samplesPerBeat * 2 / 3; break;
+		case SL_16T: samplesPerBeat = samplesPerBeat / 2 * 2 / 3; break;
+		case SL_32T: samplesPerBeat = samplesPerBeat / 4 * 2 / 3; break;
+		case SL_64T: samplesPerBeat = samplesPerBeat / 8 * 2 / 3; break;
+
+		case SL_4D:  samplesPerBeat = samplesPerBeat * 2 * 6 / 4; break;
+		case SL_8D:  samplesPerBeat = samplesPerBeat * 6 / 4; break;
+		case SL_16D: samplesPerBeat = samplesPerBeat / 2 * 6 / 4; break;
+		case SL_32D: samplesPerBeat = samplesPerBeat / 4 * 6 / 4; break;
+		case SL_64D: samplesPerBeat = samplesPerBeat / 8 * 6 / 4; break;
 	}
 	
 	const bool bPlay = PS_Play == (PlayState)GetParam(kPlayState)->Int();

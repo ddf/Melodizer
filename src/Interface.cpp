@@ -81,7 +81,7 @@ enum ELayout
 
 	kTimeGroup_X = 10,
 	kTimeGroup_Y = kOscGroup_Y + kOscGroup_H + 10,
-	kTimeGroup_W = 260,
+	kTimeGroup_W = 270,
 	kTimeGroup_H = kOscGroup_H,
 
 	kTempoControl_X = 0,
@@ -91,7 +91,7 @@ enum ELayout
 
 	kStepLengthControl_X = 0,
 	kStepLengthControl_Y = 20,
-	kStepLengthControl_W = 30,
+	kStepLengthControl_W = 40,
 	kStepLengthControl_H = kEnumHeight,
 
 	kShuffleControl_X = 0,
