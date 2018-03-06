@@ -239,41 +239,49 @@ bool MIDISettingsInStateAreEqual(AppState* os, AppState* ns)
 
 void MIDICallback( double deltatime, std::vector< unsigned char > *message, void *userData )
 {
-  if ( message->size() )
-  {
-    IMidiMsg *myMsg;
+	if ( message->size() )
+	{
+		if (message->size() > 3)
+		{
+			ISysEx sysEx(deltatime, &message->at(0), message->size());
+			gPluginInstance->ProcessSysEx(&sysEx);
+		}
+		else
+		{
+			IMidiMsg *myMsg;
 
-    switch (message->size())
-    {
-      case 1:
-        myMsg = new IMidiMsg(0, message->at(0), 0, 0);
-        break;
-      case 2:
-        myMsg = new IMidiMsg(0, message->at(0), message->at(1), 0);
-        break;
-      case 3:
-        myMsg = new IMidiMsg(0, message->at(0), message->at(1), message->at(2));
-        break;
-      default:
-        DBGMSG("NOT EXPECTING %d midi callback msg len\n", (int) message->size());
-        break;
-    }
+			switch (message->size())
+			{
+			case 1:
+				myMsg = new IMidiMsg(0, message->at(0), 0, 0);
+				break;
+			case 2:
+				myMsg = new IMidiMsg(0, message->at(0), message->at(1), 0);
+				break;
+			case 3:
+				myMsg = new IMidiMsg(0, message->at(0), message->at(1), message->at(2));
+				break;
+			default:
+				DBGMSG("NOT EXPECTING %d midi callback msg len\n", (int)message->size());
+				break;
+			}
 
-    IMidiMsg msg(*myMsg);
+			IMidiMsg msg(*myMsg);
 
-    delete myMsg;
+			delete myMsg;
 
-    // filter midi messages based on channel, if gStatus.mMidiInChan != all (0)
-    if (gState->mMidiInChan)
-    {
-      if (gState->mMidiInChan == msg.Channel() + 1 )
-        gPluginInstance->ProcessMidiMsg(&msg);
-    }
-    else
-    {
-      gPluginInstance->ProcessMidiMsg(&msg);
-    }
-  }
+			// filter midi messages based on channel, if gStatus.mMidiInChan != all (0)
+			if (gState->mMidiInChan)
+			{
+				if (gState->mMidiInChan == msg.Channel() + 1)
+					gPluginInstance->ProcessMidiMsg(&msg);
+			}
+			else
+			{
+				gPluginInstance->ProcessMidiMsg(&msg);
+			}
+		}
+	}
 }
 
 int AudioCallback(void *outputBuffer,

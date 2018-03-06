@@ -34,7 +34,7 @@
 
 // some options for the app
 
-#define ENABLE_SYSEX 0
+#define ENABLE_SYSEX 1
 #define ENABLE_MIDICLOCK 0
 #define ENABLE_ACTIVE_SENSING 0
 #define NUM_CHANNELS 2

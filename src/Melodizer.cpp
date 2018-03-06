@@ -385,6 +385,29 @@ void Melodizer::BeginMIDILearn(int param1, int param2, int x, int y)
 {
 }
 
+void Melodizer::ProcessMidiMsg(IMidiMsg* pMsg)
+{
+#ifdef TRACER_BUILD
+	pMsg->LogMsg();
+#endif
+}
+
+void Melodizer::ProcessSysEx(ISysEx* pSysEx)
+{
+#ifdef TRACER_BUILD
+	pSysEx->LogMsg();
+#endif
+	if (pSysEx->IsMMC())
+	{
+		switch (pSysEx->MMCCommand())
+		{
+		case ISysEx::kPlay: SetPlayStateFromMidi(PS_Play); break;
+		case ISysEx::kPause: SetPlayStateFromMidi(PS_Pause); break;
+		case ISysEx::kStop: SetPlayStateFromMidi(PS_Stop); break;
+		}
+	}
+}
+
 void Melodizer::Reset()
 {
 	TRACE;
@@ -534,4 +557,17 @@ float Melodizer::RandomRange(float low, float hi)
 {
 	std::uniform_real_distribution<> dist(low, hi);
 	return dist(mRandomGen);
+}
+
+void Melodizer::SetPlayStateFromMidi(PlayState state)
+{
+	IParam* param = GetParam(kPlayState);
+	if ((PlayState)param->Int() != state)
+	{
+		const double normValue = param->GetNormalized(state);
+		BeginInformHostOfParamChange(kPlayState);		
+		SetParameterFromGUI(kPlayState, normValue);
+		EndInformHostOfParamChange(kPlayState);
+		GetGUI()->SetParameterFromPlug(kPlayState, normValue, true);
+	}
 }
