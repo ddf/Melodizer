@@ -14,6 +14,17 @@ EnumControl::EnumControl(IPlugBase* pPlug, IRECT rect, int paramIdx, IText* text
 	mIncrementRect = IRECT(contentsRect.R - 5, contentsRect.T, contentsRect.R, contentsRect.B);
 
 	mTextRect = contentsRect.GetHPadded(-7);
+
+	if (paramIdx < kNumParams)
+	{
+		mMin = GetParam()->GetMin();
+		mMax = GetParam()->GetMax();
+	}
+	else
+	{
+		mMin = 0;
+		mMax = mPlug->NPresets() - 1;
+	}
 }
 
 bool EnumControl::Draw(IGraphics* pGraphics)
@@ -23,32 +34,42 @@ bool EnumControl::Draw(IGraphics* pGraphics)
 
 	// buttons
 	IColor buttonColor = mText.mTextEntryFGColor;
-	const int value = GetParam()->Int();
-	if (value == GetParam()->GetMin())
+	const int value = mParamIdx < kNumParams ? GetParam()->Int() : mPlug->GetCurrentPresetIdx();
+	if (value == mMin)
 	{
 		buttonColor.R *= 0.5f; buttonColor.G *= 0.5f; buttonColor.B *= 0.5f;
 	}
 	pGraphics->FillTriangle(&buttonColor, mDecrementRect.L, mDecrementRect.MH(), mDecrementRect.R, mDecrementRect.T, mDecrementRect.R, mDecrementRect.B, 0);
 
 	buttonColor = mText.mTextEntryFGColor;
-	if (value == GetParam()->GetMax())
+	if (value == mMax)
 	{
 		buttonColor.R *= 0.5f; buttonColor.G *= 0.5f; buttonColor.B *= 0.5f;
 	}
 	pGraphics->FillTriangle(&buttonColor, mIncrementRect.L, mIncrementRect.T, mIncrementRect.R, mIncrementRect.MH(), mIncrementRect.L, mIncrementRect.B, 0);
 
-	static char display[16];
-	GetParam()->GetDisplayForHost(display);
+	char* label = 0;
+	if (mParamIdx < kNumParams)
+	{
+		static char display[16];
+		GetParam()->GetDisplayForHost(display);
+		label = display;
+	}
+	else
+	{
+		label = const_cast<char*>(mPlug->GetPresetName(mPlug->GetCurrentPresetIdx()));
+	}
+
 	IRECT textRect = mTextRect;
 	// vertically center the text
-	pGraphics->MeasureIText(&mText, display, &textRect);
+	pGraphics->MeasureIText(&mText, label, &textRect);
 #ifdef OS_OSX
 	textRect.B -= 4;
 #endif
 	int offset = (mTextRect.H() - textRect.H()) / 2;
 	textRect.T += offset;
 	textRect.B += offset;
-	pGraphics->DrawIText(&mText, display, &textRect);
+	pGraphics->DrawIText(&mText, label, &textRect);
 
 	return true;
 }
@@ -59,7 +80,32 @@ void EnumControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 	{
 		if (mTextRect.Contains(x, y))
 		{
-			PromptUserInput();
+			if (mParamIdx < kNumParams)
+			{
+				PromptUserInput();
+			}
+			else // need to build the popup for presets by hand
+			{
+				IPopupMenu menu;
+				const int currentPresetIdx = mPlug->GetCurrentPresetIdx();
+				for (int i = 0; i < mPlug->NPresets(); ++i)
+				{
+					const char * presetName = mPlug->GetPresetName(i);
+					if (i == currentPresetIdx)
+					{
+						menu.AddItem(new IPopupMenuItem(presetName, IPopupMenuItem::kChecked), -1);
+					}
+					else
+					{
+						menu.AddItem(new IPopupMenuItem(presetName), -1);
+					}
+				}
+
+				if (GetGUI()->CreateIPopupMenu(&menu, &mTextRect))
+				{
+					mPlug->RestorePreset(menu.GetChosenItemIdx());
+				}
+			}
 		}
 		else if (mIncrementRect.Contains(x, y))
 		{
@@ -70,7 +116,7 @@ void EnumControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 			StepValue(-1);
 		}
 	}
-	else if ( pMod->R )
+	else if ( pMod->R && mParamIdx < kNumParams)
 	{
 		Melodizer* plug = static_cast<Melodizer*>(mPlug);
 		if (plug != nullptr)
@@ -87,16 +133,25 @@ void EnumControl::OnMouseWheel(int x, int y, IMouseMod* pMod, int d)
 
 void EnumControl::StepValue(int amount)
 {
-	int count = GetParam()->GetNDisplayTexts();
-	if (count > 1)
+	const bool isParam = mParamIdx < kNumParams;
+	if (isParam)
 	{
-		mValue += 1.0 / (double)(count - 1) * amount;
+		int count = GetParam()->GetNDisplayTexts();
+		if (count > 1)
+		{
+			mValue += 1.0 / (double)(count - 1) * amount;
+		}
+		else
+		{
+			mValue += 1.0;
+		}
 	}
 	else
 	{
-		mValue += 1.0;
+		const int presetIdx = BOUNDED(mPlug->GetCurrentPresetIdx() + amount, mMin, mMax);
+		mPlug->RestorePreset(presetIdx);
 	}
 
-	SetDirty();
+	SetDirty(isParam);
 	Redraw();
 }

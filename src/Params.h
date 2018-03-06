@@ -64,7 +64,11 @@ enum EParams
 	STEP_PARAM(kSustain),
 	STEP_PARAM(kRelease),
 
-	kNumParams
+	kNumParams,
+
+	kSavePreset,
+	kLoadPreset,
+	kRestorePreset,
 };
 
 enum StepMode

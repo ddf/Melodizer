@@ -14,6 +14,7 @@ private:
 
 	void StepValue(int amount);
 
+	int   mMin, mMax;
 	IRECT mTextRect;
 	IRECT mDecrementRect;
 	IRECT mIncrementRect;

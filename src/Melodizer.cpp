@@ -268,7 +268,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	AttachGraphics(pGraphics);
 
 	//MakePreset("preset 1", ... );
-	MakeDefaultPreset((char *) "-", kNumPrograms);
+	MakeDefaultPreset((char *) "Init", kNumPrograms);
 }
 
 Melodizer::~Melodizer()

@@ -129,6 +129,26 @@ enum ELayout
 	kRangeControl_W = 20,
 	kRangeControl_H = kEnumHeight,
 
+	kPresetsGroup_W = 145,
+	kPresetsGroup_H = kPitchGroup_H,
+	kPresetsGroup_X = GUI_WIDTH - 10 - kPresetsGroup_W,
+	kPresetsGroup_Y = kPitchGroup_Y,
+
+	kPresetRestoreControl_X = 0,
+	kPresetRestoreControl_Y = 5,
+	kPresetRestoreControl_W = kPresetsGroup_W - 20,
+	kPresetRestoreControl_H = kEnumHeight,
+
+	kLoadControl_X = 8,
+	kLoadControl_Y = kPresetRestoreControl_Y + kPresetRestoreControl_H + 10,
+	kLoadControl_W = 50,
+	kLoadControl_H = 12,
+
+	kSaveControl_X = kLoadControl_X,
+	kSaveControl_Y = kLoadControl_Y,
+	kSaveControl_W = kLoadControl_W,
+	kSaveControl_H = kLoadControl_H,
+
 	kSequenceGroup_X = 10,
 	kSequenceGroup_Y = kTimeGroup_Y + kTimeGroup_H + 10,
 	kSequenceGroup_W = 760,
@@ -188,11 +208,13 @@ namespace TextStyles
 #ifdef OS_WIN
 	const int ControlTextSize = 12;
 	const int LabelTextSize = 12;
+	const int ButtonTextSize = 12;
 	char * ControlFont = 0;
 	char * LabelFont = 0;
 #else
 	const int ControlTextSize = 14;
 	const int LabelTextSize = 12;
+	const int ButtonTextSize = 12;
 	char * ControlFont = 0;
 	char * LabelFont = "Helvetica Neue";
 #endif
@@ -203,6 +225,7 @@ namespace TextStyles
 	IText  TextBox(ControlTextSize, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
 	IText  StepMode(ControlTextSize-2, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
 	IText  RandLabel(ControlTextSize-2, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter);
+	IText  ButtonLabel(ButtonTextSize, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter);
 }
 
 namespace Strings
@@ -212,6 +235,7 @@ namespace Strings
 	const char * MasterLabel = "Master";
 	const char * TimeLabel = "Clock";
 	const char * PitchLabel = "Pitch";
+	const char * PresetsLabel = "Presets";
 	const char * SequenceLabel = "Sequence";
 	const char * RandomizeLabel = "rand";
 
@@ -224,6 +248,8 @@ namespace Strings
 	const char * ScaleLabel = "Scale";
 	const char * OctaveLabel = "Oct.";
 	const char * RangeLabel = "Range";
+	const char * LoadLabel = "Load...";
+	const char * SaveLabel = "Save...";
 
 	const char * ProbabilityLabel = "P(N)";
 	const char * PanLabel = "L-R";
@@ -348,6 +374,22 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kRangeControl, hoff));
 		AttachTextBox(pGraphics, rect, kRange, 1.0f / (float)(kRangeMax - kRangeMin - 1), "00", Strings::RangeLabel);
+	}
+
+	// Presets section
+	{
+		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kPresetsGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::PresetsLabel);
+		pGraphics->AttachControl(group);
+
+		IRECT rect = group->GetControlRect(MakeIRect(kLoadControl));
+		pGraphics->AttachControl(new BangControl(mPlug, rect, kLoadPreset, Color::LedOn, Color::LedOff, &TextStyles::ButtonLabel, Strings::LoadLabel));
+
+		int hoff = rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kSaveControl, hoff));
+		pGraphics->AttachControl(new BangControl(mPlug, rect, kSavePreset, Color::LedOn, Color::LedOff, &TextStyles::ButtonLabel, Strings::SaveLabel));
+
+		rect = group->GetControlRect(MakeIRect(kPresetRestoreControl));
+		AttachEnum(pGraphics, rect, kRestorePreset);
 	}
 
 	// sequence 
