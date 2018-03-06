@@ -10,11 +10,11 @@ enum EParamSettings
 	kVoicesMin = 1,
 	kVoicesMax = 32,
 
-	kOctaveMin = 0,
-	kOctaveMax = 8,
+	kOctaveMin = -1,
+	kOctaveMax = 9,
 
-	kRangeMin  = 0,
-	kRangeMax  = 8,
+	kRangeMin  = 1,
+	kRangeMax  = 10,
 
 	kSeedMin   = 0,
 	kSeedMax   = 1<<15,

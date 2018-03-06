@@ -307,7 +307,25 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			IMidiMsg* pMsg = mMidiQueue.Peek();
 			if (pMsg->mOffset > s) break;
 
-			HandleMidiControlChange(pMsg);
+			switch (pMsg->StatusMsg())
+			{
+			case IMidiMsg::kControlChange:
+				HandleMidiControlChange(pMsg);
+				break;
+
+			case IMidiMsg::kNoteOn:
+				// -1 because MIDI note 0 is considered Octave -1.
+				GetParam(kOctave)->Set(pMsg->NoteNumber() / 12 - 1);
+				InformHostOfParamChange(kOctave, GetParam(kOctave)->GetNormalized());
+				OnParamChange(kOctave);
+				GetGUI()->SetParameterFromPlug(kOctave, GetParam(kOctave)->Value(), false);
+
+				GetParam(kKey)->Set(pMsg->NoteNumber() % 12);
+				InformHostOfParamChange(kKey, GetParam(kKey)->GetNormalized());
+				OnParamChange(kKey);
+				GetGUI()->SetParameterFromPlug(kKey, GetParam(kKey)->Value(), false);
+				break;
+			}
 
 			mMidiQueue.Remove();
 		}
@@ -444,13 +462,17 @@ void Melodizer::ProcessMidiMsg(IMidiMsg* pMsg)
 	pMsg->LogMsg();
 #endif
 
-	if (pMsg->StatusMsg() == IMidiMsg::kControlChange)
+	const IMidiMsg::EStatusMsg status = pMsg->StatusMsg();
+	if (status == IMidiMsg::kControlChange || status == IMidiMsg::kNoteOn )
 	{
-		const IMidiMsg::EControlChangeMsg cc = pMsg->ControlChangeIdx();
-		if (mMidiLearnParamIdx != -1)
+		if (status == IMidiMsg::kControlChange)
 		{
-			SetControlChangeForParam(cc, mMidiLearnParamIdx);
-			mMidiLearnParamIdx = -1;
+			const IMidiMsg::EControlChangeMsg cc = pMsg->ControlChangeIdx();
+			if (mMidiLearnParamIdx != -1)
+			{
+				SetControlChangeForParam(cc, mMidiLearnParamIdx);
+				mMidiLearnParamIdx = -1;
+			}
 		}
 
 		mMidiQueue.Add(pMsg);
@@ -576,7 +598,7 @@ void Melodizer::OnParamChange(int paramIdx)
 		break;
 
 	case kOctave:
-		mLowOctave = GetParam(kOctave)->Int();
+		mLowOctave = GetParam(kOctave)->Int() + 1;
 		// fallthru because hi octave is relative to low octave
 	case kRange:
 		mHiOctave = mLowOctave + GetParam(kRange)->Int();
@@ -673,7 +695,7 @@ void Melodizer::GenerateNote( int tick,
 		nextNoteIndex = nextNoteList[RandomRange(1, listLen-1)];
 	}
 	int baseNote = notes->scale[nextNoteIndex][0] + key;
-	int octave = RandomRange(lowOctave, hiOctave);
+	int octave = RandomRange(lowOctave, hiOctave-1);
     int note = baseNote + octave * 12;
 	const float pulseWidth = GetParam(kPulseWidth)->Value();
 	const float fromFreq = mTones[mActiveTone]->getFrequency();
