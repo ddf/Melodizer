@@ -8,9 +8,16 @@
 #include "Waves.h"
 #include "Instruments.h" // contains Tone
 
+#if SA_API
+extern char * gINIPath;
+#endif
+
 using namespace Minim;
 
 const int kNumPrograms = 1;
+
+// name of the section of the INI file we save midi cc mappings to
+const char * kMidiControlIni = "midicc";
 
 #define STEP_DISPLAY(S) S, S"T", S".",
 
@@ -25,6 +32,14 @@ const char * kStepLengthDisplay[SL_Count] = {
 Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 	, mInterface(this)
+	, mMidiLearnParamIdx(-1)
+	, mSamplesPerBeat(0)
+	, mPlayState(PS_Stop)
+	, mWaveFormIdx(0)
+	, mScaleIdx(0)
+	, mKeyIdx(0)
+	, mLowOctave(4)
+	, mHiOctave(0)
 	, mTick(0)
 	, mPreviousNoteIndex(0)
 	, mSampleCount(0)
@@ -37,6 +52,8 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mActiveTone(0)
 {
 	TRACE;
+
+	memset(mControlChangeForParam, 0, sizeof(mControlChangeForParam));
 	
 	// setup dsp chain
 	{
@@ -279,49 +296,23 @@ void Melodizer::InitRandomizerParam(const int paramIdx, const char *paramName)
 void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
 	// Mutex is already locked for us.
-	// one beat is two steps, which allows us to use kShuffle directly to calculate mSampleCount.
-	unsigned int samplesPerBeat = (unsigned int)(GetSampleRate() * 60.0 / GetParam(kTempo)->Value());
-	switch(GetParam(kStepLength)->Int())
-	{
-		case SL_4:  samplesPerBeat *= 2; break;
-		case SL_8:  break;
-		case SL_16: samplesPerBeat /= 2; break;
-		case SL_32: samplesPerBeat /= 4; break;
-		case SL_64: samplesPerBeat /= 8; break;
-
-		case SL_4T:  samplesPerBeat = samplesPerBeat * 2 * 2 / 3; break;
-		case SL_8T:  samplesPerBeat = samplesPerBeat * 2 / 3; break;
-		case SL_16T: samplesPerBeat = samplesPerBeat / 2 * 2 / 3; break;
-		case SL_32T: samplesPerBeat = samplesPerBeat / 4 * 2 / 3; break;
-		case SL_64T: samplesPerBeat = samplesPerBeat / 8 * 2 / 3; break;
-
-		case SL_4D:  samplesPerBeat = samplesPerBeat * 2 * 6 / 4; break;
-		case SL_8D:  samplesPerBeat = samplesPerBeat * 6 / 4; break;
-		case SL_16D: samplesPerBeat = samplesPerBeat / 2 * 6 / 4; break;
-		case SL_32D: samplesPerBeat = samplesPerBeat / 4 * 6 / 4; break;
-		case SL_64D: samplesPerBeat = samplesPerBeat / 8 * 6 / 4; break;
-	}
-	
-	const bool bPlay = PS_Play == (PlayState)GetParam(kPlayState)->Int();
-	
-	const unsigned int waveformIdx = GetParam(kWaveform)->Int();
-	const unsigned int scaleIdx = GetParam(kScale)->Int();
-	const unsigned int keyIdx = GetParam(kKey)->Int();
-	const unsigned int lowOctave = GetParam(kOctave)->Int();
-	const unsigned int hiOctave = lowOctave + GetParam(kRange)->Int();
-	
-	// change the volume smoothly over the course of this output frame
-	const float volume = GetParam(kVolume)->DBToAmp();
-	const float frameDuration = (float)nFrames / GetSampleRate();
-	mMelodyVolumeLine.activate(frameDuration, mMelodyVolume.amplitude.getLastValue(), volume);
-
 	double* out1 = outputs[0];
 	double* out2 = outputs[1];
 
 	float result[2];
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		if (mSampleCount == 0 && bPlay)
+		while (!mMidiQueue.Empty())
+		{
+			IMidiMsg* pMsg = mMidiQueue.Peek();
+			if (pMsg->mOffset > s) break;
+
+			HandleMidiControlChange(pMsg);
+
+			mMidiQueue.Remove();
+		}
+
+		if (mSampleCount == 0 && mPlayState == PS_Play)
 		{
 			mTones[mActiveTone]->noteOff();
 
@@ -353,11 +344,11 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 			if (mOddTick)
 			{
-				mSampleCount = (unsigned long)round(samplesPerBeat*GetParam(kShuffle)->Value());
+				mSampleCount = (unsigned long)round(mSamplesPerBeat*GetParam(kShuffle)->Value());
 			}
 			else
 			{
-				mSampleCount = (unsigned long)round(samplesPerBeat*(1.0 - GetParam(kShuffle)->Value()));
+				mSampleCount = (unsigned long)round(mSamplesPerBeat*(1.0 - GetParam(kShuffle)->Value()));
 			}
 
 			mOddTick = !mOddTick;
@@ -366,7 +357,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			mInterface.OnTick(mTick, noteOn);
 			if (noteOn)
 			{
-				GenerateNote(mTick, waveformIdx, Scales[scaleIdx], keyIdx, lowOctave, hiOctave, mPreviousNoteIndex);
+				GenerateNote(mTick, mWaveFormIdx, Scales[mScaleIdx], mKeyIdx, mLowOctave, mHiOctave, mPreviousNoteIndex);
 			}
 		}
 
@@ -379,16 +370,100 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			--mSampleCount;
 		}
 	}
+
+	mMidiQueue.Flush(nFrames);
 }
 
-void Melodizer::BeginMIDILearn(int param1, int param2, int x, int y)
+void Melodizer::BeginMIDILearn(int paramIdx1, int paramIdx2, int x, int y)
 {
+	if (GetAPI() == kAPIVST3)
+	{
+		// in Reaper on OSX the popup's Y position is inverted.
+		// not sure if this is true in other hosts on OSX, so we only modify for Reaper.
+#ifdef OS_OSX
+		if (GetHost() == kHostReaper)
+		{
+			y = GUI_HEIGHT - y;
+		}
+#endif
+		PopupHostContextMenuForParam(paramIdx1, x, y);
+	}
+	else if (GetAPI() == kAPISA)
+	{
+		IPopupMenu menu;
+		menu.SetMultiCheck(true);
+		WDL_String str;
+		if (paramIdx1 != -1)
+		{
+			str.SetFormatted(64, "MIDI Learn: %s", GetParam(paramIdx1)->GetNameForHost());
+			int flags = mControlChangeForParam[paramIdx1] ? IPopupMenuItem::kChecked : IPopupMenuItem::kNoFlags;
+			menu.AddItem(str.Get(), -1, flags);
+		}
+		if (paramIdx2 != -1)
+		{
+			str.SetFormatted(64, "MIDI Learn: %s", GetParam(paramIdx2)->GetNameForHost());
+			int flags = mControlChangeForParam[paramIdx2] ? IPopupMenuItem::kChecked : IPopupMenuItem::kNoFlags;
+			menu.AddItem(str.Get(), -1, flags);
+		}
+		if (GetGUI()->CreateIPopupMenu(&menu, x, y))
+		{
+			const int chosen = menu.GetChosenItemIdx();
+			if (chosen == 0)
+			{
+				if (menu.GetItem(chosen)->GetChecked())
+				{
+					SetControlChangeForParam((IMidiMsg::EControlChangeMsg)0, paramIdx1);
+				}
+				else
+				{
+					mMidiLearnParamIdx = paramIdx1;
+				}
+			}
+			else if (chosen == 1)
+			{
+				if (menu.GetItem(chosen)->GetChecked())
+				{
+					SetControlChangeForParam((IMidiMsg::EControlChangeMsg)0, paramIdx2);
+				}
+				else
+				{
+					mMidiLearnParamIdx = paramIdx2;
+				}
+			}
+			else
+			{
+				mMidiLearnParamIdx = -1;
+			}
+		}
+	}
 }
 
 void Melodizer::ProcessMidiMsg(IMidiMsg* pMsg)
 {
 #ifdef TRACER_BUILD
 	pMsg->LogMsg();
+#endif
+
+	if (pMsg->StatusMsg() == IMidiMsg::kControlChange)
+	{
+		const IMidiMsg::EControlChangeMsg cc = pMsg->ControlChangeIdx();
+		if (mMidiLearnParamIdx != -1)
+		{
+			SetControlChangeForParam(cc, mMidiLearnParamIdx);
+			mMidiLearnParamIdx = -1;
+		}
+
+		mMidiQueue.Add(pMsg);
+	}
+}
+
+void Melodizer::SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, const int paramIdx)
+{
+	mControlChangeForParam[paramIdx] = cc;
+#if SA_API
+	char ccString[4];
+	sprintf_s(ccString, "%u", (unsigned)cc);
+	WritePrivateProfileString(kMidiControlIni, GetParam(paramIdx)->GetNameForHost(), ccString, gINIPath);
 #endif
 }
 
@@ -412,6 +487,15 @@ void Melodizer::Reset()
 {
 	TRACE;
 	IMutexLock lock(this);
+
+	mMidiQueue.Resize(GetBlockSize());
+
+#if SA_API
+	for (int i = 0; i < kNumParams; ++i)
+	{
+		mControlChangeForParam[i] = (IMidiMsg::EControlChangeMsg)GetPrivateProfileInt(kMidiControlIni, GetParam(i)->GetNameForHost(), 0, gINIPath);
+	}
+#endif
 
 	// reseed the random generator.
 	// when Seed is zero, we use a random seed, other wise we seed with the param
@@ -446,8 +530,60 @@ void Melodizer::OnParamChange(int paramIdx)
 	const IParam* param = GetParam(paramIdx);
 	switch (paramIdx)
 	{
+	case kVolume:
+	{
+		const float volume = GetParam(kVolume)->DBToAmp();
+		mMelodyVolumeLine.activate(0.001f, mMelodyVolume.amplitude.getLastValue(), volume);
+	}
+	break;
+
+	case kStepLength:
+	{
+		// one "beat" is two steps, which allows us to use kShuffle directly to calculate mSampleCount.
+		unsigned int samplesPerBeat = (unsigned int)(GetSampleRate() * 60.0 / GetParam(kTempo)->Value());
+		switch (GetParam(kStepLength)->Int())
+		{
+		case SL_4:  samplesPerBeat *= 2; break;
+		case SL_8:  break;
+		case SL_16: samplesPerBeat /= 2; break;
+		case SL_32: samplesPerBeat /= 4; break;
+		case SL_64: samplesPerBeat /= 8; break;
+
+		case SL_4T:  samplesPerBeat = samplesPerBeat * 2 * 2 / 3; break;
+		case SL_8T:  samplesPerBeat = samplesPerBeat * 2 / 3; break;
+		case SL_16T: samplesPerBeat = samplesPerBeat / 2 * 2 / 3; break;
+		case SL_32T: samplesPerBeat = samplesPerBeat / 4 * 2 / 3; break;
+		case SL_64T: samplesPerBeat = samplesPerBeat / 8 * 2 / 3; break;
+
+		case SL_4D:  samplesPerBeat = samplesPerBeat * 2 * 6 / 4; break;
+		case SL_8D:  samplesPerBeat = samplesPerBeat * 6 / 4; break;
+		case SL_16D: samplesPerBeat = samplesPerBeat / 2 * 6 / 4; break;
+		case SL_32D: samplesPerBeat = samplesPerBeat / 4 * 6 / 4; break;
+		case SL_64D: samplesPerBeat = samplesPerBeat / 8 * 6 / 4; break;
+		}
+
+		mSamplesPerBeat = samplesPerBeat;
+	}
+	break;
+
+	case kWaveform:
+		mWaveFormIdx = GetParam(kWaveform)->Int();
+		break;
+
+	case kKey:
+		mKeyIdx = GetParam(kKey)->Int();
+		break;
+
+	case kOctave:
+		mLowOctave = GetParam(kOctave)->Int();
+		// fallthru because hi octave is relative to low octave
+	case kRange:
+		mHiOctave = mLowOctave + GetParam(kRange)->Int();
+		break;
+
 	case kScale:
 		mPreviousNoteIndex = 0;
+		mScaleIdx = GetParam(kScale)->Int();
 		break;
 
 	case kSeed:
@@ -468,6 +604,7 @@ void Melodizer::OnParamChange(int paramIdx)
 			{
 				mTones[mActiveTone]->noteOff();
 			}
+			mPlayState = state;
 		}
 		break;
 
@@ -496,6 +633,21 @@ void Melodizer::OnParamChange(int paramIdx)
 
 	default:
 		break;
+	}
+}
+
+void Melodizer::HandleMidiControlChange(IMidiMsg* pMsg)
+{
+	const IMidiMsg::EControlChangeMsg cc = pMsg->ControlChangeIdx();
+	for (int i = 0; i < kNumParams; ++i)
+	{
+		if (mControlChangeForParam[i] == cc)
+		{
+			const double value = pMsg->ControlChange(cc);
+			GetParam(i)->SetNormalized(value);
+			OnParamChange(i);
+			GetGUI()->SetParameterFromPlug(i, GetParam(i)->GetNormalized(), true);
+		}
 	}
 }
 

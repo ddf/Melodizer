@@ -12,6 +12,8 @@
 #include "Multiplier.h"
 #include "Line.h"
 
+#include "IMidiQueue.h"
+
 class Tone;
 class Scale;
 
@@ -43,8 +45,25 @@ private:
 	float RandomRange(float low, float hi);
 
 	void SetPlayStateFromMidi(PlayState state);
+	void HandleMidiControlChange(IMidiMsg* pMsg);
+	void SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, const int paramIdx);
 
 	Interface mInterface;
+
+	IMidiQueue mMidiQueue;
+	IMidiMsg::EControlChangeMsg mControlChangeForParam[kNumParams];
+	int mMidiLearnParamIdx;
+
+	// param values, cached in OnParamChange.
+	// added these here because MIDI control changes can update params mid-process frame.
+	// so this is better than having locals in that loop.
+	unsigned int mSamplesPerBeat;
+	PlayState	 mPlayState;
+	unsigned int mWaveFormIdx;
+	unsigned int mScaleIdx;
+	unsigned int mKeyIdx;
+	unsigned int mLowOctave;
+	unsigned int mHiOctave;
 
 	// count how many samples so we know when to increment mTick
 	unsigned long int mSampleCount;
