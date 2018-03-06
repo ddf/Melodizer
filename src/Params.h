@@ -35,6 +35,11 @@ enum EParams
 	kEnvDecay,
 	kEnvSustain,
 	kEnvRelease,
+
+	// effects
+	kDelayDuration,
+	kDelayFeedback,
+	kDelayMix,
 	
 	// master params
 	kVoices,

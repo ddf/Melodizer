@@ -11,6 +11,7 @@
 #include "Summer.h"
 #include "Multiplier.h"
 #include "Line.h"
+#include "Delay.h"
 
 #include "IMidiQueue.h"
 
@@ -78,6 +79,7 @@ private:
 	Minim::Summer mMelodyBus;
 	Minim::Multiplier mMelodyVolume;
 	Minim::Line mMelodyVolumeLine;
+	Minim::Delay mDelay;
 
 	// we'll have one Tone for each voice that will be reconfigured before being triggered
 	std::vector<Tone*> mTones;

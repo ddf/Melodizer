@@ -124,6 +124,12 @@
     <ClInclude Include="src\StepModeControl.h">
       <Filter>interface</Filter>
     </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Delay.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Flanger.h">
+      <Filter>minim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
@@ -216,6 +222,12 @@
     </ClCompile>
     <ClCompile Include="src\StepModeControl.cpp">
       <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Delay.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Flanger.cpp">
+      <Filter>minim</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

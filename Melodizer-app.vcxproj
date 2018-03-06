@@ -276,6 +276,8 @@
     <ClInclude Include="..\..\WDL\rtaudiomidi\RtMidi.h" />
     <ClInclude Include="..\minim-cpp\src\AudioSource.h" />
     <ClInclude Include="..\minim-cpp\src\Logging.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Delay.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Flanger.h" />
     <ClInclude Include="..\minim-cpp\src\ugens\Frequency.h" />
     <ClInclude Include="..\minim-cpp\src\ugens\Line.h" />
     <ClInclude Include="..\minim-cpp\src\ugens\Multiplier.h" />
@@ -312,6 +314,8 @@
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtMidi.cpp" />
     <ClCompile Include="..\minim-cpp\src\AudioSource.cpp" />
     <ClCompile Include="..\minim-cpp\src\Logging.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Delay.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Flanger.cpp" />
     <ClCompile Include="..\minim-cpp\src\ugens\Frequency.cpp" />
     <ClCompile Include="..\minim-cpp\src\ugens\Line.cpp" />
     <ClCompile Include="..\minim-cpp\src\ugens\Multiplier.cpp" />

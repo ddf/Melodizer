@@ -47,6 +47,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mMelodyBus()
 	, mMelodyVolume(0)
 	, mMelodyVolumeLine(0,0,0)
+	, mDelay(2, 0.5f, true, true)
 	, mRandomGen(0)
 	, mTones(kVoicesMax)
 	, mActiveTone(0)
@@ -59,7 +60,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	{
 		mMelodyVolume.setAudioChannelCount(2);
 		mMelodyVolume.setSampleRate(44100);
-		mMelodyBus.patch( mMelodyVolume );
+		mMelodyBus.patch(mDelay).patch(mMelodyVolume);
 		mMelodyVolumeLine.patch( mMelodyVolume.amplitude );
 	}
 
@@ -208,6 +209,19 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		GetParam(kEnvDecay)->InitDouble("Decay", minEnv, minEnv, 2, secondsStep, "seconds");
 		GetParam(kEnvSustain)->InitDouble("Sustain", 0.5, minEnv, 1, 0.01);
 		GetParam(kEnvRelease)->InitDouble("Release", 0.25, minEnv, 5, secondsStep, "seconds");
+	}
+
+	// Effects 
+	{
+		IParam* param = GetParam(kDelayDuration);
+		param->InitEnum("Delay Duration", SL_8, SL_Count);
+		for (int i = 0; i < SL_Count; ++i)
+		{
+			param->SetDisplayText(i, kStepLengthDisplay[i]);
+		}
+
+		GetParam(kDelayFeedback)->InitDouble("Delay Feedback", 20, 0, 100, 0.5f, "%");
+		GetParam(kDelayMix)->InitDouble("Delay Mix", 50, 0, 100, 0.5f, "%");
 	}
 
 	// knob bank
@@ -586,6 +600,33 @@ void Melodizer::OnParamChange(int paramIdx)
 		}
 
 		mSamplesPerBeat = samplesPerBeat;
+	}
+	break;
+
+	case kDelayDuration:
+	{
+		float beatDuration = 60.0 / GetParam(kTempo)->Value();
+		switch (GetParam(kDelayDuration)->Int())
+		{
+		case SL_4:  break;
+		case SL_8:  beatDuration /= 2; break;
+		case SL_16: beatDuration /= 4; break;
+		case SL_32: beatDuration /= 8; break;
+		case SL_64: beatDuration /= 16; break;
+
+		case SL_4T:  beatDuration = beatDuration * 2 / 3; break;
+		case SL_8T:  beatDuration = beatDuration / 2 / 3; break;
+		case SL_16T: beatDuration = beatDuration / 4 * 2 / 3; break;
+		case SL_32T: beatDuration = beatDuration / 8 * 2 / 3; break;
+		case SL_64T: beatDuration = beatDuration / 16 * 2 / 3; break;
+
+		case SL_4D:  beatDuration = beatDuration * 1.5f; break;
+		case SL_8D:  beatDuration = beatDuration / 2 * 1.5f; break;
+		case SL_16D: beatDuration = beatDuration / 4 * 1.5f; break;
+		case SL_32D: beatDuration = beatDuration / 8 * 1.5f; break;
+		case SL_64D: beatDuration = beatDuration / 16 * 1.5f; break;
+		}
+		mDelay.delTime.setLastValue(beatDuration);
 	}
 	break;
 

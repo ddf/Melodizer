@@ -27,7 +27,7 @@ enum ELayout
 	kWaveformControl_Y = 20,
 	kWaveformControl_W = 65,
 	kWaveformControl_H = kEnumHeight,
-	
+
 	kPulseWidthControl_X = 0,
 	kPulseWidthControl_Y = 15,
 	kPulseWidthControl_W = kLargeKnobSize,
@@ -53,6 +53,16 @@ enum ELayout
 	kEnvControl_W = kLargeKnobSize,
 	kEnvControl_H = kLargeKnobSize,
 	kEnvControl_S = kLargeKnobSize + 10,
+
+	kEffectsGroup_X = kEnvGroup_X + kEnvGroup_W + 10,
+	kEffectsGroup_Y = kEnvGroup_Y,
+	kEffectsGroup_W = 170,
+	kEffectsGroup_H = kOscGroup_H,
+
+	kDelayDurationControl_X = 0,
+	kDelayDurationControl_Y = 20,
+	kDelayDurationControl_W = 60,
+	kDelayDurationControl_H = kEnumHeight,
 
 	kMasterGroup_W = 190,
 	kMasterGroup_X = GUI_WIDTH - kMasterGroup_W - 10,
@@ -232,6 +242,7 @@ namespace Strings
 {
 	const char * OscLabel = "Oscil";
 	const char * EnvLabel = "Envelope";
+	const char * EffectsLabel = "Effects";
 	const char * MasterLabel = "Master";
 	const char * TimeLabel = "Clock";
 	const char * PitchLabel = "Pitch";
@@ -311,6 +322,15 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 		rect = group->GetControlRect(MakeIRectHOffset(kEnvControl, kEnvControl_S * 3));
 		AttachKnob(pGraphics, rect, kEnvRelease, "R");
+	}
+
+	// Effects section
+	{
+		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kEffectsGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::EffectsLabel);
+		pGraphics->AttachControl(group);
+
+		IRECT rect = group->GetControlRect(MakeIRect(kDelayDurationControl));
+		AttachEnum(pGraphics, rect, kDelayDuration, "Delay");
 	}
 
 	// Master section
