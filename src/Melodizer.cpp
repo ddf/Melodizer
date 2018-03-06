@@ -537,6 +537,7 @@ void Melodizer::OnParamChange(int paramIdx)
 	}
 	break;
 
+	case kTempo:
 	case kStepLength:
 	{
 		// one "beat" is two steps, which allows us to use kShuffle directly to calculate mSampleCount.
