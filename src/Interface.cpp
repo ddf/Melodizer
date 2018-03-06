@@ -21,11 +21,11 @@ enum ELayout
 	kOscGroup_X = 10,
 	kOscGroup_Y = 10,
 	kOscGroup_W = 190,
-	kOscGroup_H = 75,
+	kOscGroup_H = 74,
 
 	kWaveformControl_X = 0,
 	kWaveformControl_Y = 20,
-	kWaveformControl_W = 50,
+	kWaveformControl_W = 65,
 	kWaveformControl_H = kEnumHeight,
 	
 	kPulseWidthControl_X = 0,
@@ -81,7 +81,7 @@ enum ELayout
 
 	kTimeGroup_X = 10,
 	kTimeGroup_Y = kOscGroup_Y + kOscGroup_H + 10,
-	kTimeGroup_W = 270,
+	kTimeGroup_W = 290,
 	kTimeGroup_H = kOscGroup_H,
 
 	kTempoControl_X = 0,
@@ -91,7 +91,7 @@ enum ELayout
 
 	kStepLengthControl_X = 0,
 	kStepLengthControl_Y = 20,
-	kStepLengthControl_W = 40,
+	kStepLengthControl_W = 60,
 	kStepLengthControl_H = kEnumHeight,
 
 	kShuffleControl_X = 0,
@@ -106,17 +106,17 @@ enum ELayout
 
 	kPitchGroup_X = kTimeGroup_X + kTimeGroup_W + 10,
 	kPitchGroup_Y = kTimeGroup_Y,
-	kPitchGroup_W = 220,
+	kPitchGroup_W = 255,
 	kPitchGroup_H = kOscGroup_H,
 
 	kKeyControl_X = 0,
 	kKeyControl_Y = 20,
-	kKeyControl_W = 25,
+	kKeyControl_W = 45,
 	kKeyControl_H = kEnumHeight,
 
 	kScaleControl_X = 0,
 	kScaleControl_Y = 20,
-	kScaleControl_W = 100,
+	kScaleControl_W = 120,
 	kScaleControl_H = kEnumHeight,
 
 	kOctaveControl_X = 0,
