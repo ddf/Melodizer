@@ -20,7 +20,7 @@ enum ELayout
 
 	kOscGroup_X = 10,
 	kOscGroup_Y = 10,
-	kOscGroup_W = 190,
+	kOscGroup_W = 205,
 	kOscGroup_H = 74,
 
 	kWaveformControl_X = 0,
