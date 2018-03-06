@@ -1,8 +1,10 @@
 #include "TextBox.h"
+#include "Melodizer.h"
 
-TextBox::TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IGraphics* pGraphics, const char * maxText, bool showParamUnits)
+TextBox::TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IGraphics* pGraphics, const char * maxText, bool showParamUnits, float scrollSpeed)
 	: ICaptionControl(pPlug, pR, paramIdx, pText, showParamUnits)
 	, mTextRect(pR)
+	, mScrollSpeed(scrollSpeed)
 {
 	mTextRect.GetPadded(-1);
 	pGraphics->MeasureIText(pText, const_cast<char*>(maxText), &mTextRect);
@@ -43,13 +45,13 @@ void TextBox::OnMouseDown(int x, int y, IMouseMod* pMod)
 		mText = ourText;
 		Redraw();
 	}
-}
-
-void TextBox::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMod)
-{
-	if (pMod->R)
+	else if (pMod->R)
 	{
-		OnMouseWheel(x, y, pMod, -dY);
+		Melodizer* plug = static_cast<Melodizer*>(mPlug);
+		if (plug != nullptr)
+		{
+			plug->BeginMIDILearn(mParamIdx, -1, x, y);
+		}
 	}
 }
 
@@ -58,17 +60,17 @@ void TextBox::OnMouseWheel(int x, int y, IMouseMod* pMod, int d)
 #ifdef PROTOOLS
 	if (pMod->C)
 	{
-		mValue += GetParam()->GetStep() * 0.001 * d;
+		mValue += GetParam()->GetStep() * mScrollSpeed/10 * d;
 	}
 #else
 	if (pMod->C || pMod->S)
 	{
-		mValue += GetParam()->GetStep() * 0.001 * d;
+		mValue += GetParam()->GetStep() * mScrollSpeed/10 * d;
 	}
 #endif
 	else
 	{
-		mValue += GetParam()->GetStep() * 0.01 * d;
+		mValue += GetParam()->GetStep() * mScrollSpeed * d;
 	}
 
 	SetDirty();

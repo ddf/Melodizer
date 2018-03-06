@@ -301,11 +301,11 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kVoiceControl, hoff));
-		AttachTextBox(pGraphics, rect, kVoices, "000", Strings::VoicesLabel);
+		AttachTextBox(pGraphics, rect, kVoices, 1.0f / (float)(kVoicesMax - kVoicesMin - 1), "000", Strings::VoicesLabel);
 
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kSeedControl, hoff));
-		AttachTextBox(pGraphics, rect, kSeed, "000000", Strings::SeedLabel);
+		AttachTextBox(pGraphics, rect, kSeed, 0.001f, "000000", Strings::SeedLabel);
 	}
 
 	// Time section
@@ -314,7 +314,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		pGraphics->AttachControl(group);
 
 		IRECT rect = group->GetControlRect(MakeIRect(kTempoControl));
-		AttachTextBox(pGraphics, rect, kTempo, "000.000", Strings::TempoLabel);
+		AttachTextBox(pGraphics, rect, kTempo, 0.01f, "000.000", Strings::TempoLabel);
 
 		int hoff = rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kStepLengthControl, hoff));
@@ -343,11 +343,11 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kOctaveControl, hoff));
-		AttachTextBox(pGraphics, rect, kOctave, "00", Strings::OctaveLabel);
+		AttachTextBox(pGraphics, rect, kOctave, 1.0f / (float)(kOctaveMax - kOctaveMin - 1), "00", Strings::OctaveLabel);
 
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kRangeControl, hoff));
-		AttachTextBox(pGraphics, rect, kRange, "00", Strings::RangeLabel);
+		AttachTextBox(pGraphics, rect, kRange, 1.0f / (float)(kRangeMax - kRangeMin - 1), "00", Strings::RangeLabel);
 	}
 
 	// sequence 
@@ -438,9 +438,9 @@ void Interface::AttachEnum(IGraphics* pGraphics, IRECT rect, int paramIdx, const
 	}
 }
 
-void Interface::AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * maxValue, const char * label /*= nullptr*/)
+void Interface::AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramIdx, const float scrollSpeed, const char * maxValue, const char * label /*= nullptr*/)
 {
-	pGraphics->AttachControl(new TextBox(mPlug, rect, paramIdx, &TextStyles::TextBox, pGraphics, maxValue));
+	pGraphics->AttachControl(new TextBox(mPlug, rect, paramIdx, &TextStyles::TextBox, pGraphics, maxValue, false, scrollSpeed));
 
 	if (label != nullptr)
 	{

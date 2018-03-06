@@ -9,6 +9,15 @@ enum EParamSettings
 	
 	kVoicesMin = 1,
 	kVoicesMax = 32,
+
+	kOctaveMin = 0,
+	kOctaveMax = 8,
+
+	kRangeMin  = 0,
+	kRangeMax  = 8,
+
+	kSeedMin   = 0,
+	kSeedMax   = 1<<15,
 	
 	kSequencerSteps = 16,
 };

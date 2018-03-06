@@ -186,8 +186,8 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	
 	// octave + range
 	{
-		GetParam(kOctave)->InitInt("Octave", 4, 0, 8);
-		GetParam(kRange)->InitInt("Range", 0, 0, 8);
+		GetParam(kOctave)->InitInt("Octave", 4, kOctaveMin, kOctaveMax);
+		GetParam(kRange)->InitInt("Range", 0, kRangeMin, kRangeMax);
 	}
 
 	// shuffle
@@ -197,7 +197,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 
 	// seed
 	{
-		GetParam(kSeed)->InitInt("Seed", 0, 0, 32768);
+		GetParam(kSeed)->InitInt("Seed", 0, kSeedMin, kSeedMax);
 	}
 
 	// ADSR

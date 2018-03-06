@@ -21,7 +21,7 @@ public:
 
 private:	
 	void AttachEnum(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label = nullptr);
-	void AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * maxValue, const char * label = nullptr);
+	void AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramIdx, const float scrollSpeed, const char * maxValue, const char * label = nullptr);
 	void AttachKnob(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label = nullptr);
 	void AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name);
 	void AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, const int param);
