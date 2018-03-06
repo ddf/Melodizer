@@ -217,7 +217,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		const double percentStep = 0.5f;
 		for (int i = 0; i < kSequencerSteps; ++i)
 		{
-			sprintf(paramName, "Step Mode %d", i);
+			sprintf(paramName, "Step %d Mode", i);
 			GetParam(kStepModeFirst + i)->InitEnum(paramName, SM_Norm, SM_Count);
 			for (int mode = SM_Norm; mode < SM_Count; ++mode)
 			{
