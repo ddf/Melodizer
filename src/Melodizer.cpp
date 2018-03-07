@@ -19,20 +19,19 @@ const int kNumPrograms = 1;
 // name of the section of the INI file we save midi cc mappings to
 const char * kMidiControlIni = "midicc";
 
-#define STEP_DISPLAY(S) S, S"T", S".",
-
 const char * kStepLengthDisplay[SL_Count] = {
-	STEP_DISPLAY("1/4")
-	STEP_DISPLAY("1/8")
-	STEP_DISPLAY("1/16")
-	STEP_DISPLAY("1/32")
-	STEP_DISPLAY("1/64")
+	"1/64T", "1/64", "1/32T",
+	"1/64.", "1/32", "1/16T",
+	"1/32.", "1/16", "1/8T",
+	"1/16.", "1/8",  "1/4T",
+	"1/8.",  "1/4",  "1/4.",
 };
 
 Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 	, mInterface(this)
 	, mMidiLearnParamIdx(-1)
+	, mTempo(DEFAULT_TEMPO)
 	, mSamplesPerBeat(0)
 	, mPlayState(PS_Stop)
 	, mWaveFormIdx(0)
@@ -47,7 +46,12 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mMelodyBus()
 	, mMelodyVolume(0)
 	, mMelodyVolumeLine(0,0,0)
-	, mDelay(2, 0.5f, true, true)
+	, mDelay(kDelayDurationMaxSeconds, 0.5f, true)
+	, mDelayDuration(0, kDelayDurationMaxSeconds, kDelayDurationMaxSeconds)
+	, mDelayAmp(0, 1, 1)
+	, mDelayFeedback(0, 0.5f, 0.5f)
+	, mDelayDryMix(0, 1, 1)
+	, mDelayWetMix(0, 0, 0)
 	, mRandomGen(0)
 	, mTones(kVoicesMax)
 	, mActiveTone(0)
@@ -58,10 +62,16 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	
 	// setup dsp chain
 	{
+		mDelayDuration.patch(mDelay.delTime);
+		mDelayAmp.patch(mDelay.delAmp);
+		mDelayFeedback.patch(mDelay.feedback);
+		mDelayDryMix.patch(mDelay.dryMix);
+		mDelayWetMix.patch(mDelay.wetMix);
+		mMelodyVolumeLine.patch(mMelodyVolume.amplitude);
+
 		mMelodyVolume.setAudioChannelCount(2);
 		mMelodyVolume.setSampleRate(44100);
 		mMelodyBus.patch(mDelay).patch(mMelodyVolume);
-		mMelodyVolumeLine.patch( mMelodyVolume.amplitude );
 	}
 
 	// setup Waveforms
@@ -503,6 +513,94 @@ void Melodizer::SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, c
 #endif
 }
 
+void Melodizer::SetSamplesPerBeat(const double tempo)
+{
+	// one "beat" is two steps, which allows us to use kShuffle directly to calculate mSampleCount.
+	unsigned int samplesPerBeat = (unsigned int)(GetSampleRate() * 60.0 / tempo);
+	switch (GetParam(kStepLength)->Int())
+	{
+	case SL_4:  samplesPerBeat *= 2; break;
+	case SL_8:  break;
+	case SL_16: samplesPerBeat /= 2; break;
+	case SL_32: samplesPerBeat /= 4; break;
+	case SL_64: samplesPerBeat /= 8; break;
+
+	case SL_4T:  samplesPerBeat = samplesPerBeat * 2 * 2 / 3; break;
+	case SL_8T:  samplesPerBeat = samplesPerBeat * 2 / 3; break;
+	case SL_16T: samplesPerBeat = samplesPerBeat / 2 * 2 / 3; break;
+	case SL_32T: samplesPerBeat = samplesPerBeat / 4 * 2 / 3; break;
+	case SL_64T: samplesPerBeat = samplesPerBeat / 8 * 2 / 3; break;
+
+	case SL_4D:  samplesPerBeat = samplesPerBeat * 2 * 6 / 4; break;
+	case SL_8D:  samplesPerBeat = samplesPerBeat * 6 / 4; break;
+	case SL_16D: samplesPerBeat = samplesPerBeat / 2 * 6 / 4; break;
+	case SL_32D: samplesPerBeat = samplesPerBeat / 4 * 6 / 4; break;
+	case SL_64D: samplesPerBeat = samplesPerBeat / 8 * 6 / 4; break;
+	}
+
+	mSamplesPerBeat = samplesPerBeat;
+}
+
+float Melodizer::CalcDelayDuration(const StepLength stepLength, const double tempo)
+{
+	float beatDuration = 60.0 / tempo;
+	switch (stepLength)
+	{
+	case SL_4:  break;
+	case SL_8:  beatDuration /= 2; break;
+	case SL_16: beatDuration /= 4; break;
+	case SL_32: beatDuration /= 8; break;
+	case SL_64: beatDuration /= 16; break;
+
+	case SL_4T:  beatDuration = beatDuration * 2 / 3; break;
+	case SL_8T:  beatDuration = beatDuration / 2 / 3; break;
+	case SL_16T: beatDuration = beatDuration / 4 * 2 / 3; break;
+	case SL_32T: beatDuration = beatDuration / 8 * 2 / 3; break;
+	case SL_64T: beatDuration = beatDuration / 16 * 2 / 3; break;
+
+	case SL_4D:  beatDuration = beatDuration * 1.5f; break;
+	case SL_8D:  beatDuration = beatDuration / 2 * 1.5f; break;
+	case SL_16D: beatDuration = beatDuration / 4 * 1.5f; break;
+	case SL_32D: beatDuration = beatDuration / 8 * 1.5f; break;
+	case SL_64D: beatDuration = beatDuration / 16 * 1.5f; break;
+	}
+
+	return beatDuration;
+}
+
+void Melodizer::SetDelayDuration(const double tempo)
+{
+	IParam* delayParam = GetParam(kDelayDuration);
+	int delayParamValue = delayParam->Int();
+	float delayDuration = CalcDelayDuration((StepLength)delayParamValue, tempo);
+
+	// if our Delay Duration param would create a longer delay than we can handle
+	// we need to change it to largest value that generates a delay we *can* handle.
+	while (delayDuration > kDelayDurationMaxSeconds)
+	{
+		// shorter durations are smaller values in the enum
+		--delayParamValue;
+		delayDuration = CalcDelayDuration((StepLength)delayParamValue, tempo);
+	}
+
+	// we need to change it, so inform the host and the UI.
+	// we don't call OnParamChange from here because 
+	// this function is called from OnParamChange for both kTempo and kDelayDuration.
+	if (delayParam->Int() != delayParamValue)
+	{
+		BeginInformHostOfParamChange(kDelayDuration);
+		delayParam->Set(delayParamValue);
+		InformHostOfParamChange(kDelayDuration, delayParam->GetNormalized());
+		EndInformHostOfParamChange(kDelayDuration);
+		GetGUI()->SetParameterFromPlug(kDelayDuration, delayParamValue, false);
+	}
+
+	// snapping the duration seems to cause the fewest glitches,
+	// but going to keep the Line here for now anyhow, even though it's not strictly required.
+	mDelayAmp.activate(0.4f, 0, 1);
+	mDelayDuration.activate(0.0f, mDelay.delTime.getLastValue(), delayDuration);
+}
+
 void Melodizer::ProcessSysEx(ISysEx* pSysEx)
 {
 #ifdef TRACER_BUILD
@@ -574,59 +672,41 @@ void Melodizer::OnParamChange(int paramIdx)
 	break;
 
 	case kTempo:
+	{
+		mTempo = GetParam(kTempo)->Value();
+		SetSamplesPerBeat(mTempo);
+		SetDelayDuration(mTempo);
+	}
+	break;
+
 	case kStepLength:
 	{
-		// one "beat" is two steps, which allows us to use kShuffle directly to calculate mSampleCount.
-		unsigned int samplesPerBeat = (unsigned int)(GetSampleRate() * 60.0 / GetParam(kTempo)->Value());
-		switch (GetParam(kStepLength)->Int())
-		{
-		case SL_4:  samplesPerBeat *= 2; break;
-		case SL_8:  break;
-		case SL_16: samplesPerBeat /= 2; break;
-		case SL_32: samplesPerBeat /= 4; break;
-		case SL_64: samplesPerBeat /= 8; break;
-
-		case SL_4T:  samplesPerBeat = samplesPerBeat * 2 * 2 / 3; break;
-		case SL_8T:  samplesPerBeat = samplesPerBeat * 2 / 3; break;
-		case SL_16T: samplesPerBeat = samplesPerBeat / 2 * 2 / 3; break;
-		case SL_32T: samplesPerBeat = samplesPerBeat / 4 * 2 / 3; break;
-		case SL_64T: samplesPerBeat = samplesPerBeat / 8 * 2 / 3; break;
-
-		case SL_4D:  samplesPerBeat = samplesPerBeat * 2 * 6 / 4; break;
-		case SL_8D:  samplesPerBeat = samplesPerBeat * 6 / 4; break;
-		case SL_16D: samplesPerBeat = samplesPerBeat / 2 * 6 / 4; break;
-		case SL_32D: samplesPerBeat = samplesPerBeat / 4 * 6 / 4; break;
-		case SL_64D: samplesPerBeat = samplesPerBeat / 8 * 6 / 4; break;
-		}
-
-		mSamplesPerBeat = samplesPerBeat;
+		SetSamplesPerBeat(mTempo);
 	}
 	break;
 
 	case kDelayDuration:
 	{
-		float beatDuration = 60.0 / GetParam(kTempo)->Value();
-		switch (GetParam(kDelayDuration)->Int())
-		{
-		case SL_4:  break;
-		case SL_8:  beatDuration /= 2; break;
-		case SL_16: beatDuration /= 4; break;
-		case SL_32: beatDuration /= 8; break;
-		case SL_64: beatDuration /= 16; break;
+		SetDelayDuration(mTempo);
+	}
+	break;
 
-		case SL_4T:  beatDuration = beatDuration * 2 / 3; break;
-		case SL_8T:  beatDuration = beatDuration / 2 / 3; break;
-		case SL_16T: beatDuration = beatDuration / 4 * 2 / 3; break;
-		case SL_32T: beatDuration = beatDuration / 8 * 2 / 3; break;
-		case SL_64T: beatDuration = beatDuration / 16 * 2 / 3; break;
+	case kDelayFeedback:
+	{
+		const float feed = GetParam(kDelayFeedback)->Value() / 100;
+		mDelayFeedback.activate(0.01f, mDelay.feedback.getLastValue(), feed);
+	}
+	break;
 
-		case SL_4D:  beatDuration = beatDuration * 1.5f; break;
-		case SL_8D:  beatDuration = beatDuration / 2 * 1.5f; break;
-		case SL_16D: beatDuration = beatDuration / 4 * 1.5f; break;
-		case SL_32D: beatDuration = beatDuration / 8 * 1.5f; break;
-		case SL_64D: beatDuration = beatDuration / 16 * 1.5f; break;
-		}
-		mDelay.delTime.setLastValue(beatDuration);
+	case kDelayMix:
+	{
+		const double mix = GetParam(kDelayMix)->Value() / 100.0;
+		// mix [0.5,1] => dry [1,0]
+		const double dry = BOUNDED(2 - mix * 2, 0, 1);
+		// mix [0, 0.5] => wet [0,1]
+		const double wet = BOUNDED(mix * 2, 0, 1);
+		mDelayDryMix.activate(0.001f, mDelay.dryMix.getLastValue(), dry);
+		mDelayWetMix.activate(0.001f, mDelay.wetMix.getLastValue(), wet);
 	}
 	break;
 

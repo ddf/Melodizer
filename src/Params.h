@@ -4,7 +4,7 @@
 
 enum EParamSettings
 {
-	kTempoMin = 1,
+	kTempoMin = 2,
 	kTempoMax = 960,
 	
 	kVoicesMin = 1,
@@ -18,6 +18,11 @@ enum EParamSettings
 
 	kSeedMin   = 0,
 	kSeedMax   = 1<<15,
+
+	// this is used to set the maximum delay time of the Delay UGen
+	// and also used to change the delay duration param if the tempo
+	// gets slow enough that the current value would generate a longer delay than this.
+	kDelayDurationMaxSeconds = 2,
 	
 	kSequencerSteps = 16,
 };
@@ -35,11 +40,6 @@ enum EParams
 	kEnvDecay,
 	kEnvSustain,
 	kEnvRelease,
-
-	// effects
-	kDelayDuration,
-	kDelayFeedback,
-	kDelayMix,
 	
 	// master params
 	kVoices,
@@ -58,6 +58,12 @@ enum EParams
 	kScale,
 	kOctave,
 	kRange,
+
+	// effects - it's important that DelayDuration comes after Tempo 
+	// because it might cap its value in OnParamChange based on Tempo.
+	kDelayDuration,
+	kDelayFeedback,
+	kDelayMix,
 	
 	// step params
 	STEP_PARAM(kStepMode), // see: enum StepMode
@@ -85,23 +91,27 @@ enum StepMode
 	SM_Count
 };
 
+// it's important that these are in order of shortest to longest durations,
+// which is why 32T is before 64D, for example.
+// putting them in order makes it easier to adjust the delay duration param
+// if the tempo gets too slow (we can't let the duration get longer than kDelayDurationMaxSeconds)
 enum StepLength
 {
-	SL_4,
-	SL_4T,
-	SL_4D,
-	SL_8,
-	SL_8T,
-	SL_8D,
-	SL_16,
-	SL_16T,
-	SL_16D,
-	SL_32,
-	SL_32T,
-	SL_32D,
-	SL_64,
 	SL_64T,
+	SL_64,
+	SL_32T,
 	SL_64D,
+	SL_32,
+	SL_16T,
+	SL_32D,
+	SL_16,
+	SL_8T,
+	SL_16D,
+	SL_8,
+	SL_4T,
+	SL_8D,
+	SL_4,
+	SL_4D,
 	
 	SL_Count,
 };

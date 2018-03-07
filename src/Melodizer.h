@@ -48,6 +48,9 @@ private:
 	void SetPlayStateFromMidi(PlayState state);
 	void HandleMidiControlChange(IMidiMsg* pMsg);
 	void SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, const int paramIdx);
+	void SetSamplesPerBeat(const double tempo);
+	float CalcDelayDuration(const StepLength stepLength, const double tempo);
+	void SetDelayDuration(const double tempo);
 
 	Interface mInterface;
 
@@ -58,6 +61,7 @@ private:
 	// param values, cached in OnParamChange.
 	// added these here because MIDI control changes can update params mid-process frame.
 	// so this is better than having locals in that loop.
+	float        mTempo;
 	unsigned int mSamplesPerBeat;
 	PlayState	 mPlayState;
 	unsigned int mWaveFormIdx;
@@ -80,6 +84,11 @@ private:
 	Minim::Multiplier mMelodyVolume;
 	Minim::Line mMelodyVolumeLine;
 	Minim::Delay mDelay;
+	Minim::Line mDelayDuration;
+	Minim::Line mDelayAmp;
+	Minim::Line mDelayFeedback;
+	Minim::Line mDelayDryMix;
+	Minim::Line mDelayWetMix;
 
 	// we'll have one Tone for each voice that will be reconfigured before being triggered
 	std::vector<Tone*> mTones;

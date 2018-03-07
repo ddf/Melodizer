@@ -64,6 +64,16 @@ enum ELayout
 	kDelayDurationControl_W = 60,
 	kDelayDurationControl_H = kEnumHeight,
 
+	kDelayFeedbackControl_X = 0,
+	kDelayFeedbackControl_Y = 15,
+	kDelayFeedbackControl_W = kLargeKnobSize,
+	kDelayFeedbackControl_H = kLargeKnobSize,
+
+	kDelayMixControl_X = 0,
+	kDelayMixControl_Y = 15,
+	kDelayMixControl_W = kLargeKnobSize,
+	kDelayMixControl_H = kLargeKnobSize,
+
 	kMasterGroup_W = 190,
 	kMasterGroup_X = GUI_WIDTH - kMasterGroup_W - 10,
 	kMasterGroup_Y = kOscGroup_Y,
@@ -331,6 +341,14 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 		IRECT rect = group->GetControlRect(MakeIRect(kDelayDurationControl));
 		AttachEnum(pGraphics, rect, kDelayDuration, "Delay");
+
+		int hoff = rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kDelayFeedbackControl, hoff));
+		AttachKnob(pGraphics, rect, kDelayFeedback, "Feedback");
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kDelayMixControl, hoff));
+		AttachKnob(pGraphics, rect, kDelayMix, "Mix");
 	}
 
 	// Master section
