@@ -631,30 +631,28 @@ void Melodizer::Reset()
 	}
 #endif
 
-	// reseed the random generator.
-	// when Seed is zero, we use a random seed, other wise we seed with the param
-	const int seedParam = GetParam(kSeed)->Int();
-	if ( seedParam == 0)
-	{
-		std::random_device rd;
-		mRandomGen.seed(rd());
-	}
-	else
-	{
-		mRandomGen.seed(seedParam);
-	}
+	// reseed the random generator
+	OnParamChange(kSeed);
 
+	// initialize the sequencer
+	StopSequencer();
+
+	mMelodyVolume.setAudioChannelCount(2);
+	mMelodyVolume.setSampleRate(GetSampleRate());
+}
+
+void Melodizer::StopSequencer()
+{
 	mTick = -1;
 	mPreviousNoteIndex = 0;
 	mSampleCount = 0;
 	mOddTick = false;
+
 	mActiveTone = 0;
-	for(int i = 0; i < mTones.size(); ++i)
+	for (int i = 0; i < mTones.size(); ++i)
 	{
 		mTones[i]->noteOff();
 	}
-	mMelodyVolume.setAudioChannelCount(2);
-	mMelodyVolume.setSampleRate(GetSampleRate());
 }
 
 void Melodizer::OnParamChange(int paramIdx)
@@ -731,18 +729,32 @@ void Melodizer::OnParamChange(int paramIdx)
 		break;
 
 	case kSeed:
-		// reset the plug when the seed changes because 
+	{
+		// when Seed is zero, we use a random seed, other wise we seed with the param
+		const int seedParam = GetParam(kSeed)->Int();
+		if (seedParam == 0)
+		{
+			std::random_device rd;
+			mRandomGen.seed(rd());
+		}
+		else
+		{
+			mRandomGen.seed(seedParam);
+		}
+
 		// we want to have deterministic output,
 		// which means we should start from the beginning of the sequence.
-		Reset();
-		break;
+		mTick = -1;
+		mPreviousNoteIndex = 0;
+	}
+	break;
 	
 	case kPlayState:
 		{
 			const PlayState state = (PlayState)param->Int();
 			if (state == PS_Stop)
 			{
-				Reset();
+				StopSequencer();
 			}
 			else if ( state == PS_Pause )
 			{

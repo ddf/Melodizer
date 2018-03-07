@@ -45,6 +45,7 @@ private:
 	int RandomRange(int low, int hi);
 	float RandomRange(float low, float hi);
 
+	void StopSequencer();
 	void SetPlayStateFromMidi(PlayState state);
 	void HandleMidiControlChange(IMidiMsg* pMsg);
 	void SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, const int paramIdx);
