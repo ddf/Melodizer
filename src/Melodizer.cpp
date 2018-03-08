@@ -442,14 +442,14 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		}
 
 		// tick our crossfade line and put the result into both channels
-		mDelayCrossfade.tick(result, 2);
+		mDelayCrossfade.tick(result, 1);
 		// then tick our dry mix and put the result into only one channel, 
 		// which means we can still get at the result of ticking crossfade.
 		mDelayDryMix.tick(result, 1);
 
 		// use the results to set delAmp and dryMix on both delays
-		const float fade = result[1];
-		const float mix = result[0];
+		const float fade = mDelayCrossfade.getAmp();
+		const float mix = mDelayDryMix.getAmp();
 
 		mDelayA.delAmp.setLastValue(1.0 - fade);
 		mDelayB.delAmp.setLastValue(fade);			
