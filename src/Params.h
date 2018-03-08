@@ -64,6 +64,12 @@ enum EParams
 	kDelayDuration,
 	kDelayFeedback,
 	kDelayMix,
+
+	kFlangerTime,
+	kFlangerRate,
+	kFlangerDepth,
+	kFlangerFeedback,
+	kFlangerMix,
 	
 	// step params
 	STEP_PARAM(kStepMode), // see: enum StepMode

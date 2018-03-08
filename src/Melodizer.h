@@ -12,6 +12,7 @@
 #include "Multiplier.h"
 #include "Line.h"
 #include "Delay.h"
+#include "Flanger.h"
 
 #include "IMidiQueue.h"
 
@@ -90,6 +91,10 @@ private:
 	Minim::Line mDelayFeedback;
 	Minim::Line mDelayDryMix;
 	Minim::Line mDelayWetMix;
+
+	Minim::Flanger mFlanger;
+	Minim::Line    mFlangerTime;
+	Minim::Line	   mFlangerDepth;
 
 	// we'll have one Tone for each voice that will be reconfigured before being triggered
 	std::vector<Tone*> mTones;

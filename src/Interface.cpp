@@ -56,7 +56,7 @@ enum ELayout
 
 	kEffectsGroup_X = kEnvGroup_X + kEnvGroup_W + 10,
 	kEffectsGroup_Y = kEnvGroup_Y,
-	kEffectsGroup_W = 170,
+	kEffectsGroup_W = 365,
 	kEffectsGroup_H = kOscGroup_H,
 
 	kDelayDurationControl_X = 0,
@@ -74,9 +74,15 @@ enum ELayout
 	kDelayMixControl_W = kLargeKnobSize,
 	kDelayMixControl_H = kLargeKnobSize,
 
+	// flanger controls are just a bunch of knobs, so we only need one rect
+	kFlangerControl_X = 10,
+	kFlangerControl_Y = 15,
+	kFlangerControl_W = kLargeKnobSize,
+	kFlangerControl_H = kLargeKnobSize,
+
 	kMasterGroup_W = 190,
 	kMasterGroup_X = GUI_WIDTH - kMasterGroup_W - 10,
-	kMasterGroup_Y = kOscGroup_Y,
+	kMasterGroup_Y = kOscGroup_Y + kOscGroup_H + 10,
 	kMasterGroup_H = kOscGroup_H,
 
 	kVoiceControl_X = 0,
@@ -148,10 +154,10 @@ enum ELayout
 	kRangeControl_Y = 20,
 	kRangeControl_W = 20,
 	kRangeControl_H = kEnumHeight,
-
+	
 	kPresetsGroup_W = 145,
 	kPresetsGroup_H = kPitchGroup_H,
-	kPresetsGroup_X = GUI_WIDTH - 10 - kPresetsGroup_W,
+	kPresetsGroup_X = GUI_WIDTH, // - 10 - kPresetsGroup_W, // for the moment, putting this off screen
 	kPresetsGroup_Y = kPitchGroup_Y,
 
 	kPresetRestoreControl_X = 0,
@@ -279,6 +285,16 @@ namespace Strings
 	const char * DecayLabel = "D";
 	const char * SustainLabel = "S";
 	const char * ReleaseLabel = "R";
+
+	const char * DelayTimeLabel = "Delay";
+	const char * DelayFeedbackLabel = "Feedback";
+	const char * DelayMixLabel = "Mix";
+
+	const char * FlangerTimeLabel = "Flanger";
+	const char * FlangerRateLabel = "Rate";
+	const char * FlangerDepthLabel = "Depth";
+	const char * FlangerFeedbackLabel = "Feedback";
+	const char * FlangerMixLabel = "Mix";
 }
 
 Interface::Interface(Melodizer* inPlug)
@@ -340,15 +356,35 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		pGraphics->AttachControl(group);
 
 		IRECT rect = group->GetControlRect(MakeIRect(kDelayDurationControl));
-		AttachEnum(pGraphics, rect, kDelayDuration, "Delay");
+		AttachEnum(pGraphics, rect, kDelayDuration, Strings::DelayTimeLabel);
 
 		int hoff = rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kDelayFeedbackControl, hoff));
-		AttachKnob(pGraphics, rect, kDelayFeedback, "Feedback");
+		AttachKnob(pGraphics, rect, kDelayFeedback, Strings::DelayFeedbackLabel);
 
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kDelayMixControl, hoff));
-		AttachKnob(pGraphics, rect, kDelayMix, "Mix");
+		AttachKnob(pGraphics, rect, kDelayMix, Strings::DelayMixLabel);
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kFlangerControl, hoff));
+		AttachKnob(pGraphics, rect, kFlangerTime, Strings::FlangerTimeLabel);
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kFlangerControl, hoff));
+		AttachKnob(pGraphics, rect, kFlangerRate, Strings::FlangerRateLabel);
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kFlangerControl, hoff));
+		AttachKnob(pGraphics, rect, kFlangerDepth, Strings::FlangerDepthLabel);
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kFlangerControl, hoff));
+		AttachKnob(pGraphics, rect, kFlangerFeedback, Strings::FlangerFeedbackLabel);
+
+		hoff += rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kFlangerControl, hoff));
+		AttachKnob(pGraphics, rect, kFlangerMix, Strings::FlangerMixLabel);
 	}
 
 	// Master section

@@ -27,6 +27,12 @@ const char * kStepLengthDisplay[SL_Count] = {
 	"1/8.",  "1/4",  "1/4.",
 };
 
+const double kFlangerTimeMinMs = 0.01f;
+const double kFlangerTimeMaxMs = 50.0f;
+
+const double kFlangerRateMinHz = 0.01;
+const double kFlangerRateMaxHz = 20;
+
 Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 	, mInterface(this)
@@ -52,6 +58,9 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mDelayFeedback(0, 0.5f, 0.5f)
 	, mDelayDryMix(0, 1, 1)
 	, mDelayWetMix(0, 0, 0)
+	, mFlanger(kFlangerTimeMinMs, kFlangerRateMinHz, 0, 0, 1, 1)
+	, mFlangerTime(0, kFlangerTimeMinMs, kFlangerTimeMinMs)
+	, mFlangerDepth(0, 0, 0)
 	, mRandomGen(0)
 	, mTones(kVoicesMax)
 	, mActiveTone(0)
@@ -67,11 +76,15 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		mDelayFeedback.patch(mDelay.feedback);
 		mDelayDryMix.patch(mDelay.dryMix);
 		mDelayWetMix.patch(mDelay.wetMix);
+
+		mFlangerTime.patch(mFlanger.delay);
+		mFlangerDepth.patch(mFlanger.depth);
+
 		mMelodyVolumeLine.patch(mMelodyVolume.amplitude);
 
 		mMelodyVolume.setAudioChannelCount(2);
 		mMelodyVolume.setSampleRate(44100);
-		mMelodyBus.patch(mDelay).patch(mMelodyVolume);
+		mMelodyBus.patch(mDelay).patch(mFlanger).patch(mMelodyVolume);
 	}
 
 	// setup Waveforms
@@ -232,6 +245,12 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 
 		GetParam(kDelayFeedback)->InitDouble("Delay Feedback", 20, 0, 100, 0.5f, "%");
 		GetParam(kDelayMix)->InitDouble("Delay Mix", 50, 0, 100, 0.5f, "%");
+
+		GetParam(kFlangerTime)->InitDouble("Flanger Delay", mFlanger.delay.getLastValue(), kFlangerTimeMinMs, kFlangerTimeMaxMs, 0.01, "ms");
+		GetParam(kFlangerRate)->InitDouble("Flanger Rate", mFlanger.rate.getLastValue(), kFlangerRateMinHz, kFlangerRateMaxHz, 0.01, "Hz");
+		GetParam(kFlangerDepth)->InitDouble("Flanger Depth", 10, 0, 100, 0.5, "%");
+		GetParam(kFlangerFeedback)->InitDouble("Flanger Feedback", mFlanger.feedback.getLastValue() * 100, 0, 100, 0.5, "%");
+		GetParam(kFlangerMix)->InitDouble("Flanger Mix", 0, 0, 100, 0.5, "%");
 	}
 
 	// knob bank
@@ -707,6 +726,39 @@ void Melodizer::OnParamChange(int paramIdx)
 		mDelayWetMix.activate(0.001f, mDelay.wetMix.getLastValue(), wet);
 	}
 	break;
+
+	case kFlangerTime:
+		mFlangerTime.activate(0.5f, mFlanger.delay.getLastValue(), param->Value());
+		// fallthru cuz depth is relative to time
+
+	case kFlangerDepth:
+	{
+		//const float amt = kFlangerDepthMinMs + (kFlangerDepthMaxMs - kFlangerDepthMinMs)*(param->Value() / 100);
+		const float amt = GetParam(kFlangerTime)->Value() * (GetParam(kFlangerDepth)->Value() / 100);
+		mFlangerDepth.activate(0.5f, mFlanger.depth.getLastValue(), amt);
+	}
+	break;
+
+	case kFlangerRate:
+		mFlanger.rate.setLastValue(param->Value());
+		break;
+	
+	case kFlangerFeedback:
+		mFlanger.feedback.setLastValue(param->Value() / 100);
+		break;
+
+	case kFlangerMix:
+	{
+		const double mix = param->Value() / 100.0;
+		// mix [0.5,1] => dry [1,0]
+		const double dry = BOUNDED(2 - mix * 2, 0, 1);
+		// mix [0, 0.5] => wet [0,1]
+		const double wet = BOUNDED(mix * 2, 0, 1);
+		mFlanger.dry.setLastValue(dry);
+		mFlanger.wet.setLastValue(wet);
+	}
+	break;
+
 
 	case kWaveform:
 		mWaveFormIdx = GetParam(kWaveform)->Int();
