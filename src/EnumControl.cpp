@@ -149,7 +149,10 @@ void EnumControl::StepValue(int amount)
 	else
 	{
 		const int presetIdx = BOUNDED(mPlug->GetCurrentPresetIdx() + amount, mMin, mMax);
-		mPlug->RestorePreset(presetIdx);
+		if (presetIdx != mPlug->GetCurrentPresetIdx())
+		{
+			mPlug->RestorePreset(presetIdx);
+		}
 	}
 
 	SetDirty(isParam);
