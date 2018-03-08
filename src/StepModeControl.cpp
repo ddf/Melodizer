@@ -6,9 +6,20 @@ StepModeControl::StepModeControl(IPlugBase* pPlug, IRECT iRect, const int paramI
 : IControl(pPlug, iRect, paramIdx)
 {
 	SetText(textStyle);
-	mNormRect = iRect.SubRectVertical(3, 2).GetPadded(0, 1, 0, 0);
-	mSkipRect = iRect.SubRectVertical(3, 1);
-	mLoopRect = iRect.SubRectVertical(3, 0).GetPadded(0, 0, 0, -1);
+	mStateCount = GetParam()->GetNDisplayTexts();
+	switch (mStateCount)
+	{
+	case 2:
+		mStateRects[1] = iRect.SubRectVertical(2, 0).GetPadded(0, 0, 0, -1);
+		mStateRects[0] = iRect.SubRectVertical(2, 1);
+		break;
+
+	case 3:
+		mStateRects[2] = iRect.SubRectVertical(3, 0).GetPadded(0, 0, 0, -1);
+		mStateRects[1] = iRect.SubRectVertical(3, 1);
+		mStateRects[0] = iRect.SubRectVertical(3, 2).GetPadded(0, 1, 0, 0);
+		break;
+	}
 
 	// expand rect to the left to account for the labels we will draw
 	mRECT.L -= 20;
@@ -17,31 +28,17 @@ StepModeControl::StepModeControl(IPlugBase* pPlug, IRECT iRect, const int paramI
 
 bool StepModeControl::Draw(IGraphics *pGraphics)
 {
-	//pGraphics->DrawRect(&mText.mTextEntryFGColor, &mRECT);
-	IColor* normColor = &mText.mTextEntryBGColor;
-	IColor* skipColor = &mText.mTextEntryBGColor;
-	IColor* loopColor = &mText.mTextEntryBGColor;
-	switch(GetParam()->Int())
-	{
-		case SM_Norm: normColor = &mText.mTextEntryFGColor; break;
-		case SM_Skip: skipColor = &mText.mTextEntryFGColor; break;
-		case SM_Loop: loopColor = &mText.mTextEntryFGColor; break;
-	}
-	pGraphics->FillIRect(normColor, &mNormRect);
-	pGraphics->FillIRect(skipColor, &mSkipRect);
-	pGraphics->FillIRect(loopColor, &mLoopRect);
-	
 	mText.mAlign = IText::kAlignFar;
-	const int pad = -mNormRect.W()-2;
-	IRECT textRect = mNormRect.GetPadded(pad, 0, pad, 0);
-	pGraphics->DrawIText(&mText, "NORM", &textRect);
-	
-	textRect = mSkipRect.GetPadded(pad, 0, pad, 0);
-	pGraphics->DrawIText(&mText, "SKIP", &textRect);
-	
-	textRect = mLoopRect.GetPadded(pad, 0, pad, 0);
-	pGraphics->DrawIText(&mText, "LOOP", &textRect);
-	
+	const int pad = -mStateRects[0].W() - 2;
+	for (int i = 0; i < mStateCount; ++i)
+	{
+		IColor* fillColor = GetParam()->Int() == i ? &mText.mTextEntryFGColor : &mText.mTextEntryBGColor;
+		pGraphics->FillIRect(fillColor, &mStateRects[i]);
+
+		IRECT textRect = mStateRects[i].GetPadded(pad, 0, pad, 0);
+		pGraphics->DrawIText(&mText, const_cast<char*>(GetParam()->GetDisplayText(i)), &textRect);
+	}
+
 	return true;
 }
 
@@ -49,17 +46,13 @@ void StepModeControl::OnMouseDown(int x, int y, IMouseMod *mod)
 {
 	if (mod->L)
 	{
-		if (mNormRect.Contains(x, y))
+		for (int i = 0; i < mStateCount; ++i)
 		{
-			SetValueFromUserInput(GetParam()->GetNormalized(SM_Norm));
-		}
-		else if (mSkipRect.Contains(x, y))
-		{
-			SetValueFromUserInput(GetParam()->GetNormalized(SM_Skip));
-		}
-		else if (mLoopRect.Contains(x, y))
-		{
-			SetValueFromUserInput(GetParam()->GetNormalized(SM_Loop));
+			if (mStateRects[i].Contains(x, y))
+			{
+				SetValueFromUserInput(GetParam()->GetNormalized(i));
+				break;
+			}
 		}
 	}
 	else if (mod->R)

@@ -47,7 +47,8 @@ enum EParams
 	kWidth,
 	kSeed,
 	
-	// sequenc time params
+	// sequence time params
+	kClockSource,
 	kTempo,
 	kStepLength,
 	kShuffle,
@@ -86,6 +87,14 @@ enum EParams
 	kSavePreset,
 	kLoadPreset,
 	kRestorePreset,
+};
+
+enum ClockSource
+{
+	CS_Internal = 0,
+	CS_External,
+
+	CS_Count,
 };
 
 enum StepMode

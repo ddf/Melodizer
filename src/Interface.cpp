@@ -123,8 +123,13 @@ enum ELayout
 
 	kTimeGroup_X = 10,
 	kTimeGroup_Y = kOscGroup_Y + kOscGroup_H + 10,
-	kTimeGroup_W = 290,
+	kTimeGroup_W = 295,
 	kTimeGroup_H = kOscGroup_H,
+
+	kClockSourceControl_X = 20,
+	kClockSourceControl_Y = 20,
+	kClockSourceControl_W = 10,
+	kClockSourceControl_H = 20,
 
 	kTempoControl_X = 0,
 	kTempoControl_Y = 20,
@@ -132,9 +137,9 @@ enum ELayout
 	kTempoControl_H = kEnumHeight,
 
 	kStepLengthControl_X = 0,
-	kStepLengthControl_Y = 20,
-	kStepLengthControl_W = 60,
-	kStepLengthControl_H = kEnumHeight,
+	kStepLengthControl_Y = 15,
+	kStepLengthControl_W = kLargeKnobSize,
+	kStepLengthControl_H = kLargeKnobSize,
 
 	kShuffleControl_X = 0,
 	kShuffleControl_Y = 15,
@@ -267,6 +272,7 @@ namespace Strings
 
 	const char * VoicesLabel = "Voices";
 	const char * SeedLabel = "Seed";
+	const char * ClockSourceLabel = "Source";
 	const char * TempoLabel = "BPM";
 	const char * StepLabel = "Step";
 	const char * ShuffleLabel = "Swing";
@@ -299,6 +305,7 @@ namespace Strings
 Interface::Interface(Melodizer* inPlug)
 	: mPlug(inPlug)
 	, mLEDs()
+	, mTempoControl(nullptr)
 {
 }
 
@@ -412,12 +419,26 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kTimeGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::TimeLabel);
 		pGraphics->AttachControl(group);
 
-		IRECT rect = group->GetControlRect(MakeIRect(kTempoControl));
-		AttachTextBox(pGraphics, rect, kTempo, 0.01f, "000.000", Strings::TempoLabel);
+		IRECT rect = group->GetControlRect(MakeIRect(kClockSourceControl));
+		//AttachEnum(pGraphics, rect, kClockSource, Strings::ClockSourceLabel);
+		pGraphics->AttachControl(new StepModeControl(mPlug, rect, kClockSource, &TextStyles::StepMode));
 
+		// adjust the rect to match what step mode control does
+		rect.L -= 18;
+		rect.R += 2;
+		// shift above for the label
+		rect.B = rect.T;
+		rect.T -= kClockSourceControl_Y;
+		pGraphics->AttachControl(new ITextControl(mPlug, rect, &TextStyles::Label, const_cast<char*>(Strings::ClockSourceLabel)));
+		
 		int hoff = rect.W() + 10;
+		rect = group->GetControlRect(MakeIRectHOffset(kTempoControl, hoff));
+		mTempoControl = AttachTextBox(pGraphics, rect, kTempo, 0.01f, "000.000", Strings::TempoLabel);
+
+		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kStepLengthControl, hoff));
-		AttachEnum(pGraphics, rect, kStepLength, Strings::StepLabel);
+		//AttachEnum(pGraphics, rect, kStepLength, Strings::StepLabel);
+		AttachKnob(pGraphics, rect, kStepLength, Strings::StepLabel);
 
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kShuffleControl, hoff));
@@ -544,9 +565,10 @@ void Interface::AttachEnum(IGraphics* pGraphics, IRECT rect, int paramIdx, const
 	}
 }
 
-void Interface::AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramIdx, const float scrollSpeed, const char * maxValue, const char * label /*= nullptr*/)
+IControl* Interface::AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramIdx, const float scrollSpeed, const char * maxValue, const char * label /*= nullptr*/)
 {
-	pGraphics->AttachControl(new TextBox(mPlug, rect, paramIdx, &TextStyles::TextBox, pGraphics, maxValue, false, scrollSpeed));
+	IControl* control = new TextBox(mPlug, rect, paramIdx, &TextStyles::TextBox, pGraphics, maxValue, false, scrollSpeed);
+	pGraphics->AttachControl(control);
 
 	if (label != nullptr)
 	{
@@ -555,6 +577,7 @@ void Interface::AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramI
 		pGraphics->AttachControl(new ITextControl(mPlug, rect, &TextStyles::Label, const_cast<char*>(label)));
 	}
 
+	return control;
 }
 
 void Interface::AttachKnob(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label)
@@ -578,5 +601,13 @@ void Interface::OnTick(const unsigned int tick, bool noteOn)
 		{
 			mNoteOns[tick]->Blink();
 		}
+	}
+}
+
+void Interface::OnClockSourceChanged(const int source)
+{
+	if (mTempoControl != nullptr)
+	{
+		mTempoControl->GrayOut(source != CS_Internal);
 	}
 }

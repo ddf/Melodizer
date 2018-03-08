@@ -11,7 +11,6 @@ public:
 	void OnMouseDown(int x, int y, IMouseMod* mod) override;
 	
 private:
-	IRECT mNormRect;
-	IRECT mSkipRect;
-	IRECT mLoopRect;
+	IRECT mStateRects[3];
+	int   mStateCount;
 };

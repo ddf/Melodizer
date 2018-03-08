@@ -25,10 +25,20 @@ bool TextBox::Draw(IGraphics* pGraphics)
 
 	IRECT ourRect = mRECT;
 	mRECT = mTextRect;
-	bool result = ICaptionControl::Draw(pGraphics);
+	if (IsGrayed())
+	{
+		char display[32];
+		GetParam()->GetDisplayForHost(mValue, true, display, false);
+		mStr.Set(display);
+		ITextControl::Draw(pGraphics);
+	}
+	else
+	{
+		ICaptionControl::Draw(pGraphics);
+	}
 	mRECT = ourRect;
 
-	return result;
+	return true;
 }
 
 void TextBox::OnMouseDown(int x, int y, IMouseMod* pMod)
@@ -74,4 +84,11 @@ void TextBox::OnMouseWheel(int x, int y, IMouseMod* pMod, int d)
 	}
 
 	SetDirty();
+}
+
+void TextBox::GrayOut(bool gray)
+{
+	ICaptionControl::GrayOut(gray);
+
+	mText.mColor.A = gray ? 128 : 255;	
 }

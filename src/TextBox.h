@@ -11,6 +11,9 @@ public:
 	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
 	void OnMouseWheel(int x, int y, IMouseMod* pMod, int d) override;
 
+
+	virtual void GrayOut(bool gray) override;
+
 private:
 	bool  mShowParamUnits;
 	float mScrollSpeed;

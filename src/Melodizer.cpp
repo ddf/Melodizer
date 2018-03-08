@@ -201,13 +201,20 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 
 	// tempo / step
 	{
+		IParam* param = GetParam(kClockSource);
+		param->InitEnum("Clock Source", CS_Internal, CS_Count);
+		param->SetDisplayText(CS_Internal, "Int.");
+		param->SetDisplayText(CS_External, "Ext.");
+
 		GetParam(kTempo)->InitDouble("Tempo", DEFAULT_TEMPO, kTempoMin, kTempoMax, 0.01, "bpm");
-		IParam* param = GetParam(kStepLength);
+		
+		param = GetParam(kStepLength);
 		param->InitEnum("Step Length", SL_8, SL_Count);
 		for(int i = 0; i < SL_Count; ++i)
 		{
 			param->SetDisplayText(i, kStepLengthDisplay[i]);
 		}
+
 		param = GetParam(kPlayState);
 		param->InitEnum("Play State", PS_Stop, PS_Count);
 		for(int i = 0; i < PS_Count; ++i)
@@ -351,6 +358,11 @@ void Melodizer::InitRandomizerParam(const int paramIdx, const char *paramName)
 
 void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
+	if (GetParam(kClockSource)->Int() == CS_External)
+	{
+		OnParamChange(kTempo);
+	}
+
 	if (mCrossfadeDelays && mDelayCrossfade.isAtEnd())
 	{
 		SetDelayDuration(mTempo, kDelayCrossfadeDuration);
@@ -732,11 +744,36 @@ void Melodizer::OnParamChange(int paramIdx)
 	}
 	break;
 
+	case kClockSource:
+	{
+		mInterface.OnClockSourceChanged(param->Int());
+	}
+	// fall thru so tempo gets set
+
 	case kTempo:
 	{
-		mTempo = GetParam(kTempo)->Value();
-		SetSamplesPerBeat(mTempo);
-		mCrossfadeDelays = true;
+		float tempo = mTempo;
+		switch (GetParam(kClockSource)->Int())
+		{
+		case CS_Internal:
+			tempo = GetParam(kTempo)->Value();
+			break;
+
+		case CS_External:
+			tempo = GetTempo();
+			// we call SetParameterFromPlug here because we will still get OnParamChanged
+			// calls if a user has automated Tempo, but has ClockSource set to Ext.
+			// So we need make sure that the UI is always displaying the correct thing.
+			GetGUI()->SetParameterFromPlug(kTempo, mTempo, false);
+			break;
+		}		
+
+		if (tempo != mTempo)
+		{
+			mTempo = tempo;
+			SetSamplesPerBeat(mTempo);
+			mCrossfadeDelays = true;			
+		}
 	}
 	break;
 
