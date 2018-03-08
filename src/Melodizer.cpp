@@ -728,14 +728,14 @@ void Melodizer::OnParamChange(int paramIdx)
 	break;
 
 	case kFlangerTime:
-		mFlangerTime.activate(0.5f, mFlanger.delay.getLastValue(), param->Value());
+		mFlangerTime.activate(0.2f, mFlanger.delay.getLastValue(), param->Value());
 		// fallthru cuz depth is relative to time
 
 	case kFlangerDepth:
 	{
 		//const float amt = kFlangerDepthMinMs + (kFlangerDepthMaxMs - kFlangerDepthMinMs)*(param->Value() / 100);
 		const float amt = GetParam(kFlangerTime)->Value() * (GetParam(kFlangerDepth)->Value() / 100);
-		mFlangerDepth.activate(0.5f, mFlanger.depth.getLastValue(), amt);
+		mFlangerDepth.activate(0.2f, mFlanger.depth.getLastValue(), amt);
 	}
 	break;
 
