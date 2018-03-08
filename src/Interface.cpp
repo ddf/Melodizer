@@ -15,11 +15,27 @@
 enum ELayout
 {
 	kEnumHeight = 20,
+	kButtonHeight = 15,
 	kLargeKnobSize = 30,
 	kSmallKnobSize = 20,
 
+	kPresetRestoreControl_X = 10,
+	kPresetRestoreControl_Y = 10,
+	kPresetRestoreControl_W = 100,
+	kPresetRestoreControl_H = kButtonHeight,
+
+	kLoadControl_X = kPresetRestoreControl_X + kPresetRestoreControl_W + 10,
+	kLoadControl_Y = kPresetRestoreControl_Y,
+	kLoadControl_W = 50,
+	kLoadControl_H = kButtonHeight,
+
+	kSaveControl_X = kLoadControl_X + kLoadControl_W + 10,
+	kSaveControl_Y = kLoadControl_Y,
+	kSaveControl_W = kLoadControl_W,
+	kSaveControl_H = kButtonHeight,
+
 	kOscGroup_X = 10,
-	kOscGroup_Y = 10,
+	kOscGroup_Y = kPresetRestoreControl_Y + kPresetRestoreControl_H + 10,
 	kOscGroup_W = 205,
 	kOscGroup_H = 74,
 
@@ -154,26 +170,6 @@ enum ELayout
 	kRangeControl_Y = 20,
 	kRangeControl_W = 20,
 	kRangeControl_H = kEnumHeight,
-	
-	kPresetsGroup_W = 145,
-	kPresetsGroup_H = kPitchGroup_H,
-	kPresetsGroup_X = GUI_WIDTH, // - 10 - kPresetsGroup_W, // for the moment, putting this off screen
-	kPresetsGroup_Y = kPitchGroup_Y,
-
-	kPresetRestoreControl_X = 0,
-	kPresetRestoreControl_Y = 5,
-	kPresetRestoreControl_W = kPresetsGroup_W - 20,
-	kPresetRestoreControl_H = kEnumHeight,
-
-	kLoadControl_X = 8,
-	kLoadControl_Y = kPresetRestoreControl_Y + kPresetRestoreControl_H + 10,
-	kLoadControl_W = 50,
-	kLoadControl_H = 12,
-
-	kSaveControl_X = kLoadControl_X,
-	kSaveControl_Y = kLoadControl_Y,
-	kSaveControl_W = kLoadControl_W,
-	kSaveControl_H = kLoadControl_H,
 
 	kSequenceGroup_X = 10,
 	kSequenceGroup_Y = kTimeGroup_Y + kTimeGroup_H + 10,
@@ -224,6 +220,9 @@ namespace Color
 
 	const IColor EnumBackground(255, 9, 66, 125);
 	const IColor EnumBorder = KnobLine;
+
+	const IColor BangBackground = EnumBackground;
+	const IColor BangActive = LedOn;
 
 	const IColor GroupOutline = KnobLine;
 	const IColor GroupLabel = Background;
@@ -452,18 +451,9 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 	// Presets section
 	{
-		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kPresetsGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::PresetsLabel);
-		pGraphics->AttachControl(group);
-
-		IRECT rect = group->GetControlRect(MakeIRect(kLoadControl));
-		pGraphics->AttachControl(new BangControl(mPlug, rect, kLoadPreset, Color::LedOn, Color::LedOff, &TextStyles::ButtonLabel, Strings::LoadLabel));
-
-		int hoff = rect.W() + 10;
-		rect = group->GetControlRect(MakeIRectHOffset(kSaveControl, hoff));
-		pGraphics->AttachControl(new BangControl(mPlug, rect, kSavePreset, Color::LedOn, Color::LedOff, &TextStyles::ButtonLabel, Strings::SaveLabel));
-
-		rect = group->GetControlRect(MakeIRect(kPresetRestoreControl));
-		AttachEnum(pGraphics, rect, kRestorePreset);
+		pGraphics->AttachControl(new BangControl(mPlug, MakeIRect(kLoadControl), kLoadPreset, Color::BangActive, Color::BangBackground, &TextStyles::ButtonLabel, Strings::LoadLabel));
+		pGraphics->AttachControl(new BangControl(mPlug, MakeIRect(kSaveControl), kSavePreset, Color::BangActive, Color::BangBackground, &TextStyles::ButtonLabel, Strings::SaveLabel));
+		AttachEnum(pGraphics, MakeIRect(kPresetRestoreControl), kRestorePreset);
 	}
 
 	// sequence 
@@ -539,7 +529,7 @@ void Interface::AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char 
 void Interface::AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, const int param)
 {
 	IRECT rect = MakeIRectVOffset(kStepRandomize, kStepKnobRowSpacing*rowNum);
-	pGraphics->AttachControl(new BangControl(mPlug, rect, param, Color::LedOn, Color::LedOff, &TextStyles::RandLabel, Strings::RandomizeLabel));
+	pGraphics->AttachControl(new BangControl(mPlug, rect, param, Color::BangActive, Color::BangBackground, &TextStyles::RandLabel, Strings::RandomizeLabel));
 }
 
 void Interface::AttachEnum(IGraphics* pGraphics, IRECT rect, int paramIdx, const char * label)

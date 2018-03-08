@@ -30,7 +30,18 @@ bool BangControl::Draw(IGraphics* pGraphics)
 	
 	if ( mLabel != nullptr )
 	{
-		pGraphics->DrawIText(&mText, const_cast<char*>(mLabel), &mRECT);
+		char * label = const_cast<char*>(mLabel);
+		IRECT textRect = mRECT;
+		// vertically center the text
+		pGraphics->MeasureIText(&mText, label, &textRect);
+#ifdef OS_OSX
+		textRect.B -= 4;
+#endif
+		int offset = (mRECT.H() - textRect.H()) / 2;
+		textRect.T += offset;
+		textRect.B += offset;
+		pGraphics->MeasureIText(&mText, label, &textRect);
+		pGraphics->DrawIText(&mText, label, &textRect);
 	}
 
 	return true;
