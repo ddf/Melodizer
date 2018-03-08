@@ -1,4 +1,4 @@
-#define PLUG_MFR "compartmental"
+#define PLUG_MFR "Damien Quartz"
 #define PLUG_NAME "Melodizer"
 
 #define PLUG_CLASS_NAME Melodizer
@@ -53,12 +53,6 @@ instrument determined by PLUG _IS _INST
 #define PLUG_DOES_MIDI 1
 
 #define PLUG_DOES_STATE_CHUNKS 0
-
-// Unique IDs for each image resource.
-#define KNOB_ID 101
-
-// Image resource locations for this plug.
-#define KNOB_FN "resources/img/knob.png"
 
 // GUI default dimensions
 #define GUI_WIDTH 780

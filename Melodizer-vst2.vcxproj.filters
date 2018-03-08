@@ -4,15 +4,149 @@
     <ClCompile Include="..\..\WDL\IPlug\IPlugVST.cpp">
       <Filter>vst2</Filter>
     </ClCompile>
-    <ClCompile Include="src\Interface.cpp" />
-    <ClCompile Include="src\KnobLineCoronaControl.cpp" />
-    <ClCompile Include="src\LED.cpp" />
     <ClCompile Include="src\Melodizer.cpp" />
+    <ClCompile Include="src\BangControl.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ControlGroup.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnumControl.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KnobLineCoronaControl.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Interface.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LED.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayStateControl.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StepModeControl.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextBox.cpp">
+      <Filter>interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\AudioSource.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\Logging.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Delay.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Flanger.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Frequency.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Line.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Multiplier.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Oscil.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Pan.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Summer.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\UGen.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Waves.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\minim-cpp\src\ugens\Wavetable.cpp">
+      <Filter>minim</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Instruments.cpp" />
+    <ClCompile Include="src\Scales.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="..\..\WDL\IPlug\IPlugVST.h">
       <Filter>vst2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BangControl.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ControlGroup.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EnumControl.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KnobLineCoronaControl.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Interface.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LED.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PlayStateControl.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StepModeControl.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TextBox.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\AudioSource.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\Logging.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Delay.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Flanger.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Frequency.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Line.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Multiplier.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Oscil.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Pan.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Summer.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\UGen.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Waveform.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Waves.h">
+      <Filter>minim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minim-cpp\src\ugens\Wavetable.h">
+      <Filter>minim</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -21,6 +155,12 @@
   <ItemGroup>
     <Filter Include="vst2">
       <UniqueIdentifier>{ea16de74-9d15-4c60-ba09-d0924088d3e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interface">
+      <UniqueIdentifier>{18a756ab-f8bf-498a-82a6-7019c4a00dea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="minim">
+      <UniqueIdentifier>{398995d8-3a5d-40ef-a821-b1d0be6253e1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

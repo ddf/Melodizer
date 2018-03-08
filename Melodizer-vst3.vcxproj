@@ -317,7 +317,30 @@
     <ClInclude Include="..\..\VST3_SDK\public.sdk\source\vst\vstparameters.h" />
     <ClInclude Include="..\..\VST3_SDK\public.sdk\source\vst\vstsinglecomponenteffect.h" />
     <ClInclude Include="..\..\WDL\IPlug\IPlugVST3.h" />
+    <ClInclude Include="..\minim-cpp\src\AudioSource.h" />
+    <ClInclude Include="..\minim-cpp\src\Logging.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Delay.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Flanger.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Frequency.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Line.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Multiplier.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Oscil.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Pan.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Summer.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\UGen.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Waveform.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Waves.h" />
+    <ClInclude Include="..\minim-cpp\src\ugens\Wavetable.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\BangControl.h" />
+    <ClInclude Include="src\ControlGroup.h" />
+    <ClInclude Include="src\EnumControl.h" />
+    <ClInclude Include="src\Interface.h" />
+    <ClInclude Include="src\KnobLineCoronaControl.h" />
+    <ClInclude Include="src\LED.h" />
+    <ClInclude Include="src\PlayStateControl.h" />
+    <ClInclude Include="src\StepModeControl.h" />
+    <ClInclude Include="src\TextBox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\VST3_SDK\pluginterfaces\base\funknown.cpp" />
@@ -333,10 +356,31 @@
     <ClCompile Include="..\..\VST3_SDK\public.sdk\source\vst\vstparameters.cpp" />
     <ClCompile Include="..\..\VST3_SDK\public.sdk\source\vst\vstsinglecomponenteffect.cpp" />
     <ClCompile Include="..\..\WDL\IPlug\IPlugVST3.cpp" />
+    <ClCompile Include="..\minim-cpp\src\AudioSource.cpp" />
+    <ClCompile Include="..\minim-cpp\src\Logging.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Delay.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Flanger.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Frequency.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Line.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Multiplier.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Oscil.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Pan.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Summer.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\UGen.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Waves.cpp" />
+    <ClCompile Include="..\minim-cpp\src\ugens\Wavetable.cpp" />
+    <ClCompile Include="src\BangControl.cpp" />
+    <ClCompile Include="src\ControlGroup.cpp" />
+    <ClCompile Include="src\EnumControl.cpp" />
+    <ClCompile Include="src\Instruments.cpp" />
     <ClCompile Include="src\Interface.cpp" />
     <ClCompile Include="src\KnobLineCoronaControl.cpp" />
     <ClCompile Include="src\LED.cpp" />
     <ClCompile Include="src\Melodizer.cpp" />
+    <ClCompile Include="src\PlayStateControl.cpp" />
+    <ClCompile Include="src\Scales.cpp" />
+    <ClCompile Include="src\StepModeControl.cpp" />
+    <ClCompile Include="src\TextBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Melodizer.rc" />

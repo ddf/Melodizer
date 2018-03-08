@@ -13,9 +13,6 @@
     <Filter Include="minim">
       <UniqueIdentifier>{01c21a6c-a842-46ab-b790-ea1a1f4f345d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="dsp">
-      <UniqueIdentifier>{fe848cd7-7662-4c35-a4f7-1713a16e6b53}</UniqueIdentifier>
-    </Filter>
     <Filter Include="interface">
       <UniqueIdentifier>{92938d68-f8f5-4bd5-91c4-02f18ae00cc0}</UniqueIdentifier>
     </Filter>
@@ -79,14 +76,8 @@
     <ClInclude Include="src\Params.h" />
     <ClInclude Include="src\Melodizer.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="src\Instruments.h">
-      <Filter>dsp</Filter>
-    </ClInclude>
     <ClInclude Include="..\minim-cpp\src\ugens\Pan.h">
       <Filter>minim</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Scales.h">
-      <Filter>dsp</Filter>
     </ClInclude>
     <ClInclude Include="src\Interface.h">
       <Filter>interface</Filter>
@@ -130,6 +121,8 @@
     <ClInclude Include="..\minim-cpp\src\ugens\Flanger.h">
       <Filter>minim</Filter>
     </ClInclude>
+    <ClInclude Include="src\Instruments.h" />
+    <ClInclude Include="src\Scales.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
@@ -178,14 +171,8 @@
       <Filter>minim</Filter>
     </ClCompile>
     <ClCompile Include="src\Melodizer.cpp" />
-    <ClCompile Include="src\Instruments.cpp">
-      <Filter>dsp</Filter>
-    </ClCompile>
     <ClCompile Include="..\minim-cpp\src\ugens\Pan.cpp">
       <Filter>minim</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Scales.cpp">
-      <Filter>dsp</Filter>
     </ClCompile>
     <ClCompile Include="src\Interface.cpp">
       <Filter>interface</Filter>
@@ -229,6 +216,8 @@
     <ClCompile Include="..\minim-cpp\src\ugens\Flanger.cpp">
       <Filter>minim</Filter>
     </ClCompile>
+    <ClCompile Include="src\Instruments.cpp" />
+    <ClCompile Include="src\Scales.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Melodizer.rc" />
