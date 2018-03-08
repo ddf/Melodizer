@@ -33,6 +33,8 @@ const double kFlangerTimeMaxMs = 50.0f;
 const double kFlangerRateMinHz = 0.01;
 const double kFlangerRateMaxHz = 20;
 
+const double kDelayCrossfadeDuration = 0.1;
+
 Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 	, mInterface(this)
@@ -47,17 +49,19 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mHiOctave(0)
 	, mTick(0)
 	, mPreviousNoteIndex(0)
+	, mCrossfadeDelays(false)
 	, mSampleCount(0)
 	, mOddTick(false)
 	, mMelodyBus()
 	, mMelodyVolume(0)
 	, mMelodyVolumeLine(0,0,0)
-	, mDelay(kDelayDurationMaxSeconds, 0.5f, true)
-	, mDelayDuration(0, kDelayDurationMaxSeconds, kDelayDurationMaxSeconds)
-	, mDelayAmp(0, 1, 1)
+	, mDelayA(kDelayDurationMaxSeconds, 0.5f, true)
+	, mDelayB(kDelayDurationMaxSeconds, 0.5f, true)
+	, mDelayCrossfade(0,0,0)
 	, mDelayFeedback(0, 0.5f, 0.5f)
 	, mDelayDryMix(0, 1, 1)
 	, mDelayWetMix(0, 0, 0)
+	, mDelayBus()
 	, mFlanger(kFlangerTimeMinMs, kFlangerRateMinHz, 0, 0, 1, 1)
 	, mFlangerTime(0, kFlangerTimeMinMs, kFlangerTimeMinMs)
 	, mFlangerDepth(0, 0, 0)
@@ -71,20 +75,29 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	
 	// setup dsp chain
 	{
-		mDelayDuration.patch(mDelay.delTime);
-		mDelayAmp.patch(mDelay.delAmp);
-		mDelayFeedback.patch(mDelay.feedback);
-		mDelayDryMix.patch(mDelay.dryMix);
-		mDelayWetMix.patch(mDelay.wetMix);
+		mDelayFeedback.patch(mDelayA.feedback);
+		mDelayFeedback.patch(mDelayB.feedback);
+		mDelayWetMix.patch(mDelayA.wetMix);
+		mDelayWetMix.patch(mDelayB.wetMix);
 
 		mFlangerTime.patch(mFlanger.delay);
 		mFlangerDepth.patch(mFlanger.depth);
 
 		mMelodyVolumeLine.patch(mMelodyVolume.amplitude);
 
+		// melody goes into both delays, which connect to the delay bus
+		mMelodyBus.patch(mDelayA).patch(mDelayBus);
+		mMelodyBus.patch(mDelayB).patch(mDelayBus);
+
+		// the output of the delay bus is sent to the flanger
+		// and on to the main volume.
+		mDelayBus.patch(mFlanger).patch(mMelodyVolume);
+
+		// configure default audio settings (this is also done in Reset)
 		mMelodyVolume.setAudioChannelCount(2);
 		mMelodyVolume.setSampleRate(44100);
-		mMelodyBus.patch(mDelay).patch(mFlanger).patch(mMelodyVolume);
+		mDelayCrossfade.setSampleRate(44100);
+		mDelayDryMix.setSampleRate(44100);
 	}
 
 	// setup Waveforms
@@ -338,6 +351,12 @@ void Melodizer::InitRandomizerParam(const int paramIdx, const char *paramName)
 
 void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
+	if (mCrossfadeDelays && mDelayCrossfade.isAtEnd())
+	{
+		SetDelayDuration(mTempo, kDelayCrossfadeDuration);
+		mCrossfadeDelays = false;
+	}
+
 	// Mutex is already locked for us.
 	double* out1 = outputs[0];
 	double* out2 = outputs[1];
@@ -421,6 +440,21 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 				GenerateNote(mTick, mWaveFormIdx, Scales[mScaleIdx], mKeyIdx, mLowOctave, mHiOctave, mPreviousNoteIndex);
 			}
 		}
+
+		// tick our crossfade line and put the result into both channels
+		mDelayCrossfade.tick(result, 2);
+		// then tick our dry mix and put the result into only one channel, 
+		// which means we can still get at the result of ticking crossfade.
+		mDelayDryMix.tick(result, 1);
+
+		// use the results to set delAmp and dryMix on both delays
+		const float fade = result[1];
+		const float mix = result[0];
+
+		mDelayA.delAmp.setLastValue(1.0 - fade);
+		mDelayB.delAmp.setLastValue(fade);			
+		mDelayA.dryMix.setLastValue((1 - fade) * mix);
+		mDelayB.dryMix.setLastValue(fade * mix);
 
 		mMelodyVolume.tick(result, 2);
 		*out1 = result[0];
@@ -587,7 +621,7 @@ float Melodizer::CalcDelayDuration(const StepLength stepLength, const double tem
 	return beatDuration;
 }
 
-void Melodizer::SetDelayDuration(const double tempo)
+void Melodizer::SetDelayDuration(const double tempo, const double crossfade)
 {
 	IParam* delayParam = GetParam(kDelayDuration);
 	int delayParamValue = delayParam->Int();
@@ -614,10 +648,18 @@ void Melodizer::SetDelayDuration(const double tempo)
 		GetGUI()->SetParameterFromPlug(kDelayDuration, delayParamValue, false);
 	}
 
-	// snapping the duration seems to cause the fewest glitches,
-	// but going to keep the Line here for now anyhow, even though it's not strictly required.
-	mDelayAmp.activate(0.4f, 0, 1);
-	mDelayDuration.activate(0.0f, mDelay.delTime.getLastValue(), delayDuration);
+	if (mDelayCrossfade.getAmp() < 0.001f )
+	{
+		Trace(TRACELOC, "Crossfade to Delay B");
+		mDelayB.delTime.setLastValue(delayDuration);
+		mDelayCrossfade.activate(crossfade, 0, 1);
+	}
+	else
+	{
+		Trace(TRACELOC, "Crossfade to Delay A");
+		mDelayA.delTime.setLastValue(delayDuration);
+		mDelayCrossfade.activate(crossfade, 1, 0);
+	}
 }
 
 void Melodizer::ProcessSysEx(ISysEx* pSysEx)
@@ -658,6 +700,8 @@ void Melodizer::Reset()
 
 	mMelodyVolume.setAudioChannelCount(2);
 	mMelodyVolume.setSampleRate(GetSampleRate());
+	mDelayCrossfade.setSampleRate(GetSampleRate());
+	mDelayDryMix.setSampleRate(GetSampleRate());
 }
 
 void Melodizer::StopSequencer()
@@ -692,7 +736,7 @@ void Melodizer::OnParamChange(int paramIdx)
 	{
 		mTempo = GetParam(kTempo)->Value();
 		SetSamplesPerBeat(mTempo);
-		SetDelayDuration(mTempo);
+		mCrossfadeDelays = true;
 	}
 	break;
 
@@ -704,14 +748,14 @@ void Melodizer::OnParamChange(int paramIdx)
 
 	case kDelayDuration:
 	{
-		SetDelayDuration(mTempo);
+		mCrossfadeDelays = true;
 	}
 	break;
 
 	case kDelayFeedback:
 	{
 		const float feed = GetParam(kDelayFeedback)->Value() / 100;
-		mDelayFeedback.activate(0.01f, mDelay.feedback.getLastValue(), feed);
+		mDelayFeedback.activate(0.01f, mDelayFeedback.getAmp(), feed);
 	}
 	break;
 
@@ -722,8 +766,8 @@ void Melodizer::OnParamChange(int paramIdx)
 		const double dry = BOUNDED(2 - mix * 2, 0, 1);
 		// mix [0, 0.5] => wet [0,1]
 		const double wet = BOUNDED(mix * 2, 0, 1);
-		mDelayDryMix.activate(0.001f, mDelay.dryMix.getLastValue(), dry);
-		mDelayWetMix.activate(0.001f, mDelay.wetMix.getLastValue(), wet);
+		mDelayDryMix.activate(0.001f, mDelayDryMix.getAmp(), dry);
+		mDelayWetMix.activate(0.001f, mDelayWetMix.getAmp(), wet);
 	}
 	break;
 

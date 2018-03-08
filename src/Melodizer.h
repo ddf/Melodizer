@@ -52,7 +52,7 @@ private:
 	void SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, const int paramIdx);
 	void SetSamplesPerBeat(const double tempo);
 	float CalcDelayDuration(const StepLength stepLength, const double tempo);
-	void SetDelayDuration(const double tempo);
+	void SetDelayDuration(const double tempo, const double crossfade);
 
 	Interface mInterface;
 
@@ -78,6 +78,8 @@ private:
 	bool mOddTick;
 	unsigned int mTick;
 	unsigned int mPreviousNoteIndex;
+	// true if we should crossfade between delays at the beginning of Process
+	bool mCrossfadeDelays;
 
 	// random number generation for testing against probabilities and generating random numbers for tones, used by RandomRange methods
 	std::default_random_engine mRandomGen;
@@ -85,12 +87,23 @@ private:
 	Minim::Summer mMelodyBus;
 	Minim::Multiplier mMelodyVolume;
 	Minim::Line mMelodyVolumeLine;
-	Minim::Delay mDelay;
-	Minim::Line mDelayDuration;
-	Minim::Line mDelayAmp;
+
+	// we use two delays so we can crossfade between them when delay duration changes
+	// in order to mask pitch-warble artifacts and clicks that would happen when using only one.
+	Minim::Delay mDelayA;
+	Minim::Delay mDelayB;
+	// this is not patched to anything, we tick it explicitly in Process
+	// and then set each Delay's dryMix and delAmp based on this value and current param values.
+	Minim::Line mDelayCrossfade;
+	// these are patched to both delays because they can be the same regardless of crossfade state
 	Minim::Line mDelayFeedback;
-	Minim::Line mDelayDryMix;
 	Minim::Line mDelayWetMix;
+	// this is not patched to anything, we tick it explicitly in Process
+	// and then set dry mix on each delay using the crossfade value.
+	Minim::Line mDelayDryMix;
+
+	// both Delays are patched to this, which then connects to the Flanger
+	Minim::Summer mDelayBus;
 
 	Minim::Flanger mFlanger;
 	Minim::Line    mFlangerTime;
