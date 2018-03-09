@@ -243,7 +243,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 
 	// seed
 	{
-		GetParam(kSeed)->InitInt("Seed", 0, kSeedMin, kSeedMax);
+		GetParam(kSeed)->InitInt("Seed", kSeedMin, kSeedMin, kSeedMax);
 	}
 
 	// ADSR
@@ -266,7 +266,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		}
 
 		GetParam(kDelayFeedback)->InitDouble("Delay Feedback", 20, 0, 100, 0.5f, "%");
-		GetParam(kDelayMix)->InitDouble("Delay Mix", 50, 0, 100, 0.5f, "%");
+		GetParam(kDelayMix)->InitDouble("Delay Mix", 0, 0, 100, 0.5f, "%");
 
 		GetParam(kFlangerTime)->InitDouble("Flanger Delay", mFlanger.delay.getLastValue(), kFlangerTimeMinMs, kFlangerTimeMaxMs, 0.01, "ms");
 		GetParam(kFlangerRate)->InitDouble("Flanger Rate", mFlanger.rate.getLastValue(), kFlangerRateMinHz, kFlangerRateMaxHz, 0.01, "Hz");
@@ -465,8 +465,8 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		mDelayDryMix.tick(result, 1);
 
 		// use the results to set delAmp and dryMix on both delays
-		const float fade = mDelayCrossfade.getAmp();
-		const float mix = mDelayDryMix.getAmp();
+		const float fade = BOUNDED(mDelayCrossfade.getAmp(), 0, 1);
+		const float mix = BOUNDED(mDelayDryMix.getAmp(), 0, 1);
 
 		mDelayA.delAmp.setLastValue(1.0 - fade);
 		mDelayB.delAmp.setLastValue(fade);			
