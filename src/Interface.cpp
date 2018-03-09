@@ -292,13 +292,13 @@ namespace Strings
 	const char * ReleaseLabel = "R";
 
 	const char * DelayTimeLabel = "Delay";
-	const char * DelayFeedbackLabel = "Feedback";
+	const char * DelayFeedbackLabel = "Feed";
 	const char * DelayMixLabel = "Mix";
 
-	const char * FlangerTimeLabel = "Flanger";
+	const char * FlangerTimeLabel = "Flange";
 	const char * FlangerRateLabel = "Rate";
 	const char * FlangerDepthLabel = "Depth";
-	const char * FlangerFeedbackLabel = "Feedback";
+	const char * FlangerFeedbackLabel = "Feed";
 	const char * FlangerMixLabel = "Mix";
 }
 
@@ -582,13 +582,18 @@ IControl* Interface::AttachTextBox(IGraphics* pGraphics, IRECT rect, const int p
 
 void Interface::AttachKnob(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label)
 {
-	pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, rect, paramIdx, &Color::KnobLine, &Color::KnobCorona));
+	KnobLineCoronaControl* knob = new KnobLineCoronaControl(mPlug, rect, paramIdx, &Color::KnobLine, &Color::KnobCorona);
+	pGraphics->AttachControl(knob);
 	
 	if (label != nullptr)
 	{
 		rect.B = rect.T;
-		rect.T -= 15,
-		pGraphics->AttachControl(new ITextControl(mPlug, rect, &TextStyles::Label, const_cast<char*>(label)));
+		rect.T -= 15;
+		rect.L -= 15;
+		rect.R += 15;
+		ITextControl* labelControl = new ITextControl(mPlug, rect, &TextStyles::Label, const_cast<char*>(label));
+		pGraphics->AttachControl(labelControl);
+		knob->SetLabelControl(labelControl);
 	}
 }
 

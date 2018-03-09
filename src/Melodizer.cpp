@@ -21,6 +21,12 @@ const int kNumPrograms = 1;
 // name of the section of the INI file we save midi cc mappings to
 const char * kMidiControlIni = "midicc";
 
+const double kSecondsStep = 0.005;
+const char * kSecondsLabel = "s";
+
+const double kPercentStep = 1;
+const char * kPercentLabel = "%";
+
 const char * kStepLengthDisplay[SL_Count] = {
 	"1/64T", "1/64", "1/32T",
 	"1/64.", "1/32", "1/16T",
@@ -29,8 +35,8 @@ const char * kStepLengthDisplay[SL_Count] = {
 	"1/8.",  "1/4",  "1/4.",
 };
 
-const double kFlangerTimeMinMs = 0.01f;
-const double kFlangerTimeMaxMs = 50.0f;
+const double kFlangerTimeMinMs = 0.01;
+const double kFlangerTimeMaxMs = 50.0;
 
 const double kFlangerRateMinHz = 0.01;
 const double kFlangerRateMaxHz = 20;
@@ -168,12 +174,12 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	
 	// synth settings
 	{
-		GetParam(kPulseWidth)->InitDouble("Pulse Width", 0.5, 0.01, 0.5, 0.01);
+		GetParam(kPulseWidth)->InitDouble("Pulse Width", 50, 1, 50, kPercentStep, kPercentLabel);
 		GetParam(kVoices)->InitInt("Max Voices", 16, kVoicesMin, kVoicesMax);
-		GetParam(kVolume)->InitDouble("Volume", -6, -48, 6, 0.1f, "db");
-		GetParam(kWidth)->InitDouble("Width", 100, 0, 100, 0.5, "%");
-		GetParam(kGlide)->InitDouble("Glide", 0, 0, 2, 0.01, "seconds");
-		GetParam(kMovement)->InitDouble("Movement", 0, 0, 2, 0.01, "seconds");
+		GetParam(kVolume)->InitDouble("Volume", -6, -48, 6, 0.1, "db");
+		GetParam(kWidth)->InitDouble("Width", 100, 0, 100, kPercentStep, kPercentLabel);
+		GetParam(kGlide)->InitDouble("Glide", 0, 0, 2, kSecondsStep, kSecondsLabel);
+		GetParam(kMovement)->InitDouble("Movement", 0, 0, 2, kSecondsStep, kSecondsLabel);
 		
 		// make a Tone for each voice we can have
 		for(int i = 0; i < kVoicesMax; ++i)
@@ -241,7 +247,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 
 	// shuffle
 	{
-		GetParam(kShuffle)->InitDouble("Shuffle", 0.5, 0.1, 0.9, 0.01f);
+		GetParam(kShuffle)->InitDouble("Shuffle", 50, 10, 90, kPercentStep, kPercentLabel);
 	}
 
 	// seed
@@ -251,12 +257,11 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 
 	// ADSR
 	{
-		const double secondsStep = 0.001f;
-		const double minEnv = 0.005f;
-		GetParam(kEnvAttack)->InitDouble("Attack", minEnv, minEnv, 2, secondsStep, "seconds");
-		GetParam(kEnvDecay)->InitDouble("Decay", minEnv, minEnv, 2, secondsStep, "seconds");
-		GetParam(kEnvSustain)->InitDouble("Sustain", 0.5, minEnv, 1, 0.01);
-		GetParam(kEnvRelease)->InitDouble("Release", 0.25, minEnv, 5, secondsStep, "seconds");
+		const double minEnv = 0.005;
+		GetParam(kEnvAttack)->InitDouble("Attack", minEnv, minEnv, 2, kSecondsStep, kSecondsLabel);
+		GetParam(kEnvDecay)->InitDouble("Decay", minEnv, minEnv, 2, kSecondsStep, kSecondsLabel);
+		GetParam(kEnvSustain)->InitDouble("Sustain", 50, 0, 100, kPercentStep, kPercentLabel);
+		GetParam(kEnvRelease)->InitDouble("Release", 0.25, minEnv, 5, kSecondsStep, kSecondsLabel);
 	}
 
 	// Effects 
@@ -268,21 +273,20 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 			param->SetDisplayText(i, kStepLengthDisplay[i]);
 		}
 
-		GetParam(kDelayFeedback)->InitDouble("Delay Feedback", 20, 0, 100, 0.5f, "%");
-		GetParam(kDelayMix)->InitDouble("Delay Mix", 0, 0, 100, 0.5f, "%");
+		GetParam(kDelayFeedback)->InitDouble("Delay Feedback", 20, 0, 100, kPercentStep, kPercentLabel);
+		GetParam(kDelayMix)->InitDouble("Delay Mix", 0, 0, 100, kPercentStep, kPercentLabel);
 
 		GetParam(kFlangerTime)->InitDouble("Flanger Delay", mFlanger.delay.getLastValue(), kFlangerTimeMinMs, kFlangerTimeMaxMs, 0.01, "ms");
 		GetParam(kFlangerRate)->InitDouble("Flanger Rate", mFlanger.rate.getLastValue(), kFlangerRateMinHz, kFlangerRateMaxHz, 0.01, "Hz");
-		GetParam(kFlangerDepth)->InitDouble("Flanger Depth", 10, 0, 100, 0.5, "%");
-		GetParam(kFlangerFeedback)->InitDouble("Flanger Feedback", mFlanger.feedback.getLastValue() * 100, 0, 100, 0.5, "%");
-		GetParam(kFlangerMix)->InitDouble("Flanger Mix", 0, 0, 100, 0.5, "%");
+		GetParam(kFlangerDepth)->InitDouble("Flanger Depth", 10, 0, 100, kPercentStep, kPercentLabel);
+		GetParam(kFlangerFeedback)->InitDouble("Flanger Feedback", mFlanger.feedback.getLastValue() * 100, 0, 100, kPercentStep, kPercentLabel);
+		GetParam(kFlangerMix)->InitDouble("Flanger Mix", 0, 0, 100, kPercentStep, kPercentLabel);
 	}
 
 	// knob bank
 	{
 		//arguments are: name, defaultVal, minVal, maxVal, step, label
 		char paramName[32];
-		const double percentStep = 0.5f;
 		for (int i = 0; i < kSequencerSteps; ++i)
 		{
 			sprintf(paramName, "Step %d Mode", i);
@@ -299,25 +303,25 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 			}
 
 			sprintf(paramName, "Step %d Probability", i);
-			GetParam(kProbabilityFirst + i)->InitDouble(paramName, 50, 0, 100, percentStep, "%");
+			GetParam(kProbabilityFirst + i)->InitDouble(paramName, 50, 0, 100, kPercentStep, kPercentLabel);
 			
 			sprintf(paramName, "Step %d Pan", i);
 			GetParam(kPanFirst + i)->InitDouble(paramName, 0, -1, 1, 0.1);
 			
 			sprintf(paramName, "Step %d Velocity", i);
-			GetParam(kVelocityFirst + i)->InitDouble(paramName, 100, 0, 100, percentStep, "%");
+			GetParam(kVelocityFirst + i)->InitDouble(paramName, 100, 0, 100, kPercentStep, kPercentLabel);
 
 			sprintf(paramName, "Step %d Attack", i);
-			GetParam(kAttackFirst + i)->InitDouble(paramName, 100, 1, 100, percentStep, "%");
+			GetParam(kAttackFirst + i)->InitDouble(paramName, 100, 1, 100, kPercentStep, kPercentLabel);
 
 			sprintf(paramName, "Step %d Decay", i);
-			GetParam(kDecayFirst + i)->InitDouble(paramName, 100, 1, 100, percentStep, "%");
+			GetParam(kDecayFirst + i)->InitDouble(paramName, 100, 1, 100, kPercentStep, kPercentLabel);
 
 			sprintf(paramName, "Step %d Sustain", i);
-			GetParam(kSustainFirst + i)->InitDouble(paramName, 100, 1, 100, percentStep, "%");
+			GetParam(kSustainFirst + i)->InitDouble(paramName, 100, 1, 100, kPercentStep, kPercentLabel);
 
 			sprintf(paramName, "Step %d Release", i);
-			GetParam(kReleaseFirst + i)->InitDouble(paramName, 100, 1, 100, percentStep, "%");
+			GetParam(kReleaseFirst + i)->InitDouble(paramName, 100, 1, 100, kPercentStep, kPercentLabel);
 		}
 	}
 
@@ -425,7 +429,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			mMidiQueue.Remove();
 		}
 	
-		const float shuffle = GetParam(kShuffle)->Value();
+		const float shuffle = GetParam(kShuffle)->Value() / 100;
 		if ( mPlayState == PS_Play &&
 			((!mOddTick && mBeatTime >= 0 && mBeatTime < shuffle) || (mOddTick && mBeatTime >= shuffle))
 		)
@@ -837,7 +841,7 @@ void Melodizer::OnParamChange(int paramIdx)
 				// see: starting playback in a DAW *between* steps.
 				if ( mTick == -1 && mBeatTime > 0.01 )
 				{
-					const float shuffle = GetParam(kShuffle)->Value();
+					const float shuffle = GetParam(kShuffle)->Value() / 100;
 					// we haven't hit the shuffle marker yet,
 					// so set odd tick to true to prevent an even tick from playing.
 					if (  mBeatTime <= shuffle )
@@ -1068,7 +1072,7 @@ void Melodizer::GenerateNote( int tick,
 	int baseNote = nextNote + key;
 	int octave = RandomRange(lowOctave, hiOctave-1);
     int note = baseNote + octave * 12;
-	const float pulseWidth = GetParam(kPulseWidth)->Value();
+	const float pulseWidth = GetParam(kPulseWidth)->Value() / 100;
 	const float fromFreq = mTones[mActiveTone]->getFrequency();
     const float toFreq 	= Frequency::ofMidiNote( note ).asHz();
 	const float glide   = GetParam(kGlide)->Value();
@@ -1078,7 +1082,7 @@ void Melodizer::GenerateNote( int tick,
 	const float panDur = GetParam(kMovement)->Value();
 	const float attack  = GetParam(kEnvAttack)->Value()  * GetParam(kAttackFirst + tick)->Value() / 100;
 	const float decay   = GetParam(kEnvDecay)->Value()   * GetParam(kDecayFirst + tick)->Value() / 100;
-	const float sustain = GetParam(kEnvSustain)->Value() * GetParam(kSustainFirst + tick)->Value() / 100;
+	const float sustain = GetParam(kEnvSustain)->Value() / 100 * GetParam(kSustainFirst + tick)->Value() / 100;
 	const float release = GetParam(kEnvRelease)->Value() * GetParam(kReleaseFirst + tick)->Value() / 100;
 	
 	// move to the next active tone

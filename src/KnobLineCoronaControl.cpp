@@ -41,6 +41,11 @@ void KnobLineCoronaControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 			plug->BeginMIDILearn(mParamIdx, -1, x, y);
 		}
 	}
+	else
+	{
+		SetValDisplayControl(mLabelControl);
+		SetDirty();
+	}
 }
 
 void KnobLineCoronaControl::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMod)
@@ -61,6 +66,15 @@ void KnobLineCoronaControl::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod*
 	mValue += (double)dX / (double)(mRECT.R - mRECT.L) / gearing;
 	
 	SetDirty();
+}
+
+void KnobLineCoronaControl::OnMouseUp(int x, int y, IMouseMod* pMod)
+{
+	SetValDisplayControl(nullptr);
+	if (mLabelControl != nullptr)
+	{
+		mLabelControl->SetTextFromPlug(mLabelString.Get());
+	}
 }
 
 #pragma  endregion KnobLineCoronaControl

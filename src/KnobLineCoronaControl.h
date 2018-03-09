@@ -22,12 +22,16 @@ public:
 	bool Draw(IGraphics* pGraphics) override;
 
 	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
-
 	void OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMod) override;
+	void OnMouseUp(int x, int y, IMouseMod* pMod) override;
+
+	void SetLabelControl(ITextControl* control) { mLabelControl = control; mLabelString.Set(mLabelControl->GetTextForPlug()); }
 
 private:
 	IColor        mCoronaColor;
 	IChannelBlend mCoronaBlend;
+	ITextControl* mLabelControl;
+	WDL_String	  mLabelString;
 };
 
 #endif /* Controls_h */
