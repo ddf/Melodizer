@@ -8,6 +8,8 @@
 #include "Waves.h"
 #include "Instruments.h" // contains Tone
 
+#include <math.h> // for modf
+
 #if SA_API
 extern char * gINIPath;
 #endif
@@ -40,18 +42,18 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mInterface(this)
 	, mMidiLearnParamIdx(-1)
 	, mTempo(DEFAULT_TEMPO)
-	, mSamplesPerBeat(0)
 	, mPlayState(PS_Stop)
 	, mWaveFormIdx(0)
 	, mScaleIdx(0)
 	, mKeyIdx(0)
 	, mLowOctave(4)
 	, mHiOctave(0)
+	, mBeatTime(0)
+	, mBeatInc(0)
+	, mOddTick(false)
 	, mTick(0)
 	, mPreviousNoteIndex(0)
 	, mCrossfadeDelays(false)
-	, mSampleCount(0)
-	, mOddTick(false)
 	, mMelodyBus()
 	, mMelodyVolume(0)
 	, mMelodyVolumeLine(0,0,0)
@@ -408,8 +410,11 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 			mMidiQueue.Remove();
 		}
-
-		if (mSampleCount == 0 && mPlayState == PS_Play)
+	
+		const float shuffle = GetParam(kShuffle)->Value();
+		if ( mPlayState == PS_Play &&
+			((!mOddTick && mBeatTime >= 0 && mBeatTime < shuffle) || (mOddTick && mBeatTime >= shuffle))
+		)
 		{
 			mTones[mActiveTone]->noteOff();
 
@@ -438,16 +443,6 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			}
 			
 			mTick = nextTick;
-
-			if (mOddTick)
-			{
-				mSampleCount = (unsigned long)round(mSamplesPerBeat*GetParam(kShuffle)->Value());
-			}
-			else
-			{
-				mSampleCount = (unsigned long)round(mSamplesPerBeat*(1.0 - GetParam(kShuffle)->Value()));
-			}
-
 			mOddTick = !mOddTick;
 
 			const bool noteOn = RandomRange(0.f, 100.f) <= GetParam(kProbabilityFirst + mTick)->Value();
@@ -477,9 +472,10 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		*out1 = result[0];
 		*out2 = result[1];
 
-		if ( mSampleCount > 0 )
+		mBeatTime += mBeatInc;
+		while(mBeatTime >= 1)
 		{
-			--mSampleCount;
+			mBeatTime -= 1;
 		}
 	}
 
@@ -583,32 +579,32 @@ void Melodizer::SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, c
 #endif
 }
 
-void Melodizer::SetSamplesPerBeat(const double tempo)
+void Melodizer::SetBeatIncrement(const double tempo)
 {
-	// one "beat" is two steps, which allows us to use kShuffle directly to calculate mSampleCount.
-	unsigned int samplesPerBeat = (unsigned int)(GetSampleRate() * 60.0 / tempo);
-	switch (GetParam(kStepLength)->Int())
+	double beatLength = 60.0 / tempo;
+	const StepLength step = (StepLength)GetParam(kStepLength)->Int();
+	switch (step)
 	{
-	case SL_4:  samplesPerBeat *= 2; break;
+	case SL_4:  beatLength *= 2; break;
 	case SL_8:  break;
-	case SL_16: samplesPerBeat /= 2; break;
-	case SL_32: samplesPerBeat /= 4; break;
-	case SL_64: samplesPerBeat /= 8; break;
+	case SL_16: beatLength /= 2; break;
+	case SL_32: beatLength /= 4; break;
+	case SL_64: beatLength /= 8; break;
 
-	case SL_4T:  samplesPerBeat = samplesPerBeat * 2 * 2 / 3; break;
-	case SL_8T:  samplesPerBeat = samplesPerBeat * 2 / 3; break;
-	case SL_16T: samplesPerBeat = samplesPerBeat / 2 * 2 / 3; break;
-	case SL_32T: samplesPerBeat = samplesPerBeat / 4 * 2 / 3; break;
-	case SL_64T: samplesPerBeat = samplesPerBeat / 8 * 2 / 3; break;
+	case SL_4T:  beatLength = beatLength * 2 * 2 / 3; break;
+	case SL_8T:  beatLength = beatLength * 2 / 3; break;
+	case SL_16T: beatLength = beatLength / 2 * 2 / 3; break;
+	case SL_32T: beatLength = beatLength / 4 * 2 / 3; break;
+	case SL_64T: beatLength = beatLength / 8 * 2 / 3; break;
 
-	case SL_4D:  samplesPerBeat = samplesPerBeat * 2 * 6 / 4; break;
-	case SL_8D:  samplesPerBeat = samplesPerBeat * 6 / 4; break;
-	case SL_16D: samplesPerBeat = samplesPerBeat / 2 * 6 / 4; break;
-	case SL_32D: samplesPerBeat = samplesPerBeat / 4 * 6 / 4; break;
-	case SL_64D: samplesPerBeat = samplesPerBeat / 8 * 6 / 4; break;
+	case SL_4D:  beatLength = beatLength * 2 * 6 / 4; break;
+	case SL_8D:  beatLength = beatLength * 6 / 4; break;
+	case SL_16D: beatLength = beatLength / 2 * 6 / 4; break;
+	case SL_32D: beatLength = beatLength / 4 * 6 / 4; break;
+	case SL_64D: beatLength = beatLength / 8 * 6 / 4; break;
 	}
 
-	mSamplesPerBeat = samplesPerBeat;
+	mBeatInc = 1.0 / (beatLength * GetSampleRate());
 }
 
 float Melodizer::CalcDelayDuration(const StepLength stepLength, const double tempo)
@@ -623,7 +619,7 @@ float Melodizer::CalcDelayDuration(const StepLength stepLength, const double tem
 	case SL_64: beatDuration /= 16; break;
 
 	case SL_4T:  beatDuration = beatDuration * 2 / 3; break;
-	case SL_8T:  beatDuration = beatDuration / 2 / 3; break;
+	case SL_8T:  beatDuration = beatDuration / 2 * 2 / 3; break;
 	case SL_16T: beatDuration = beatDuration / 4 * 2 / 3; break;
 	case SL_32T: beatDuration = beatDuration / 8 * 2 / 3; break;
 	case SL_64T: beatDuration = beatDuration / 16 * 2 / 3; break;
@@ -725,7 +721,7 @@ void Melodizer::StopSequencer()
 {
 	mTick = -1;
 	mPreviousNoteIndex = 0;
-	mSampleCount = 0;
+	mBeatTime = 0;
 	mOddTick = false;
 
 	mActiveTone = 0;
@@ -769,22 +765,61 @@ void Melodizer::OnParamChange(int paramIdx)
 			// we call SetParameterFromPlug here because we will still get OnParamChanged
 			// calls if a user has automated Tempo, but has ClockSource set to Ext.
 			// So we need make sure that the UI is always displaying the correct thing.
-			GetGUI()->SetParameterFromPlug(kTempo, mTempo, false);
+			GetGUI()->SetParameterFromPlug(kTempo, tempo, false);
+			
+			// this is called every Process if our clock is set to external.
+			// in order to keep our sequence in time with the host's musical time,
+			// we snap our beat time to wherever the host is at the beginning of Process,
+			// but only if the host is actually playing and providing PPQPos.
+			ITimeInfo time;
+			GetTime(&time);
+			if ( (time.mTransportIsRunning || IsRenderingOffline()) && time.mPPQPos > -1 )
+			{
+				// PPQ is quarter notes, so we have to scale it based on our step length
+				// in order to pull out the correct fractional time for our beat,
+				// which is two sequencer steps.
+				// we pass 30 as the tempo here because PPQ is already relative to the current tempo
+				// and we want scale it so it matches our step length.
+				// i guess just trust me the math works out here, i tested it?
+				time.mPPQPos /= CalcDelayDuration((StepLength)GetParam(kStepLength)->Int(), 30);
+				double intPart;
+				mBeatTime = modf(time.mPPQPos, &intPart);
+				// if the sequencer is stopped, we need to tweak our beat settings
+				// so that when it starts playing notes, we don't get extras.
+				// see: starting playback in a DAW *between* steps.
+				if ( mTick == -1 && mBeatTime > 0 )
+				{
+					const float shuffle = GetParam(kShuffle)->Value();
+					// we haven't hit the shuffle marker yet,
+					// so set odd tick to true to prevent an even tick from playing.
+					if (  mBeatTime <= shuffle )
+					{
+						mOddTick = true;
+					}
+					// we're past the shuffle marker already,
+					// so subtract one so we don't play an even tick
+					// until we get to zero.
+					else
+					{
+						mBeatTime -= 1;
+					}
+				}
+			}
 			break;
 		}		
 
 		if (tempo != mTempo)
 		{
 			mTempo = tempo;
-			SetSamplesPerBeat(mTempo);
-			mCrossfadeDelays = true;			
+			SetBeatIncrement(mTempo);
+			mCrossfadeDelays = true;
 		}
 	}
 	break;
 
 	case kStepLength:
 	{
-		SetSamplesPerBeat(mTempo);
+		SetBeatIncrement(mTempo);
 	}
 	break;
 

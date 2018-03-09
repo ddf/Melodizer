@@ -50,7 +50,7 @@ private:
 	void SetPlayStateFromMidi(PlayState state);
 	void HandleMidiControlChange(IMidiMsg* pMsg);
 	void SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, const int paramIdx);
-	void SetSamplesPerBeat(const double tempo);
+	void SetBeatIncrement(const double tempo);
 	float CalcDelayDuration(const StepLength stepLength, const double tempo);
 	void SetDelayDuration(const double tempo, const double crossfade);
 
@@ -63,8 +63,7 @@ private:
 	// param values, cached in OnParamChange.
 	// added these here because MIDI control changes can update params mid-process frame.
 	// so this is better than having locals in that loop.
-	float        mTempo;
-	unsigned int mSamplesPerBeat;
+	float        mTempo; // in BPM
 	PlayState	 mPlayState;
 	unsigned int mWaveFormIdx;
 	unsigned int mScaleIdx;
@@ -72,10 +71,16 @@ private:
 	unsigned int mLowOctave;
 	unsigned int mHiOctave;
 
-	// count how many samples so we know when to increment mTick
-	unsigned long int mSampleCount;
-	// is the tick even or odd, for the purposes of adjust sample count with shuffle
+	// where are we in a "beat", which is two steps in the sequencer.
+	// this is [0,1]
+	double mBeatTime;
+	// how much we should increment beat time every audio sample.
+	// this will change depending one Tempo and Step Length.
+	double mBeatInc;
+	// is the tick even or odd,
+	// so we know when to change to the next tick based on shuffle.
 	bool mOddTick;
+	// the step in the sequence we are at
 	unsigned int mTick;
 	unsigned int mPreviousNoteIndex;
 	// true if we should crossfade between delays at the beginning of Process
