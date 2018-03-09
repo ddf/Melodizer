@@ -233,7 +233,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	// octave + range
 	{
 		GetParam(kOctave)->InitInt("Octave", 4, kOctaveMin, kOctaveMax);
-		GetParam(kRange)->InitInt("Range", 0, kRangeMin, kRangeMax);
+		GetParam(kRange)->InitInt("Range", kRangeMin, kRangeMin, kRangeMax);
 	}
 
 	// shuffle
