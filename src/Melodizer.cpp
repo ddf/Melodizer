@@ -113,6 +113,8 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 			harmonics[i] = dist(mRandomGen);
 		}
 
+		mWaveforms.resize(WT_Count);
+
 		IParam* param = GetParam(kWaveform);
 		param->InitEnum("Waveform", WT_Sine4, WT_Count);
 
@@ -123,35 +125,35 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 			{
 			case WT_Sine:
 				param->SetDisplayText(i, "SIN");
-				mWaveforms.push_back(Waves::SINE());
+				mWaveforms[i] = Waves::SINE();
 				break;
 			case WT_Triangle:
 				param->SetDisplayText(i, "TRI");
-				mWaveforms.push_back(Waves::TRIANGLE());
+				mWaveforms[i] = Waves::TRIANGLE();
 				break;
 			case WT_Saw:
 				param->SetDisplayText(i, "SAW");
-				mWaveforms.push_back(Waves::SAW());
+				mWaveforms[i] = Waves::SAW();
 				break;
 			case WT_Square:
 				param->SetDisplayText(i, "SQR");
-				mWaveforms.push_back(Waves::SQUARE());
+				mWaveforms[i] = Waves::SQUARE();
 				break;
 			case WT_Sine4:
 				param->SetDisplayText(i, "SIN4");
-				mWaveforms.push_back(Waves::gen10(kWaveformLength, harmonics, 4));
+				mWaveforms[i] = Waves::gen10(kWaveformLength, harmonics, 4);
 				break;
 			case WT_Sine8:
 				param->SetDisplayText(i, "SIN8");
-				mWaveforms.push_back(Waves::gen10(kWaveformLength, harmonics, 8));
+				mWaveforms[i] = Waves::gen10(kWaveformLength, harmonics, 8);
 				break;
 			case WT_Sine16:
 				param->SetDisplayText(i, "SIN16");
-				mWaveforms.push_back(Waves::gen10(kWaveformLength, harmonics, 16));
+				mWaveforms[i] = Waves::gen10(kWaveformLength, harmonics, 16);
 				break;
 			case WT_Sine32:
 				param->SetDisplayText(i, "SIN32");
-				mWaveforms.push_back(Waves::gen10(kWaveformLength, harmonics, 32));
+				mWaveforms[i] = Waves::gen10(kWaveformLength, harmonics, 32);
 				break;
 			case WT_Count:
 				break;
@@ -338,7 +340,10 @@ Melodizer::~Melodizer()
 {
 	for (int i = 0; i < mWaveforms.size(); ++i)
 	{
-		delete mWaveforms[i];
+		if (mWaveforms[i] != nullptr)
+		{
+			delete mWaveforms[i];
+		}
 	}
 	mWaveforms.clear();
 
