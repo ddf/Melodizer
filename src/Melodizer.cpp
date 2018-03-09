@@ -577,8 +577,8 @@ void Melodizer::SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, c
 {
 	mControlChangeForParam[paramIdx] = cc;
 #if SA_API
-	char ccString[4];
-	sprintf_s(ccString, "%u", (unsigned)cc);
+	char ccString[100];
+	sprintf(ccString, "%u", (unsigned)cc);
 	WritePrivateProfileString(kMidiControlIni, GetParam(paramIdx)->GetNameForHost(), ccString, gINIPath);
 #endif
 }
