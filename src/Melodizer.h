@@ -31,6 +31,15 @@ public:
   ~Melodizer();
 
   void Reset() override;
+
+  // we override this method in plugins so that we can know when
+  // a user is trying to change play state from the UI.
+  // this is because we ignore parameter changes in OnParamChanged
+  // if the Host is not in play mode.
+#ifndef SA_API
+  void SetParameterFromGUI(int idx, double normalizedValue) override;
+#endif
+	
   void OnParamChange(int paramIdx) override;
   void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames) override;
 
@@ -47,6 +56,7 @@ private:
 	float RandomRange(float low, float hi);
 
 	void StopSequencer();
+	void ChangePlayState(PlayState toState);
 	void SetPlayStateFromMidi(PlayState state);
 	void HandleMidiControlChange(IMidiMsg* pMsg);
 	void SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, const int paramIdx);
@@ -70,6 +80,9 @@ private:
 	unsigned int mKeyIdx;
 	unsigned int mLowOctave;
 	unsigned int mHiOctave;
+	
+	// will be true if we automatically entered play mode in Reset
+	bool mAutoPlayed;
 
 	// where are we in a "beat", which is two steps in the sequencer.
 	// this is [0,1]

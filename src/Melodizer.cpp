@@ -43,6 +43,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mMidiLearnParamIdx(-1)
 	, mTempo(DEFAULT_TEMPO)
 	, mPlayState(PS_Stop)
+	, mAutoPlayed(false)
 	, mWaveFormIdx(0)
 	, mScaleIdx(0)
 	, mKeyIdx(0)
@@ -374,6 +375,19 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	{
 		SetDelayDuration(mTempo, kDelayCrossfadeDuration);
 		mCrossfadeDelays = false;
+	}
+	
+	// see if we should exit play mode automatically when the Host does
+	if ( mAutoPlayed )
+	{
+		ITimeInfo time;
+		GetTime(&time);
+		if (!time.mTransportIsRunning && !IsRenderingOffline())
+		{
+			ChangePlayState(PS_Stop);
+			GetGUI()->SetParameterFromPlug(kPlayState, PS_Stop, false);
+			mAutoPlayed = false;
+		}
 	}
 
 	// Mutex is already locked for us.
@@ -710,6 +724,18 @@ void Melodizer::Reset()
 
 	// initialize the sequencer
 	StopSequencer();
+	
+	// in a plugin we should automatically enter Play Mode if the Host is playing
+#ifndef SA_API
+	ITimeInfo time;
+	GetTime(&time);
+	if ( time.mTransportIsRunning || IsRenderingOffline() )
+	{
+		ChangePlayState(PS_Play);
+		GetGUI()->SetParameterFromPlug(kPlayState, PS_Play, false);
+		mAutoPlayed = true;
+	}
+#endif
 
 	mMelodyVolume.setAudioChannelCount(2);
 	mMelodyVolume.setSampleRate(GetSampleRate());
@@ -730,6 +756,28 @@ void Melodizer::StopSequencer()
 		mTones[i]->noteOff();
 	}
 }
+
+#ifndef SA_API
+void Melodizer::SetParameterFromGUI(int idx, double normalizedValue)
+{
+	IMutexLock lock(this);
+	
+	IPlug::SetParameterFromGUI(idx, normalizedValue);
+	
+	// if play state is changing from the UI,
+	// but the daw is not in play mode,
+	// we need to change play state here because OnParamChanged will ignore it.
+	if ( idx == kPlayState )
+	{
+		ITimeInfo time;
+		GetTime(&time);
+		if ( !time.mTransportIsRunning && !IsRenderingOffline() )
+		{
+			ChangePlayState((PlayState)GetParam(kPlayState)->Int());
+		}
+	}
+}
+#endif
 
 void Melodizer::OnParamChange(int paramIdx)
 {
@@ -787,7 +835,7 @@ void Melodizer::OnParamChange(int paramIdx)
 				// if the sequencer is stopped, we need to tweak our beat settings
 				// so that when it starts playing notes, we don't get extras.
 				// see: starting playback in a DAW *between* steps.
-				if ( mTick == -1 && mBeatTime > 0 )
+				if ( mTick == -1 && mBeatTime > 0.01 )
 				{
 					const float shuffle = GetParam(kShuffle)->Value();
 					// we haven't hit the shuffle marker yet,
@@ -923,19 +971,26 @@ void Melodizer::OnParamChange(int paramIdx)
 	break;
 	
 	case kPlayState:
+	{
+#if SA_API
+		ChangePlayState((PlayState)param->Int());
+#else
+		// in the plugin version we only allow play state
+		// to change when the parameter does if the host is in play mode.
+		// this is to prevent automated play state from taking over
+		// user input when not playing.
+		// see also: SetParameterFromGUI
+		ITimeInfo time;
+		GetTime(&time);
+		if ( time.mTransportIsRunning || IsRenderingOffline() )
 		{
-			const PlayState state = (PlayState)param->Int();
-			if (state == PS_Stop)
-			{
-				StopSequencer();
-			}
-			else if ( state == PS_Pause )
-			{
-				mTones[mActiveTone]->noteOff();
-			}
-			mPlayState = state;
+			ChangePlayState((PlayState)param->Int());
 		}
-		break;
+		// keep UI in sync with our actual state
+		GetGUI()->SetParameterFromPlug(kPlayState, mPlayState, false);
+#endif
+	}
+	break;
 
 	case kProbabilityRandomize:
 	case kPanRandomize:
@@ -1048,6 +1103,19 @@ float Melodizer::RandomRange(float low, float hi)
 {
 	std::uniform_real_distribution<> dist(low, hi);
 	return dist(mRandomGen);
+}
+
+void Melodizer::ChangePlayState(PlayState toState)
+{
+	if (toState == PS_Stop)
+	{
+		StopSequencer();
+	}
+	else if ( toState == PS_Pause )
+	{
+		mTones[mActiveTone]->noteOff();
+	}
+	mPlayState = toState;
 }
 
 void Melodizer::SetPlayStateFromMidi(PlayState state)
