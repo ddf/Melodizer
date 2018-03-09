@@ -185,7 +185,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		param->InitEnum("Scale", 0, ScalesLength);
 		for (int i = 0; i < ScalesLength; ++i)
 		{
-			param->SetDisplayText(i, Scales[i]->scaleName);
+			param->SetDisplayText(i, Scales[i]->name);
 		}
 	}
 
@@ -951,21 +951,31 @@ void Melodizer::GenerateNote( int tick,
                           unsigned int key, 
                           int lowOctave, 
                           int hiOctave,
-                          unsigned int& previousNoteIndex
+                          unsigned int& previousNote
                          )
 {
-	int nextNoteIndex = previousNoteIndex;
+	int nextNote = previousNote;
 	// figure out next note
 	{
-		int listLen = 1;
-		const int* nextNoteList = notes->scale[previousNoteIndex];
-		while (nextNoteList[listLen] != -1)
+		int listLen = 0;
+		const int* nextNoteList = notes->notes[previousNote];
+		// look for the terminating 0 in this note list
+		while ( listLen < 12 && nextNoteList[listLen] > 0)
 		{
 			++listLen;
 		}
-		nextNoteIndex = nextNoteList[RandomRange(1, listLen-1)];
+		if (listLen > 0)
+		{
+			// we subtract one from the number in the list
+			// because notes stored with C = 1
+			nextNote = nextNoteList[RandomRange(0, listLen - 1)] - 1;
+		}
+		else // return to the root if for some reason we jumped to a scale degree with no next notes
+		{
+			nextNote = 0;
+		}
 	}
-	int baseNote = notes->scale[nextNoteIndex][0] + key;
+	int baseNote = nextNote + key;
 	int octave = RandomRange(lowOctave, hiOctave-1);
     int note = baseNote + octave * 12;
 	const float pulseWidth = GetParam(kPulseWidth)->Value();
@@ -990,7 +1000,7 @@ void Melodizer::GenerateNote( int tick,
 	mTones[mActiveTone]->setPulseWidth(pulseWidth);
 	mTones[mActiveTone]->noteOn(mWaveforms[waveformIdx], tick, fromFreq, toFreq, glide, amp, attack, decay, sustain, release, fromPan, toPan, panDur);
 
-    previousNoteIndex = nextNoteIndex;    
+    previousNote = nextNote;    
 }
 
 int Melodizer::RandomRange(int low, int hi)
