@@ -310,6 +310,14 @@
 		7779EA57204DF47000AB7ED5 /* PlayStateControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA52204DF46F00AB7ED5 /* PlayStateControl.cpp */; };
 		7779EA58204DF47000AB7ED5 /* PlayStateControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 7779EA53204DF46F00AB7ED5 /* PlayStateControl.h */; };
 		7779EA59204DF47000AB7ED5 /* PlayStateControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 7779EA53204DF46F00AB7ED5 /* PlayStateControl.h */; };
+		7779EA5C2052E0AF00AB7ED5 /* Delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA5A2052E0AF00AB7ED5 /* Delay.cpp */; };
+		7779EA5D2052E0AF00AB7ED5 /* Delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA5A2052E0AF00AB7ED5 /* Delay.cpp */; };
+		7779EA5E2052E0AF00AB7ED5 /* Delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA5A2052E0AF00AB7ED5 /* Delay.cpp */; };
+		7779EA5F2052E0AF00AB7ED5 /* Delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA5A2052E0AF00AB7ED5 /* Delay.cpp */; };
+		7779EA602052E0AF00AB7ED5 /* Flanger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA5B2052E0AF00AB7ED5 /* Flanger.cpp */; };
+		7779EA612052E0AF00AB7ED5 /* Flanger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA5B2052E0AF00AB7ED5 /* Flanger.cpp */; };
+		7779EA622052E0AF00AB7ED5 /* Flanger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA5B2052E0AF00AB7ED5 /* Flanger.cpp */; };
+		7779EA632052E0AF00AB7ED5 /* Flanger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779EA5B2052E0AF00AB7ED5 /* Flanger.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -693,6 +701,8 @@
 		7779EA4B204DBF8300AB7ED5 /* StepModeControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StepModeControl.h; path = src/StepModeControl.h; sourceTree = "<group>"; };
 		7779EA52204DF46F00AB7ED5 /* PlayStateControl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PlayStateControl.cpp; path = src/PlayStateControl.cpp; sourceTree = "<group>"; };
 		7779EA53204DF46F00AB7ED5 /* PlayStateControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PlayStateControl.h; path = src/PlayStateControl.h; sourceTree = "<group>"; };
+		7779EA5A2052E0AF00AB7ED5 /* Delay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Delay.cpp; path = "../minim-cpp/src/ugens/Delay.cpp"; sourceTree = "<group>"; };
+		7779EA5B2052E0AF00AB7ED5 /* Flanger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Flanger.cpp; path = "../minim-cpp/src/ugens/Flanger.cpp"; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -1374,6 +1384,8 @@
 		7779E9F12049DBC900AB7ED5 /* minim */ = {
 			isa = PBXGroup;
 			children = (
+				7779EA5A2052E0AF00AB7ED5 /* Delay.cpp */,
+				7779EA5B2052E0AF00AB7ED5 /* Flanger.cpp */,
 				7779EA33204C70BA00AB7ED5 /* Line.cpp */,
 				7779EA32204C70BA00AB7ED5 /* Multiplier.cpp */,
 				7779E9F62049DC1D00AB7ED5 /* AudioSource.cpp */,
@@ -1773,7 +1785,9 @@
 				4F78D9BF13B63BA50032E0F3 /* IGraphicsMac.mm in Sources */,
 				7779E9E02049DB0800AB7ED5 /* Scales.cpp in Sources */,
 				4F78D9C013B63BA50032E0F3 /* IGraphics.cpp in Sources */,
+				7779EA5D2052E0AF00AB7ED5 /* Delay.cpp in Sources */,
 				7779EA0E2049DC2200AB7ED5 /* Waves.cpp in Sources */,
+				7779EA612052E0AF00AB7ED5 /* Flanger.cpp in Sources */,
 				7779EA252049DDE000AB7ED5 /* LED.cpp in Sources */,
 				7779EA0F2049DC2200AB7ED5 /* Wavetable.cpp in Sources */,
 				7779E9DE2049DB0800AB7ED5 /* KnobLineCoronaControl.cpp in Sources */,
@@ -1806,6 +1820,7 @@
 				4FD16D0E13B634BF001D0217 /* swell-gdi.mm in Sources */,
 				7779EA232049DC2300AB7ED5 /* Wavetable.cpp in Sources */,
 				7779EA272049DDE100AB7ED5 /* LED.cpp in Sources */,
+				7779EA632052E0AF00AB7ED5 /* Flanger.cpp in Sources */,
 				4F78D94513B63BA50032E0F3 /* IPlugBase.cpp in Sources */,
 				4F78D94713B63BA50032E0F3 /* IPlugStructs.cpp in Sources */,
 				7779EA3B204C70C300AB7ED5 /* Multiplier.cpp in Sources */,
@@ -1827,6 +1842,7 @@
 				7779EA202049DC2300AB7ED5 /* Summer.cpp in Sources */,
 				7779E9EF2049DB0900AB7ED5 /* TextBox.cpp in Sources */,
 				7779EA1D2049DC2300AB7ED5 /* Logging.cpp in Sources */,
+				7779EA5F2052E0AF00AB7ED5 /* Delay.cpp in Sources */,
 				4F78D95513B63BA50032E0F3 /* IPopupMenu.cpp in Sources */,
 				7779EA31204C5F6E00AB7ED5 /* BangControl.cpp in Sources */,
 				4F78D95C13B63BA50032E0F3 /* IParam.cpp in Sources */,
@@ -1883,6 +1899,7 @@
 				4F9828CB140A9EB700F3FCC1 /* vstcomponent.cpp in Sources */,
 				4F9828CC140A9EB700F3FCC1 /* vstcomponentbase.cpp in Sources */,
 				7779E9E72049DB0900AB7ED5 /* Scales.cpp in Sources */,
+				7779EA5E2052E0AF00AB7ED5 /* Delay.cpp in Sources */,
 				7779EA162049DC2300AB7ED5 /* Summer.cpp in Sources */,
 				7779EA152049DC2300AB7ED5 /* Pan.cpp in Sources */,
 				7779E9E22049DB0800AB7ED5 /* EnumControl.cpp in Sources */,
@@ -1898,6 +1915,7 @@
 				4F9828D5140A9EB700F3FCC1 /* funknown.cpp in Sources */,
 				7779EA142049DC2300AB7ED5 /* Oscil.cpp in Sources */,
 				7779EA262049DDE100AB7ED5 /* LED.cpp in Sources */,
+				7779EA622052E0AF00AB7ED5 /* Flanger.cpp in Sources */,
 				7779EA172049DC2300AB7ED5 /* UGen.cpp in Sources */,
 				4F9828D6140A9EB700F3FCC1 /* ustring.cpp in Sources */,
 				7779EA36204C70BF00AB7ED5 /* Line.cpp in Sources */,
@@ -1909,6 +1927,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7779EA5C2052E0AF00AB7ED5 /* Delay.cpp in Sources */,
 				4FD16CFC13B63468001D0217 /* swell-appstub.mm in Sources */,
 				4FD16D0513B634AA001D0217 /* swell-dlg.mm in Sources */,
 				4FD16D0C13B634BF001D0217 /* swell-gdi.mm in Sources */,
@@ -1943,6 +1962,7 @@
 				7779E9D92049DB0700AB7ED5 /* Scales.cpp in Sources */,
 				7779EA042049DC2200AB7ED5 /* Waves.cpp in Sources */,
 				4F78D91013B63BA50032E0F3 /* IGraphics.cpp in Sources */,
+				7779EA602052E0AF00AB7ED5 /* Flanger.cpp in Sources */,
 				4F78D91113B63BA50032E0F3 /* IGraphicsCarbon.cpp in Sources */,
 				4F78D91213B63BA50032E0F3 /* IGraphicsCocoa.mm in Sources */,
 				7779EA34204C70BE00AB7ED5 /* Line.cpp in Sources */,
