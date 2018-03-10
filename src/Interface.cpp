@@ -72,7 +72,7 @@ enum ELayout
 
 	kEffectsGroup_X = kEnvGroup_X + kEnvGroup_W + 10,
 	kEffectsGroup_Y = kEnvGroup_Y,
-	kEffectsGroup_W = 365,
+	kEffectsGroup_W = 370,
 	kEffectsGroup_H = kOscGroup_H,
 
 	kDelayDurationControl_X = 0,
@@ -96,34 +96,9 @@ enum ELayout
 	kFlangerControl_W = kLargeKnobSize,
 	kFlangerControl_H = kLargeKnobSize,
 
-	kMasterGroup_W = 190,
-	kMasterGroup_X = GUI_WIDTH - kMasterGroup_W - 10,
-	kMasterGroup_Y = kOscGroup_Y + kOscGroup_H + 10,
-	kMasterGroup_H = kOscGroup_H,
-
-	kVoiceControl_X = 0,
-	kVoiceControl_Y = 20,
-	kVoiceControl_H = 20,
-	kVoiceControl_W = 30,
-
-	kVolumeControl_X = 0,
-	kVolumeControl_Y = 15,
-	kVolumeControl_W = kLargeKnobSize,
-	kVolumeControl_H = kLargeKnobSize,
-
-	kWidthControl_X = 0,
-	kWidthControl_Y = 15,
-	kWidthControl_W = kLargeKnobSize,
-	kWidthControl_H = kLargeKnobSize,
-
-	kSeedControl_X = 0,
-	kSeedControl_Y = 20,
-	kSeedControl_W = 50,
-	kSeedControl_H = kEnumHeight,
-
 	kTimeGroup_X = 10,
 	kTimeGroup_Y = kOscGroup_Y + kOscGroup_H + 10,
-	kTimeGroup_W = 295,
+	kTimeGroup_W = 325,
 	kTimeGroup_H = kOscGroup_H,
 
 	kClockSourceControl_X = 20,
@@ -137,9 +112,9 @@ enum ELayout
 	kTempoControl_H = kEnumHeight,
 
 	kStepLengthControl_X = 0,
-	kStepLengthControl_Y = 15,
-	kStepLengthControl_W = kLargeKnobSize,
-	kStepLengthControl_H = kLargeKnobSize,
+	kStepLengthControl_Y = 20,
+	kStepLengthControl_W = 60,
+	kStepLengthControl_H = kEnumHeight,
 
 	kShuffleControl_X = 0,
 	kShuffleControl_Y = 15,
@@ -176,12 +151,37 @@ enum ELayout
 	kRangeControl_W = 20,
 	kRangeControl_H = kEnumHeight,
 
+	kMasterGroup_W = 180,
+	kMasterGroup_X = kPitchGroup_X + kPitchGroup_W + 10,
+	kMasterGroup_Y = kOscGroup_Y + kOscGroup_H + 10,
+	kMasterGroup_H = kOscGroup_H,
+
+	kVoiceControl_X = 0,
+	kVoiceControl_Y = 20,
+	kVoiceControl_H = 20,
+	kVoiceControl_W = 25,
+
+	kVolumeControl_X = 0,
+	kVolumeControl_Y = 15,
+	kVolumeControl_W = kLargeKnobSize,
+	kVolumeControl_H = kLargeKnobSize,
+
+	kWidthControl_X = 0,
+	kWidthControl_Y = 15,
+	kWidthControl_W = kLargeKnobSize,
+	kWidthControl_H = kLargeKnobSize,
+
+	kSeedControl_X = 0,
+	kSeedControl_Y = 20,
+	kSeedControl_W = 45,
+	kSeedControl_H = kEnumHeight,
+
 	kSequenceGroup_X = 10,
 	kSequenceGroup_Y = kTimeGroup_Y + kTimeGroup_H + 10,
-	kSequenceGroup_W = 760,
+	kSequenceGroup_W = 780,
 	kSequenceGroup_H = GUI_HEIGHT - 10 - kSequenceGroup_Y,
 
-	kFirstKnobColumnX = kSequenceGroup_X + 60,
+	kFirstKnobColumnX = kSequenceGroup_X + 65,
 
 	kKnobLED_W = 8,
 	kKnobLED_H = kKnobLED_W,
@@ -203,7 +203,7 @@ enum ELayout
 	kStepKnobLabel_W = kFirstKnobColumnX - kStepKnobLabel_X - kStepKnob_W / 2,
 	kStepKnobLabel_H = 8,
 
-	kStepKnobColumnSpacing = 45,
+	kStepKnobColumnSpacing = 46,
 	kStepKnobRowSpacing = 45,
 
 	kStepRandomize_W = 22,
@@ -437,8 +437,8 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kStepLengthControl, hoff));
-		//AttachEnum(pGraphics, rect, kStepLength, Strings::StepLabel);
-		AttachKnob(pGraphics, rect, kStepLength, Strings::StepLabel);
+		AttachEnum(pGraphics, rect, kStepLength, Strings::StepLabel);
+		//AttachKnob(pGraphics, rect, kStepLength, Strings::StepLabel);
 
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kShuffleControl, hoff));

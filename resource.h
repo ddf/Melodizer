@@ -55,8 +55,8 @@ instrument determined by PLUG _IS _INST
 #define PLUG_DOES_STATE_CHUNKS 0
 
 // GUI default dimensions
-#define GUI_WIDTH 780
-#define GUI_HEIGHT 600
+#define GUI_WIDTH 800
+#define GUI_HEIGHT 610
 
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API)
