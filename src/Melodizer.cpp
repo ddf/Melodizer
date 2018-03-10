@@ -900,15 +900,17 @@ void Melodizer::OnParamChange(int paramIdx)
 	}
 	break;
 
+	// depth should modulate *around* the delay time, which is not what Flanger does 
+	// (it modulates by *increasing* delay time up to depth ms more and back).
+	// so we account for that here by change both inputs when either parameter changes.
 	case kFlangerTime:
-		mFlangerTime.activate(0.2f, mFlanger.delay.getLastValue(), param->Value());
-		// fallthru cuz depth is relative to time
-
 	case kFlangerDepth:
 	{
-		//const float amt = kFlangerDepthMinMs + (kFlangerDepthMaxMs - kFlangerDepthMinMs)*(param->Value() / 100);
-		const float amt = GetParam(kFlangerTime)->Value() * (GetParam(kFlangerDepth)->Value() / 100);
-		mFlangerDepth.activate(0.2f, mFlanger.depth.getLastValue(), amt);
+		const float delay = GetParam(kFlangerTime)->Value();
+		const float depth = GetParam(kFlangerDepth)->Value() / 100;		
+
+		mFlangerTime.activate(0.2f, mFlangerTime.getAmp(), delay - delay*depth);
+		mFlangerDepth.activate(0.2f, mFlangerDepth.getAmp(), delay*depth*2);
 	}
 	break;
 
