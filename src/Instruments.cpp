@@ -14,9 +14,10 @@
 //---------------------------------------
 //-- ADSR
 //---------------------------------------
-ADSR::ADSR()
+ADSR::ADSR(UGen& out)
 : UGen()
 , audio( *this, AUDIO )
+, mOut(out)
 , mState(kOff)
 , mAutoRelease(false)
 , mAmp(0)
@@ -48,6 +49,11 @@ void ADSR::noteOn(float amp, float attack, float decay, float sustain, float rel
 	if (mAttack > 0) mState = kAttack;
 	else if (mDecay > 0) mState = kDecay;
 	else mState = kSustain;
+
+	if (!isPatched())
+	{
+		patch(mOut);
+	}
 }
 
 void ADSR::noteOff()
@@ -109,6 +115,7 @@ void ADSR::uGenerate(float * channels, const int numChannels)
 		{
 			amp = 0;
 			mState = kOff;
+			unpatch(mOut);
 		}
 		else
 		{
@@ -137,12 +144,12 @@ Tone::Tone( Summer& inSummer )
 , frequency(0,0,0)
 , panner( 0 )
 , pan(0,0,0)
-, adsr()
+, adsr(inSummer)
 {
 	frequency.patch( oscil.frequency );
 	pan.patch(panner.pan);
     adsr.setAudioChannelCount( 2 );
-    oscil.patch( panner ).patch ( adsr ).patch( out );
+    oscil.patch( panner ).patch ( adsr );
 }
 
 Tone::~Tone()

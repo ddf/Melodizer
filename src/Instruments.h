@@ -21,7 +21,7 @@ using namespace Minim;
 class ADSR : public UGen
 {
 public:
-	ADSR();
+	ADSR(UGen& out);
 
 	bool isOn() const { return mState != kOff; }
 
@@ -36,6 +36,11 @@ protected:
 	virtual void sampleRateChanged() override;
 
 private:
+
+	// will patch to this in noteOn if not already patched
+	// and automatically unpatch when Release finishes.
+	UGen& mOut;
+
 	enum
 	{
 		kOff,
