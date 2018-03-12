@@ -765,9 +765,7 @@ void Melodizer::StopSequencer()
 void Melodizer::SetParameterFromGUI(int idx, double normalizedValue)
 {
 	IMutexLock lock(this);
-	
-	IPlug::SetParameterFromGUI(idx, normalizedValue);
-	
+
 	// if play state is changing from the UI,
 	// but the daw is not in play mode,
 	// we need to change play state here because OnParamChanged will ignore it.
@@ -777,9 +775,13 @@ void Melodizer::SetParameterFromGUI(int idx, double normalizedValue)
 		GetTime(&time);
 		if ( !time.mTransportIsRunning && !IsRenderingOffline() )
 		{
-			ChangePlayState((PlayState)GetParam(kPlayState)->Int());
+			ChangePlayState((PlayState)(int)GetParam(kPlayState)->GetNonNormalized(normalizedValue));
 		}
 	}
+
+	// now update the actual parameter, which in the case of
+	// kPlayState will push our actual mPlayState back to the UI.
+	IPlug::SetParameterFromGUI(idx, normalizedValue);
 }
 #endif
 
