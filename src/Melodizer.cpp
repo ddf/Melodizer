@@ -340,7 +340,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	AttachGraphics(pGraphics);
 
 	//MakePreset("preset 1", ... );
-	MakeDefaultPreset((char *) "Init", kNumPrograms);
+	MakeDefaultPreset((char *) "-", kNumPrograms);
 }
 
 Melodizer::~Melodizer()
@@ -562,6 +562,30 @@ void Melodizer::BeginMIDILearn(int paramIdx1, int paramIdx2, int x, int y)
 			}
 		}
 	}
+}
+
+void Melodizer::HandleSave(WDL_String* fileName)
+{
+	const char * programName = fileName->get_filepart();
+	// change the current preset without actually loading it.
+	mCurrentPresetIdx = 0;
+	// modify this preset so that the preset name saved to the file is correct.
+	ModifyCurrentPreset(programName);
+	SaveProgramAsFXP(fileName);
+	// notify the host because we changed the settings of the first preset
+	InformHostOfProgramChange();
+
+	mInterface.OnPresetChanged();
+}
+
+void Melodizer::HandleLoad(WDL_String* fileName)
+{
+	// change preset index to first preset so that the program will load there
+	// instead of overwriting a real preset.
+	mCurrentPresetIdx = 0;
+	LoadProgramFromFXP(fileName);
+
+	mInterface.OnPresetChanged();
 }
 
 void Melodizer::ProcessMidiMsg(IMidiMsg* pMsg)

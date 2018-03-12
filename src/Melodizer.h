@@ -45,6 +45,12 @@ public:
 
   void BeginMIDILearn(int param1, int param2, int x, int y);
 
+  // called from the UI for the Load and Save buttons.
+  // we need to wrap LoadProgramFromFXP and SaveProgramAsFXP
+  // to prevent our presets from getting overwritten.
+  void HandleSave(WDL_String* fileName);
+  void HandleLoad(WDL_String* fileName);
+
 
   virtual void ProcessMidiMsg(IMidiMsg* pMsg) override;
   virtual void ProcessSysEx(ISysEx* pSysEx) override;

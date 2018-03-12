@@ -1,5 +1,6 @@
 #include "BangControl.h"
 #include "Params.h"
+#include "Melodizer.h"
 
 BangControl::BangControl(IPlugBase* pPlug, IRECT iRect, int paramIdx, IColor onColor, IColor offColor,
 						 IText* textStyle, const char * label)
@@ -65,7 +66,11 @@ void BangControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 			GetGUI()->PromptForFile(&fileName, kFileSave, &directory, "fxp");
 			if (fileName.GetLength() > 0)
 			{
-				mPlug->SaveProgramAsFXP(&fileName);
+				Melodizer* plug = static_cast<Melodizer*>(mPlug);
+				if (plug != nullptr)
+				{
+					plug->HandleSave(&fileName);
+				}				
 			}
 		}
 		break;
@@ -77,7 +82,11 @@ void BangControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 			GetGUI()->PromptForFile(&fileName, kFileOpen, &directory, "fxp");
 			if (fileName.GetLength() > 0)
 			{
-				mPlug->LoadProgramFromFXP(&fileName);
+				Melodizer* plug = static_cast<Melodizer*>(mPlug);
+				if (plug != nullptr)
+				{
+					plug->HandleLoad(&fileName);
+				}
 			}
 		}
 		break;

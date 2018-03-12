@@ -23,8 +23,11 @@ public:
 	// call by the plug when ClockSource changes
 	void OnClockSourceChanged(const int source);
 
+	// called by the plug when a preset is loaded or saved
+	void OnPresetChanged();
+
 private:	
-	void AttachEnum(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label = nullptr);
+	IControl* AttachEnum(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label = nullptr);
 	IControl* AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramIdx, const float scrollSpeed, const char * maxValue, const char * label = nullptr);
 	void AttachKnob(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label = nullptr);
 	void AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name);
@@ -32,6 +35,7 @@ private:
 
 	Melodizer* const mPlug;
 
+	IControl* mPresetControl;
 	// we hold on to this so we can disable it when clock source is not Internal
 	IControl* mTempoControl;
 

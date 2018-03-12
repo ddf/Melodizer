@@ -21,7 +21,7 @@ enum ELayout
 
 	kPresetRestoreControl_X = 10,
 	kPresetRestoreControl_Y = 10,
-	kPresetRestoreControl_W = 100,
+	kPresetRestoreControl_W = 200,
 	kPresetRestoreControl_H = kButtonHeight,
 
 	kLoadControl_X = kPresetRestoreControl_X + kPresetRestoreControl_W + 10,
@@ -474,7 +474,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	{
 		pGraphics->AttachControl(new BangControl(mPlug, MakeIRect(kLoadControl), kLoadPreset, Color::BangActive, Color::BangBackground, &TextStyles::ButtonLabel, Strings::LoadLabel));
 		pGraphics->AttachControl(new BangControl(mPlug, MakeIRect(kSaveControl), kSavePreset, Color::BangActive, Color::BangBackground, &TextStyles::ButtonLabel, Strings::SaveLabel));
-		AttachEnum(pGraphics, MakeIRect(kPresetRestoreControl), kRestorePreset);
+		mPresetControl = AttachEnum(pGraphics, MakeIRect(kPresetRestoreControl), kRestorePreset);
 	}
 
 	// sequence 
@@ -553,9 +553,10 @@ void Interface::AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, const 
 	pGraphics->AttachControl(new BangControl(mPlug, rect, param, Color::BangActive, Color::BangBackground, &TextStyles::RandLabel, Strings::RandomizeLabel));
 }
 
-void Interface::AttachEnum(IGraphics* pGraphics, IRECT rect, int paramIdx, const char * label)
+IControl* Interface::AttachEnum(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label /*= nullptr*/)
 {
-	pGraphics->AttachControl(new EnumControl(mPlug, rect, paramIdx, &TextStyles::Enum));
+	IControl* control = new EnumControl(mPlug, rect, paramIdx, &TextStyles::Enum);
+	pGraphics->AttachControl(control);
 
 	if (label != nullptr)
 	{
@@ -563,6 +564,8 @@ void Interface::AttachEnum(IGraphics* pGraphics, IRECT rect, int paramIdx, const
 		rect.T -= 20;
 		pGraphics->AttachControl(new ITextControl(mPlug, rect, &TextStyles::Label, const_cast<char*>(label)));
 	}
+
+	return control;
 }
 
 IControl* Interface::AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramIdx, const float scrollSpeed, const char * maxValue, const char * label /*= nullptr*/)
@@ -614,5 +617,13 @@ void Interface::OnClockSourceChanged(const int source)
 	if (mTempoControl != nullptr)
 	{
 		mTempoControl->GrayOut(source != CS_Internal);
+	}
+}
+
+void Interface::OnPresetChanged()
+{
+	if (mPresetControl != nullptr)
+	{
+		mPresetControl->SetDirty(false);
 	}
 }
