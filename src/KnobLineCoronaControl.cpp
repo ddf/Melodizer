@@ -12,6 +12,7 @@ KnobLineCoronaControl::KnobLineCoronaControl(IPlugBase* pPlug, IRECT pR, int par
 : IKnobLineControl(pPlug, pR, paramIdx, pColor, innerRadius, outerRadius, minAngle, maxAngle, direction, gearing)
 , mCoronaColor(*pCoronaColor)
 , mCoronaBlend(IChannelBlend::kBlendAdd, coronaThickness)
+, mLabelControl(nullptr)
 {
 }
 
@@ -41,7 +42,7 @@ void KnobLineCoronaControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 			plug->BeginMIDILearn(mParamIdx, -1, x, y);
 		}
 	}
-	else
+	else if ( mLabelControl != nullptr )
 	{
 		SetValDisplayControl(mLabelControl);
 		SetDirty();
