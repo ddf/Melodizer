@@ -336,6 +336,7 @@
     <ClCompile Include="src\LED.cpp" />
     <ClCompile Include="src\Melodizer.cpp" />
     <ClCompile Include="src\PlayStateControl.cpp" />
+    <ClCompile Include="src\Presets.cpp" />
     <ClCompile Include="src\Scales.cpp" />
     <ClCompile Include="src\StepModeControl.cpp" />
     <ClCompile Include="src\TextBox.cpp" />

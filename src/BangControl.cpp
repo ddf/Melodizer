@@ -90,6 +90,17 @@ void BangControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 			}
 		}
 		break;
+
+		case kDumpPreset:
+		{
+			Melodizer* plug = static_cast<Melodizer*>(mPlug);
+			if (plug != nullptr)
+			{
+				plug->DumpPresetSrc();
+			}
+		}
+		break;
+
 		}
 	}
 }

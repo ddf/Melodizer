@@ -56,6 +56,7 @@ public:
   virtual void ProcessSysEx(ISysEx* pSysEx) override;
 
 private:
+	void MakePresets();
 	void InitRandomizerParam(const int paramIdx, const char * paramName);
 	void GenerateNote(int tick, unsigned int waveformIdx, const Scale* notes, unsigned int key, int lowOctave, int hiOctave, unsigned int& previousNoteIndex);
 	int RandomRange(int low, int hi);
@@ -139,4 +140,7 @@ private:
 
 	// we'll have a number of Waveforms to choose from
 	std::vector<Minim::Waveform*> mWaveforms;
+
+public:
+	void DumpPresetSrc();
 };

@@ -87,6 +87,7 @@ enum EParams
 	kSavePreset,
 	kLoadPreset,
 	kRestorePreset,
+	kDumpPreset,
 };
 
 enum ClockSource

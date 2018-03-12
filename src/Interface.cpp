@@ -34,6 +34,11 @@ enum ELayout
 	kSaveControl_W = kLoadControl_W,
 	kSaveControl_H = kButtonHeight,
 
+	kDumpControl_X = kSaveControl_X + kSaveControl_W + 10,
+	kDumpControl_Y = kSaveControl_Y,
+	kDumpControl_W = kSaveControl_W,
+	kDumpControl_H = kButtonHeight,
+
 	kOscGroup_X = 10,
 	kOscGroup_Y = kPresetRestoreControl_Y + kPresetRestoreControl_H + 10,
 	kOscGroup_W = 205,
@@ -282,6 +287,7 @@ namespace Strings
 	const char * RangeLabel = "Range";
 	const char * LoadLabel = "Load...";
 	const char * SaveLabel = "Save...";
+	const char * DumpLabel = "Dump";
 
 	const char * ProbabilityLabel = "P(N)";
 	const char * PanLabel = "L-R";
@@ -474,6 +480,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	{
 		pGraphics->AttachControl(new BangControl(mPlug, MakeIRect(kLoadControl), kLoadPreset, Color::BangActive, Color::BangBackground, &TextStyles::ButtonLabel, Strings::LoadLabel));
 		pGraphics->AttachControl(new BangControl(mPlug, MakeIRect(kSaveControl), kSavePreset, Color::BangActive, Color::BangBackground, &TextStyles::ButtonLabel, Strings::SaveLabel));
+		pGraphics->AttachControl(new BangControl(mPlug, MakeIRect(kDumpControl), kDumpPreset, Color::BangActive, Color::BangBackground, &TextStyles::ButtonLabel, Strings::DumpLabel));
 		mPresetControl = AttachEnum(pGraphics, MakeIRect(kPresetRestoreControl), kRestorePreset);
 	}
 

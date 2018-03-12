@@ -16,7 +16,8 @@ extern char * gINIPath;
 
 using namespace Minim;
 
-const int kNumPrograms = 1;
+// this is at the top of Presets.cpp
+extern const int kNumPrograms;
 
 // name of the section of the INI file we save midi cc mappings to
 const char * kMidiControlIni = "midicc";
@@ -191,7 +192,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	// scales
 	{
 		IParam* param = GetParam(kScale);
-		param->InitEnum("Scale", 0, ScalesLength);
+		param->InitEnum("Scale", 1, ScalesLength);
 		for (int i = 0; i < ScalesLength; ++i)
 		{
 			param->SetDisplayText(i, Scales[i]->name);
@@ -334,13 +335,13 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	InitRandomizerParam(kSustainRandomize, "Randomize Sustain");
 	InitRandomizerParam(kReleaseRandomize, "Randomize Releases");
 
+	// in Presets.cpp
+	MakePresets();
+
 	// interface!
 	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
 	mInterface.CreateControls(pGraphics);
 	AttachGraphics(pGraphics);
-
-	//MakePreset("preset 1", ... );
-	MakeDefaultPreset((char *) "-", kNumPrograms);
 }
 
 Melodizer::~Melodizer()
@@ -1097,9 +1098,9 @@ void Melodizer::GenerateNote( int tick,
 			nextNote = 0;
 		}
 	}
-	int baseNote = nextNote + key;
-	int octave = RandomRange(lowOctave, hiOctave-1);
-    int note = baseNote + octave * 12;
+	const int baseNote = nextNote + key;
+	const int octave = RandomRange(lowOctave, hiOctave-1);
+    const int note = baseNote + octave * 12;
 	const float pulseWidth = GetParam(kPulseWidth)->Value() / 100;
 	const float fromFreq = mTones[mActiveTone]->getFrequency();
     const float toFreq 	= Frequency::ofMidiNote( note ).asHz();
@@ -1162,3 +1163,57 @@ void Melodizer::SetPlayStateFromMidi(PlayState state)
 		GetGUI()->SetParameterFromPlug(kPlayState, normValue, true);
 	}
 }
+
+// modified version of DumpPresetSrcCode 
+void Melodizer::DumpPresetSrc()
+{
+	IMutexLock lock(this);
+
+	WDL_String path;
+	GetGUI()->DesktopPath(&path);
+	path.Append("\\dump.txt");
+	FILE* fp = fopen(path.Get(), "w");
+	// all the param indices we *should* include.
+	// we collect these first because we need the count for the second argument
+	// of MakePresetFromNamedParams
+	std::vector<int> paramsForDump;
+	for (int i = 0; i < kNumParams; ++i)
+	{
+		IParam* param = GetParam(i);
+		if (param->Value() != param->GetDefault())
+		{
+			paramsForDump.push_back(i);
+		}
+	}
+	const int paramCount = paramsForDump.size();
+	WDL_String name;
+	name.Set(GetPresetName(0));
+	name.remove_fileext();
+	fprintf(fp, "\tMakePresetFromNamedParams(\"%s\", %d", name.Get(), paramCount);
+	for (int i = 0; i < paramCount; ++i)
+	{
+		const int paramIdx = paramsForDump[i];
+		IParam* pParam = GetParam(paramIdx);
+		char paramVal[32];
+		switch (pParam->Type())
+		{
+		case IParam::kTypeBool:
+			sprintf(paramVal, "%s", (pParam->Bool() ? "true" : "false"));
+			break;
+		case IParam::kTypeInt:
+			sprintf(paramVal, "%d", pParam->Int());
+			break;
+		case IParam::kTypeEnum:
+			sprintf(paramVal, "%d", pParam->Int());
+			break;
+		case IParam::kTypeDouble:
+		default:
+			sprintf(paramVal, "%.6f", pParam->Value());
+			break;
+		}
+		fprintf(fp, "\n\t\t, %d, %s // %s", paramIdx, paramVal, pParam->GetNameForHost());
+	}
+	fprintf(fp, "\n\t);\n");
+	fclose(fp);
+}
+
