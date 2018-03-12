@@ -40,5 +40,10 @@ bool LED::Draw(IGraphics* pGraphics)
 void LED::Blink()
 {
 	mColorLerp = 1;
+	// we have to set dirty and also call Redraw becuase Blink is called from the audio thread.
+	// so it's possible that we will mark ourselves dirty and then the UI thread will  SetClean
+	// because it just finished drawing this control. by calling Redraw we prevent SetClean
+	// from clearing the dirty flag in that case.
 	SetDirty();
+	Redraw();
 }
