@@ -1,6 +1,6 @@
 #include "Melodizer.h"
 
-extern const int kNumPrograms = 11;
+extern const int kNumPrograms = 14;
 
 void Melodizer::MakePresets()
 {
@@ -467,7 +467,7 @@ void Melodizer::MakePresets()
 		, 152, 96.700000 // Step 4 Release
 	);
 
-	MakePresetFromNamedParams("chiptune", 55
+	MakePresetFromNamedParams("chiptune", 54
 		, 0, 3 // Waveform
 		, 1, 25.908333 // Pulse Width
 		, 2, 0.033333 // Glide
@@ -477,7 +477,6 @@ void Melodizer::MakePresets()
 		, 9, -5.999999 // Volume
 		, 13, 132.000003 // Tempo
 		, 14, 7 // Step Length
-		, 16, 2 // Play State
 		, 17, 2 // Key
 		, 18, 3 // Scale
 		, 20, 2 // Range
@@ -592,6 +591,66 @@ void Melodizer::MakePresets()
 		, 128, 71.950000 // Step 14 Decay
 		, 129, 50.500000 // Step 15 Decay
 	);
+
+	MakePresetFromNamedParams("blues bass", 56
+		, 0, 6 // Waveform
+		, 1, 34.075000 // Pulse Width
+		, 5, 0.520375 // Decay
+		, 6, 0.000000 // Sustain
+		, 7, 0.005000 // Release
+		, 9, -5.999999 // Volume
+		, 10, 50.833333 // Width
+		, 13, 100.000000 // Tempo
+		, 14, 7 // Step Length
+		, 15, 67.333333 // Shuffle
+		, 18, 6 // Scale
+		, 19, 2 // Octave
+		, 22, 21.666665 // Delay Feedback
+		, 24, 1.259750 // Flanger Delay
+		, 25, 1.009500 // Flanger Rate
+		, 26, 0.000000 // Flanger Depth
+		, 46, 97.516721 // Step 0 Probability
+		, 47, 88.712618 // Step 1 Probability
+		, 48, 49.638284 // Step 2 Probability
+		, 49, 35.958102 // Step 3 Probability
+		, 50, 74.122877 // Step 4 Probability
+		, 51, 66.373770 // Step 5 Probability
+		, 52, 58.258504 // Step 6 Probability
+		, 53, 90.309215 // Step 7 Probability
+		, 54, 62.736766 // Step 8 Probability
+		, 55, 86.247956 // Step 9 Probability
+		, 56, 25.809073 // Step 10 Probability
+		, 57, 59.079010 // Step 11 Probability
+		, 58, 92.511221 // Step 12 Probability
+		, 59, 14.181269 // Step 13 Probability
+		, 60, 3.471259 // Step 14 Probability
+		, 61, 12.416873 // Step 15 Probability
+		, 81, 74.896219 // Step 1 Velocity
+		, 83, 57.354820 // Step 3 Velocity
+		, 85, 66.982993 // Step 5 Velocity
+		, 87, 74.422139 // Step 7 Velocity
+		, 89, 77.286619 // Step 9 Velocity
+		, 90, 96.849668 // Step 10 Velocity
+		, 91, 68.445857 // Step 11 Velocity
+		, 93, 68.345733 // Step 13 Velocity
+		, 95, 65.247780 // Step 15 Velocity
+		, 115, 67.386612 // Step 1 Decay
+		, 116, 76.675109 // Step 2 Decay
+		, 117, 33.041979 // Step 3 Decay
+		, 118, 83.194330 // Step 4 Decay
+		, 119, 74.405723 // Step 5 Decay
+		, 120, 39.687996 // Step 6 Decay
+		, 121, 67.382578 // Step 7 Decay
+		, 122, 67.711427 // Step 8 Decay
+		, 123, 53.492258 // Step 9 Decay
+		, 124, 84.150873 // Step 10 Decay
+		, 125, 37.351641 // Step 11 Decay
+		, 126, 78.924752 // Step 12 Decay
+		, 127, 70.139687 // Step 13 Decay
+		, 128, 66.965469 // Step 14 Decay
+		, 129, 18.923721 // Step 15 Decay
+	);
+
 
 	MakePresetFromNamedParams("fjords of canada", 49
 		, 0, 0 // Waveform
@@ -710,6 +769,204 @@ void Melodizer::MakePresets()
 		, 144, 43.274174 // Step 13 Sustain
 		, 145, 36.061268 // Step 14 Sustain
 		, 146, 9.007126 // Step 15 Sustain
+	);
+
+	MakePresetFromNamedParams("skittertowne", 99
+		, 0, 6 // Waveform
+		, 1, 36.933334 // Pulse Width
+		, 5, 0.071500 // Decay
+		, 6, 2.500000 // Sustain
+		, 7, 0.916000 // Release
+		, 9, -5.999999 // Volume
+		, 13, 99.999998 // Tempo
+		, 14, 7 // Step Length
+		, 18, 4 // Scale
+		, 19, 9 // Octave
+		, 20, 2 // Range
+		, 21, 12 // Delay Duration
+		, 22, 29.166666 // Delay Feedback
+		, 23, 25.833333 // Delay Mix
+		, 24, 35.002999 // Flanger Delay
+		, 25, 1.442617 // Flanger Rate
+		, 26, 50.833333 // Flanger Depth
+		, 27, 63.333333 // Flanger Feedback
+		, 28, 40.000001 // Flanger Mix
+		, 46, 55.826032 // Step 0 Probability
+		, 47, 48.264328 // Step 1 Probability
+		, 48, 25.811747 // Step 2 Probability
+		, 49, 0.637421 // Step 3 Probability
+		, 50, 73.838550 // Step 4 Probability
+		, 51, 31.733266 // Step 5 Probability
+		, 52, 25.356489 // Step 6 Probability
+		, 53, 48.179507 // Step 7 Probability
+		, 54, 8.321319 // Step 8 Probability
+		, 55, 92.167670 // Step 9 Probability
+		, 56, 97.163773 // Step 10 Probability
+		, 57, 35.263363 // Step 11 Probability
+		, 58, 2.174314 // Step 12 Probability
+		, 59, 72.785497 // Step 13 Probability
+		, 60, 30.166611 // Step 14 Probability
+		, 61, 99.707282 // Step 15 Probability
+		, 63, 0.164171 // Step 0 Pan
+		, 64, 0.809353 // Step 1 Pan
+		, 65, -0.037772 // Step 2 Pan
+		, 66, 0.331644 // Step 3 Pan
+		, 67, -0.548773 // Step 4 Pan
+		, 68, -0.047962 // Step 5 Pan
+		, 69, 0.193854 // Step 6 Pan
+		, 70, -0.339974 // Step 7 Pan
+		, 71, -0.804286 // Step 8 Pan
+		, 72, 0.278768 // Step 9 Pan
+		, 73, 0.301189 // Step 10 Pan
+		, 74, 0.593348 // Step 11 Pan
+		, 75, 0.765986 // Step 12 Pan
+		, 76, -0.261634 // Step 13 Pan
+		, 77, 0.006031 // Step 14 Pan
+		, 78, -0.239457 // Step 15 Pan
+		, 80, 12.179153 // Step 0 Velocity
+		, 81, 20.159692 // Step 1 Velocity
+		, 82, 10.521761 // Step 2 Velocity
+		, 83, 52.896225 // Step 3 Velocity
+		, 84, 70.656770 // Step 4 Velocity
+		, 85, 55.065250 // Step 5 Velocity
+		, 86, 62.479454 // Step 6 Velocity
+		, 87, 39.448893 // Step 7 Velocity
+		, 88, 43.437698 // Step 8 Velocity
+		, 89, 19.584383 // Step 9 Velocity
+		, 90, 50.429231 // Step 10 Velocity
+		, 91, 72.660452 // Step 11 Velocity
+		, 92, 51.618844 // Step 12 Velocity
+		, 93, 69.778883 // Step 13 Velocity
+		, 94, 46.700263 // Step 14 Velocity
+		, 95, 13.441172 // Step 15 Velocity
+		, 114, 24.380331 // Step 0 Decay
+		, 115, 19.800905 // Step 1 Decay
+		, 116, 98.283546 // Step 2 Decay
+		, 117, 83.297333 // Step 3 Decay
+		, 118, 92.766543 // Step 4 Decay
+		, 119, 13.124962 // Step 5 Decay
+		, 120, 57.133139 // Step 6 Decay
+		, 121, 74.719666 // Step 7 Decay
+		, 122, 51.512080 // Step 8 Decay
+		, 123, 64.763889 // Step 9 Decay
+		, 124, 18.173941 // Step 10 Decay
+		, 125, 72.807557 // Step 11 Decay
+		, 126, 59.264553 // Step 12 Decay
+		, 127, 19.726351 // Step 13 Decay
+		, 128, 67.643396 // Step 14 Decay
+		, 129, 18.318835 // Step 15 Decay
+		, 131, 18.366300 // Step 0 Sustain
+		, 132, 1.851945 // Step 1 Sustain
+		, 133, 61.673886 // Step 2 Sustain
+		, 134, 14.504572 // Step 3 Sustain
+		, 135, 70.987349 // Step 4 Sustain
+		, 136, 32.009007 // Step 5 Sustain
+		, 137, 2.172681 // Step 6 Sustain
+		, 138, 52.608401 // Step 7 Sustain
+		, 139, 55.412784 // Step 8 Sustain
+		, 140, 64.807396 // Step 9 Sustain
+		, 141, 7.425201 // Step 10 Sustain
+		, 142, 78.342098 // Step 11 Sustain
+		, 143, 66.265740 // Step 12 Sustain
+		, 144, 58.358275 // Step 13 Sustain
+		, 145, 36.519417 // Step 14 Sustain
+		, 146, 73.759655 // Step 15 Sustain
+	);
+
+	MakePresetFromNamedParams("alien chatter", 93
+		, 0, 7 // Waveform
+		, 2, 0.333333 // Glide
+		, 3, 2.000000 // Movement
+		, 4, 0.054875 // Attack
+		, 6, 0.000000 // Sustain
+		, 7, 0.005000 // Release
+		, 8, 32 // Max Voices
+		, 9, -9.149999 // Volume
+		, 10, 50.833333 // Width
+		, 14, 1 // Step Length
+		, 18, 7 // Scale
+		, 19, 6 // Octave
+		, 20, 3 // Range
+		, 21, 4 // Delay Duration
+		, 22, 19.166667 // Delay Feedback
+		, 23, 13.333333 // Delay Mix
+		, 24, 7.925083 // Flanger Delay
+		, 25, 3.341667 // Flanger Rate
+		, 26, 15.833333 // Flanger Depth
+		, 27, 60.833333 // Flanger Feedback
+		, 28, 50.833333 // Flanger Mix
+		, 46, 53.397171 // Step 0 Probability
+		, 47, 94.236645 // Step 1 Probability
+		, 48, 52.656487 // Step 2 Probability
+		, 49, 9.685580 // Step 3 Probability
+		, 50, 9.991538 // Step 4 Probability
+		, 51, 42.041553 // Step 5 Probability
+		, 52, 27.752244 // Step 6 Probability
+		, 53, 63.457258 // Step 7 Probability
+		, 54, 29.322979 // Step 8 Probability
+		, 55, 30.652597 // Step 9 Probability
+		, 56, 86.392143 // Step 10 Probability
+		, 57, 19.137784 // Step 11 Probability
+		, 58, 24.597890 // Step 12 Probability
+		, 59, 86.557150 // Step 13 Probability
+		, 60, 19.005625 // Step 14 Probability
+		, 61, 64.121675 // Step 15 Probability
+		, 63, -0.481695 // Step 0 Pan
+		, 64, -0.905326 // Step 1 Pan
+		, 65, 0.225353 // Step 2 Pan
+		, 66, -0.123982 // Step 3 Pan
+		, 67, -0.416507 // Step 4 Pan
+		, 68, -0.207947 // Step 5 Pan
+		, 69, -0.616479 // Step 6 Pan
+		, 70, -0.751113 // Step 7 Pan
+		, 71, 0.788021 // Step 8 Pan
+		, 72, 0.994720 // Step 9 Pan
+		, 73, -0.452505 // Step 10 Pan
+		, 74, -0.397769 // Step 11 Pan
+		, 75, 0.513354 // Step 12 Pan
+		, 76, -0.575127 // Step 13 Pan
+		, 77, -0.738709 // Step 14 Pan
+		, 78, 0.507067 // Step 15 Pan
+		, 81, 74.896219 // Step 1 Velocity
+		, 83, 57.354820 // Step 3 Velocity
+		, 85, 66.982993 // Step 5 Velocity
+		, 87, 74.422139 // Step 7 Velocity
+		, 89, 77.286619 // Step 9 Velocity
+		, 90, 96.849668 // Step 10 Velocity
+		, 91, 68.445857 // Step 11 Velocity
+		, 93, 68.345733 // Step 13 Velocity
+		, 95, 65.247780 // Step 15 Velocity
+		, 97, 6.882613 // Step 0 Attack
+		, 98, 67.604875 // Step 1 Attack
+		, 99, 51.268993 // Step 2 Attack
+		, 100, 42.903322 // Step 3 Attack
+		, 101, 18.388071 // Step 4 Attack
+		, 102, 63.537401 // Step 5 Attack
+		, 103, 99.938776 // Step 6 Attack
+		, 104, 95.114789 // Step 7 Attack
+		, 105, 10.708150 // Step 8 Attack
+		, 106, 20.303490 // Step 9 Attack
+		, 107, 29.432868 // Step 10 Attack
+		, 108, 20.398558 // Step 11 Attack
+		, 109, 43.494614 // Step 12 Attack
+		, 110, 37.000895 // Step 13 Attack
+		, 111, 51.243827 // Step 14 Attack
+		, 112, 43.242741 // Step 15 Attack
+		, 115, 67.386612 // Step 1 Decay
+		, 116, 76.675109 // Step 2 Decay
+		, 117, 33.041979 // Step 3 Decay
+		, 118, 83.194330 // Step 4 Decay
+		, 119, 74.405723 // Step 5 Decay
+		, 120, 39.687996 // Step 6 Decay
+		, 121, 67.382578 // Step 7 Decay
+		, 122, 67.711427 // Step 8 Decay
+		, 123, 53.492258 // Step 9 Decay
+		, 124, 84.150873 // Step 10 Decay
+		, 125, 37.351641 // Step 11 Decay
+		, 126, 78.924752 // Step 12 Decay
+		, 127, 70.139687 // Step 13 Decay
+		, 128, 66.965469 // Step 14 Decay
+		, 129, 18.923721 // Step 15 Decay
 	);
 
 }
