@@ -1,6 +1,6 @@
 #include "Melodizer.h"
 
-extern const int kNumPrograms = 14;
+extern const int kNumPrograms = 15;
 
 void Melodizer::MakePresets()
 {
@@ -414,7 +414,7 @@ void Melodizer::MakePresets()
 		, 92, 82.686898 // Step 12 Velocity
 		, 93, 39.760171 // Step 13 Velocity
 		, 94, 64.541392 // Step 14 Velocity
-		, 95, 4.863929 // Step 15 Velocity
+		, 95, 84.863929 // Step 15 Velocity
 		, 97, 88.239274 // Step 0 Attack
 		, 98, 90.226559 // Step 1 Attack
 		, 99, 75.593259 // Step 2 Attack
@@ -770,6 +770,34 @@ void Melodizer::MakePresets()
 		, 145, 36.061268 // Step 14 Sustain
 		, 146, 9.007126 // Step 15 Sustain
 	);
+
+	MakePresetFromNamedParams("swirling chord texture", 24
+		, 0, 0 // Waveform
+		, 1, 14.883333 // Pulse Width
+		, 3, 0.216667 // Movement
+		, 4, 0.453875 // Attack
+		, 5, 0.902750 // Decay
+		, 6, 25.833333 // Sustain
+		, 14, 7 // Step Length
+		, 19, 3 // Octave
+		, 20, 2 // Range
+		, 22, 34.166667 // Delay Feedback
+		, 23, 21.666667 // Delay Mix
+		, 24, 11.257750 // Flanger Delay
+		, 25, 3.175083 // Flanger Rate
+		, 26, 5.000000 // Flanger Depth
+		, 27, 15.833333 // Flanger Feedback
+		, 28, 80.833333 // Flanger Mix
+		, 32, 2 // Step 3 Mode
+		, 46, 100.000000 // Step 0 Probability
+		, 47, 99.166667 // Step 1 Probability
+		, 48, 100.000000 // Step 2 Probability
+		, 63, -1.000000 // Step 0 Pan
+		, 65, 1.000000 // Step 2 Pan
+		, 80, 82.758687 // Step 0 Velocity
+		, 82, 79.954384 // Step 2 Velocity
+	);
+
 
 	MakePresetFromNamedParams("skittertowne", 99
 		, 0, 6 // Waveform
