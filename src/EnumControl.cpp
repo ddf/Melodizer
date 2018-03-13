@@ -15,6 +15,9 @@ EnumControl::EnumControl(IPlugBase* pPlug, IRECT rect, int paramIdx, IText* text
 
 	mTextRect = contentsRect.GetHPadded(-7);
 
+	// rect for displaying the popup should be full height, but only as wide as the text rect
+	mPopupRect = mRECT.GetHPadded(-12);
+
 	if (paramIdx < kNumParams)
 	{
 		mMin = GetParam()->GetMin();
@@ -79,7 +82,7 @@ void EnumControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
 	if (pMod->L)
 	{
-		if (mTextRect.Contains(x, y))
+		if (mPopupRect.Contains(x, y))
 		{
 			if (mParamIdx < kNumParams)
 			{
@@ -102,7 +105,7 @@ void EnumControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 					}
 				}
 
-				if (GetGUI()->CreateIPopupMenu(&menu, &mTextRect))
+				if (GetGUI()->CreateIPopupMenu(&menu, &mRECT))
 				{
 					mPlug->RestorePreset(menu.GetChosenItemIdx());
 				}

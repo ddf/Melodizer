@@ -15,7 +15,10 @@ private:
 	void StepValue(int amount);
 
 	int   mMin, mMax;
+	// where we draw the text
 	IRECT mTextRect;
+	// where we respond to clicks to create the popup
+	IRECT mPopupRect;
 	IRECT mDecrementRect;
 	IRECT mIncrementRect;
 };
