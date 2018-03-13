@@ -12,6 +12,8 @@
 #include "StepModeControl.h"
 #include "PlayStateControl.h"
 
+//#define ENABLE_DUMP
+
 enum ELayout
 {
 	kEnumHeight = 20,
@@ -21,7 +23,7 @@ enum ELayout
 
 	kPresetRestoreControl_X = 10,
 	kPresetRestoreControl_Y = 10,
-	kPresetRestoreControl_W = 200,
+	kPresetRestoreControl_W = 205,
 	kPresetRestoreControl_H = kButtonHeight,
 
 	kLoadControl_X = kPresetRestoreControl_X + kPresetRestoreControl_W + 10,
@@ -484,7 +486,9 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	{
 		pGraphics->AttachControl(new BangControl(mPlug, MakeIRect(kLoadControl), kLoadPreset, Color::BangActive, Color::BangBackground, &TextStyles::ButtonLabel, Strings::LoadLabel));
 		pGraphics->AttachControl(new BangControl(mPlug, MakeIRect(kSaveControl), kSavePreset, Color::BangActive, Color::BangBackground, &TextStyles::ButtonLabel, Strings::SaveLabel));
+#ifdef ENABLE_DUMP
 		pGraphics->AttachControl(new BangControl(mPlug, MakeIRect(kDumpControl), kDumpPreset, Color::BangActive, Color::BangBackground, &TextStyles::ButtonLabel, Strings::DumpLabel));
+#endif
 		mPresetControl = AttachEnum(pGraphics, MakeIRect(kPresetRestoreControl), kRestorePreset);
 	}
 
