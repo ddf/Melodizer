@@ -44,6 +44,8 @@ const double kFlangerRateMaxHz = 20;
 
 const double kDelayCrossfadeDuration = 0.1;
 
+const int kFingeredScale = ScalesLength;
+
 Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 	, mInterface(this)
@@ -80,6 +82,10 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mActiveTone(0)
 {
 	TRACE;
+
+	// preallocate some space right now
+	mFingeredScale.reserve(32);
+	mFingeredNotes.reserve(32);
 
 	memset(mControlChangeForParam, 0, sizeof(mControlChangeForParam));
 	
@@ -192,11 +198,12 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	// scales
 	{
 		IParam* param = GetParam(kScale);
-		param->InitEnum("Scale", 1, ScalesLength);
+		param->InitEnum("Scale", 1, ScalesLength+1);
 		for (int i = 0; i < ScalesLength; ++i)
 		{
 			param->SetDisplayText(i, Scales[i]->name);
 		}
+		param->SetDisplayText(kFingeredScale, "Fingered");
 	}
 
 	// key (ie root note)
@@ -414,16 +421,40 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 				break;
 
 			case IMidiMsg::kNoteOn:
-				// -1 because MIDI note 0 is considered Octave -1.
-				GetParam(kOctave)->Set(pMsg->NoteNumber() / 12 - 1);
-				InformHostOfParamChange(kOctave, GetParam(kOctave)->GetNormalized());
-				OnParamChange(kOctave);
-				GetGUI()->SetParameterFromPlug(kOctave, GetParam(kOctave)->Value(), false);
+				// make sure this is a real NoteOn
+				if (pMsg->Velocity() > 0)
+				{
+					// push note on notes into our fingered scale, in case we need to use them
+					mFingeredScale.push_back(pMsg->NoteNumber());
 
-				GetParam(kKey)->Set(pMsg->NoteNumber() % 12);
-				InformHostOfParamChange(kKey, GetParam(kKey)->GetNormalized());
-				OnParamChange(kKey);
-				GetGUI()->SetParameterFromPlug(kKey, GetParam(kKey)->Value(), false);
+					// if we are not currently in Fingered scale mode, change Octave and Key
+					if (mScaleIdx != kFingeredScale)
+					{
+						// -1 because MIDI note 0 is considered Octave -1.
+						GetParam(kOctave)->Set(pMsg->NoteNumber() / 12 - 1);
+						InformHostOfParamChange(kOctave, GetParam(kOctave)->GetNormalized());
+						OnParamChange(kOctave);
+						GetGUI()->SetParameterFromPlug(kOctave, GetParam(kOctave)->Value(), false);
+
+						GetParam(kKey)->Set(pMsg->NoteNumber() % 12);
+						InformHostOfParamChange(kKey, GetParam(kKey)->GetNormalized());
+						OnParamChange(kKey);
+						GetGUI()->SetParameterFromPlug(kKey, GetParam(kKey)->Value(), false);
+					}
+					break;
+				}
+				// fallthru in the case that a NoteOn is supposed to be treated like a NoteOff
+
+			case IMidiMsg::kNoteOff:
+				// remove the first instance of this note we find in our scale
+				for (auto iter = mFingeredScale.begin(); iter != mFingeredScale.end(); ++iter)
+				{
+					if (*iter == pMsg->NoteNumber())
+					{
+						mFingeredScale.erase(iter);
+						break;
+					}
+				}
 				break;
 			}
 
@@ -468,7 +499,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			mInterface.OnTick(mTick, noteOn);
 			if (noteOn)
 			{
-				GenerateNote(mTick, mWaveFormIdx, Scales[mScaleIdx], mKeyIdx, mLowOctave, mHiOctave, mPreviousNote);
+				GenerateNote(mTick, mWaveFormIdx, mScaleIdx, mKeyIdx, mLowOctave, mHiOctave, mPreviousNote);
 			}
 		}
 
@@ -596,7 +627,7 @@ void Melodizer::ProcessMidiMsg(IMidiMsg* pMsg)
 #endif
 
 	const IMidiMsg::EStatusMsg status = pMsg->StatusMsg();
-	if (status == IMidiMsg::kControlChange || status == IMidiMsg::kNoteOn )
+	if (status == IMidiMsg::kControlChange || status == IMidiMsg::kNoteOn || status == IMidiMsg::kNoteOff )
 	{
 		if (status == IMidiMsg::kControlChange)
 		{
@@ -739,7 +770,11 @@ void Melodizer::Reset()
 	TRACE;
 	IMutexLock lock(this);
 
+	mMidiQueue.Clear();
 	mMidiQueue.Resize(GetBlockSize());
+
+	// clear the fingered scale because we might not get note offs?
+	mFingeredScale.clear();
 
 #if SA_API
 	for (int i = 0; i < kNumParams; ++i)
@@ -1070,62 +1105,110 @@ void Melodizer::HandleMidiControlChange(IMidiMsg* pMsg)
 
 void Melodizer::GenerateNote( int tick,
                           unsigned int waveformIdx, 
-                          const Scale* notes, 
+                          unsigned int scaleIdx,
                           unsigned int key, 
                           int lowOctave, 
                           int hiOctave,
                           unsigned int& previousNote
                          )
 {
-	// default to the root
-	int nextNote = 0;
-	// figure out next note
-	if ( previousNote != -1 )
-	{
-		int listLen = 0;
-		const int* nextNoteList = notes->notes[previousNote];
-		// look for the terminating 0 in this note list
-		while ( listLen < 12 && nextNoteList[listLen] > 0)
-		{
-			++listLen;
-		}
-		if (listLen > 0)
-		{
-			// we subtract one from the number in the list
-			// because notes stored with C = 1
-			nextNote = nextNoteList[RandomRange(0, listLen - 1)] - 1;
-		}
-		else // return to the root if for some reason we jumped to a scale degree with no next notes
-		{
-			nextNote = 0;
-		}
-	}
-	const int baseNote = nextNote + key;
-	const int octave = RandomRange(lowOctave, hiOctave-1);
-    const int note = baseNote + octave * 12;
-	const float pulseWidth = GetParam(kPulseWidth)->Value() / 100;
-	const float fromFreq = mTones[mActiveTone]->getFrequency();
-    const float toFreq 	= Frequency::ofMidiNote( note ).asHz();
-	const float glide   = GetParam(kGlide)->Value();
-	const float amp 	= GetParam(kVelocityFirst + tick)->Value() / 100;
-	const float fromPan = mTones[mActiveTone]->getPan();
-	const float toPan 	= GetParam(kPanFirst + tick)->Value() * GetParam(kWidth)->Value() / 100;
-	const float panDur = GetParam(kMovement)->Value();
-	const float attack  = GetParam(kEnvAttack)->Value()  * GetParam(kAttackFirst + tick)->Value() / 100;
-	const float decay   = GetParam(kEnvDecay)->Value()   * GetParam(kDecayFirst + tick)->Value() / 100;
-	const float sustain = GetParam(kEnvSustain)->Value() / 100 * GetParam(kSustainFirst + tick)->Value() / 100;
-	const float release = GetParam(kEnvRelease)->Value() * GetParam(kReleaseFirst + tick)->Value() / 100;
-	
-	// move to the next active tone
-	const int voices = GetParam(kVoices)->Int();
-	if ( voices > 1 )
-	{
-		mActiveTone = (mActiveTone+1)%voices;
-	}
-	mTones[mActiveTone]->setPulseWidth(pulseWidth);
-	mTones[mActiveTone]->noteOn(mWaveforms[waveformIdx], tick, fromFreq, toFreq, glide, amp, attack, decay, sustain, release, fromPan, toPan, panDur);
+	// the midi note to play, if it remains at -1 we don't play a note
+	int midiNote = -1;
 
-    previousNote = nextNote;    
+	// this is a special index meaning Fingered
+	if (scaleIdx == kFingeredScale)
+	{
+		// only play notes if we have some to choose from
+		if (!mFingeredScale.empty())
+		{
+			const int scaleLength = mFingeredScale.size();
+			if (scaleLength == 1)
+			{
+				midiNote = mFingeredScale[0];
+			}
+			// no previous note, any thing is fine
+			else if (previousNote == -1)
+			{
+				midiNote = mFingeredScale[RandomRange(0, scaleLength - 1)];
+			}
+			// build a list of all notes in the fingered scale that are not the one we just played
+			else
+			{
+				mFingeredNotes.clear();
+				for (int i = 0; i < scaleLength; ++i)
+				{
+					if (mFingeredScale[i] != previousNote)
+					{
+						mFingeredNotes.push_back(mFingeredScale[i]);
+					}
+				}
+				if (!mFingeredNotes.empty())
+				{
+					midiNote = mFingeredNotes[RandomRange(0, mFingeredNotes.size() - 1)];
+				}
+			}
+		}
+
+		previousNote = midiNote;
+	}
+	// not pulling from midi notes, pull from a pre-defined Scale
+	else if ( scaleIdx < ScalesLength )
+	{
+		// default to the root
+		int nextNote = 0;
+
+		if (previousNote != -1)
+		{
+			int listLen = 0;
+			const int* nextNoteList = Scales[scaleIdx]->notes[previousNote];
+			// look for the terminating 0 in this note list
+			while (listLen < 12 && nextNoteList[listLen] > 0)
+			{
+				++listLen;
+			}
+			if (listLen > 0)
+			{
+				// we subtract one from the number in the list
+				// because notes stored with C = 1
+				nextNote = nextNoteList[RandomRange(0, listLen - 1)] - 1;
+			}
+			else // return to the root if for some reason we jumped to a scale degree with no next notes
+			{
+				nextNote = 0;
+			}
+		}
+
+		const int baseNote = nextNote + key;
+		const int octave = RandomRange(lowOctave, hiOctave - 1);
+		midiNote = baseNote + octave * 12;
+
+		previousNote = nextNote;
+	}
+
+	if (midiNote != -1)
+	{
+		const float pulseWidth = GetParam(kPulseWidth)->Value() / 100;
+		const float fromFreq = mTones[mActiveTone]->getFrequency();
+		const float toFreq = Frequency::ofMidiNote(midiNote).asHz();
+		const float glide = GetParam(kGlide)->Value();
+		const float amp = GetParam(kVelocityFirst + tick)->Value() / 100;
+		const float fromPan = mTones[mActiveTone]->getPan();
+		const float toPan = GetParam(kPanFirst + tick)->Value() * GetParam(kWidth)->Value() / 100;
+		const float panDur = GetParam(kMovement)->Value();
+		const float attack = GetParam(kEnvAttack)->Value()  * GetParam(kAttackFirst + tick)->Value() / 100;
+		const float decay = GetParam(kEnvDecay)->Value()   * GetParam(kDecayFirst + tick)->Value() / 100;
+		const float sustain = GetParam(kEnvSustain)->Value() / 100 * GetParam(kSustainFirst + tick)->Value() / 100;
+		const float release = GetParam(kEnvRelease)->Value() * GetParam(kReleaseFirst + tick)->Value() / 100;
+
+		// move to the next active tone
+		const int voices = GetParam(kVoices)->Int();
+		if (voices > 1)
+		{
+			mActiveTone = (mActiveTone + 1) % voices;
+		}
+		mTones[mActiveTone]->setPulseWidth(pulseWidth);
+		mTones[mActiveTone]->noteOn(mWaveforms[waveformIdx], tick, fromFreq, toFreq, glide, amp, attack, decay, sustain, release, fromPan, toPan, panDur);
+	}
 }
 
 int Melodizer::RandomRange(int low, int hi)

@@ -58,7 +58,7 @@ public:
 private:
 	void MakePresets();
 	void InitRandomizerParam(const int paramIdx, const char * paramName);
-	void GenerateNote(int tick, unsigned int waveformIdx, const Scale* notes, unsigned int key, int lowOctave, int hiOctave, unsigned int& previousNoteIndex);
+	void GenerateNote(int tick, unsigned int waveformIdx, unsigned int scaleIdx, unsigned int key, int lowOctave, int hiOctave, unsigned int& previousNoteIndex);
 	int RandomRange(int low, int hi);
 	float RandomRange(float low, float hi);
 
@@ -108,6 +108,12 @@ private:
 
 	// random number generation for testing against probabilities and generating random numbers for tones, used by RandomRange methods
 	std::default_random_engine mRandomGen;
+
+	// all MIDI NoteOn notes we've received
+	std::vector<int> mFingeredScale;
+	// vector of notes we will choose from when picking a next note
+	// we store this as a member so we don't have to allocate a new one every time GenerateNote is called.
+	std::vector<int> mFingeredNotes;
 
 	Minim::Summer mMelodyBus;
 	Minim::Multiplier mMelodyVolume;
