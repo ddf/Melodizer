@@ -26,6 +26,9 @@ public:
 	// called by the plug when a preset is loaded or saved
 	void OnPresetChanged();
 
+	// called by the plug when the Scale changes to indicate if the UI should change to Fingered mode
+	void SetFingeredMode(bool enabled);
+
 private:	
 	IControl* AttachEnum(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label = nullptr);
 	IControl* AttachTextBox(IGraphics* pGraphics, IRECT rect, const int paramIdx, const float scrollSpeed, const char * maxValue, const char * label = nullptr);
@@ -38,6 +41,10 @@ private:
 	IControl* mPresetControl;
 	// we hold on to this so we can disable it when clock source is not Internal
 	IControl* mTempoControl;
+
+	IControl* mKeyControl;
+	IControl* mOctaveControl;
+	IControl* mRangeControl;
 
 	// bank of LED graphics above all the knobs
 	std::vector<LED*> mLEDs;

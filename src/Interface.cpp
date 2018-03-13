@@ -311,7 +311,11 @@ namespace Strings
 Interface::Interface(Melodizer* inPlug)
 	: mPlug(inPlug)
 	, mLEDs()
+	, mPresetControl(nullptr)
 	, mTempoControl(nullptr)
+	, mKeyControl(nullptr)
+	, mOctaveControl(nullptr)
+	, mRangeControl(nullptr)
 {
 }
 
@@ -461,7 +465,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		pGraphics->AttachControl(group);
 
 		IRECT rect = group->GetControlRect(MakeIRect(kKeyControl));
-		AttachEnum(pGraphics, rect, kKey, Strings::KeyLabel);
+		mKeyControl = AttachEnum(pGraphics, rect, kKey, Strings::KeyLabel);
 
 		int hoff = rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kScaleControl, hoff));
@@ -469,11 +473,11 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kOctaveControl, hoff));
-		AttachTextBox(pGraphics, rect, kOctave, 1.0f / (float)(kOctaveMax - kOctaveMin - 1), "00", Strings::OctaveLabel);
+		mOctaveControl = AttachTextBox(pGraphics, rect, kOctave, 1.0f / (float)(kOctaveMax - kOctaveMin - 1), "00", Strings::OctaveLabel);
 
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kRangeControl, hoff));
-		AttachTextBox(pGraphics, rect, kRange, 1.0f / (float)(kRangeMax - kRangeMin - 1), "00", Strings::RangeLabel);
+		mRangeControl = AttachTextBox(pGraphics, rect, kRange, 1.0f / (float)(kRangeMax - kRangeMin - 1), "00", Strings::RangeLabel);
 	}
 
 	// Presets section
@@ -632,5 +636,23 @@ void Interface::OnPresetChanged()
 	if (mPresetControl != nullptr)
 	{
 		mPresetControl->SetDirty(false);
+	}
+}
+
+void Interface::SetFingeredMode(bool enabled)
+{
+	if (mKeyControl != nullptr)
+	{
+		mKeyControl->GrayOut(enabled);
+	}
+
+	if (mOctaveControl != nullptr)
+	{
+		mOctaveControl->GrayOut(enabled);
+	}
+
+	if (mRangeControl != nullptr)
+	{
+		mRangeControl->GrayOut(enabled);
 	}
 }

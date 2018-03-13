@@ -35,14 +35,14 @@ bool EnumControl::Draw(IGraphics* pGraphics)
 	// buttons
 	IColor buttonColor = mText.mTextEntryFGColor;
 	const int value = mParamIdx < kNumParams ? GetParam()->Int() : mPlug->GetCurrentPresetIdx();
-	if (value == mMin)
+	if (value == mMin || IsGrayed())
 	{
 		buttonColor.R *= 0.5f; buttonColor.G *= 0.5f; buttonColor.B *= 0.5f;
 	}
 	pGraphics->FillTriangle(&buttonColor, mDecrementRect.L, mDecrementRect.MH(), mDecrementRect.R, mDecrementRect.T, mDecrementRect.R, mDecrementRect.B, 0);
 
 	buttonColor = mText.mTextEntryFGColor;
-	if (value == mMax)
+	if (value == mMax || IsGrayed())
 	{
 		buttonColor.R *= 0.5f; buttonColor.G *= 0.5f; buttonColor.B *= 0.5f;
 	}
@@ -69,6 +69,7 @@ bool EnumControl::Draw(IGraphics* pGraphics)
 	int offset = (mTextRect.H() - textRect.H()) / 2;
 	textRect.T += offset;
 	textRect.B += offset;
+	mText.mColor.A = IsGrayed() ? 128 : 255;
 	pGraphics->DrawIText(&mText, label, &textRect);
 
 	return true;

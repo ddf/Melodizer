@@ -1015,6 +1015,7 @@ void Melodizer::OnParamChange(int paramIdx)
 	case kScale:
 		mPreviousNote = -1;
 		mScaleIdx = GetParam(kScale)->Int();
+		mInterface.SetFingeredMode(mScaleIdx == kFingeredScale);
 		break;
 
 	case kSeed:
