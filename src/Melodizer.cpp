@@ -60,7 +60,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mBeatInc(0)
 	, mOddTick(false)
 	, mTick(0)
-	, mPreviousNoteIndex(0)
+	, mPreviousNote(-1)
 	, mCrossfadeDelays(false)
 	, mMelodyBus()
 	, mMelodyVolume(0)
@@ -468,7 +468,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			mInterface.OnTick(mTick, noteOn);
 			if (noteOn)
 			{
-				GenerateNote(mTick, mWaveFormIdx, Scales[mScaleIdx], mKeyIdx, mLowOctave, mHiOctave, mPreviousNoteIndex);
+				GenerateNote(mTick, mWaveFormIdx, Scales[mScaleIdx], mKeyIdx, mLowOctave, mHiOctave, mPreviousNote);
 			}
 		}
 
@@ -775,7 +775,7 @@ void Melodizer::Reset()
 void Melodizer::StopSequencer()
 {
 	mTick = -1;
-	mPreviousNoteIndex = 0;
+	mPreviousNote = -1;
 	mBeatTime = 0;
 	mOddTick = false;
 
@@ -978,7 +978,7 @@ void Melodizer::OnParamChange(int paramIdx)
 		break;
 
 	case kScale:
-		mPreviousNoteIndex = 0;
+		mPreviousNote = -1;
 		mScaleIdx = GetParam(kScale)->Int();
 		break;
 
@@ -999,7 +999,7 @@ void Melodizer::OnParamChange(int paramIdx)
 		// we want to have deterministic output,
 		// which means we should start from the beginning of the sequence.
 		mTick = -1;
-		mPreviousNoteIndex = 0;
+		mPreviousNote = -1;
 	}
 	break;
 	
@@ -1077,8 +1077,10 @@ void Melodizer::GenerateNote( int tick,
                           unsigned int& previousNote
                          )
 {
-	int nextNote = previousNote;
+	// default to the root
+	int nextNote = 0;
 	// figure out next note
+	if ( previousNote != -1 )
 	{
 		int listLen = 0;
 		const int* nextNoteList = notes->notes[previousNote];

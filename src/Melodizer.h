@@ -102,7 +102,7 @@ private:
 	bool mOddTick;
 	// the step in the sequence we are at
 	unsigned int mTick;
-	unsigned int mPreviousNoteIndex;
+	unsigned int mPreviousNote;
 	// true if we should crossfade between delays at the beginning of Process
 	bool mCrossfadeDelays;
 
