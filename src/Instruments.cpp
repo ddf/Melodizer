@@ -171,10 +171,11 @@ float Tone::Wave::value(const float at) const
 	return source->value(lu);
 }
 
-void Tone::noteOn( Waveform* waveform, int tick, float fromFreq, float toFreq, float glide, float amp, float attack, float decay, float sustain, float release, float fromPan, float toPan, float panDur )
+void Tone::noteOn( Waveform* waveform, int tick, float fromFreq, int toNote, float glide, float amp, float attack, float decay, float sustain, float release, float fromPan, float toPan, float panDur )
 {
 	wave->source = waveform;
-	frequency.activate(glide, fromFreq, toFreq);
+	midiNote = toNote;
+	frequency.activate(glide, fromFreq, Frequency::ofMidiNote(midiNote).asHz());
 	pan.activate(panDur, fromPan, toPan);
     tick = tick;
     

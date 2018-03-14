@@ -491,7 +491,13 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			((!mOddTick && mBeatTime >= 0 && mBeatTime < shuffle) || (mOddTick && mBeatTime >= shuffle))
 		)
 		{
-			mTones[mActiveTone]->noteOff();
+			if (mTones[mActiveTone]->isOn())
+			{
+				mTones[mActiveTone]->noteOff();
+				IMidiMsg msg;
+				msg.MakeNoteOffMsg(mTones[mActiveTone]->getMidiNote(), s);
+				SendMidiMsg(&msg);
+			}
 
 			// advance one tick
 			int nextTick = (mTick + 1) % kSequencerSteps;
@@ -524,7 +530,7 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			mInterface.OnTick(mTick, noteOn);
 			if (noteOn)
 			{
-				GenerateNote(mTick, mWaveFormIdx, mScaleIdx, mKeyIdx, mLowOctave, mHiOctave, mPreviousNote);
+				GenerateNote(mTick, mWaveFormIdx, mScaleIdx, mKeyIdx, mLowOctave, mHiOctave, mPreviousNote, s);
 			}
 		}
 
@@ -1147,7 +1153,8 @@ void Melodizer::GenerateNote( int tick,
                           unsigned int key, 
                           int lowOctave, 
                           int hiOctave,
-                          unsigned int& previousNote
+                          unsigned int& previousNoteIndex,
+                          int offset
                          )
 {
 	// the midi note to play, if it remains at -1 we don't play a note
@@ -1165,7 +1172,7 @@ void Melodizer::GenerateNote( int tick,
 				midiNote = mFingeredScale[0];
 			}
 			// no previous note, any thing is fine
-			else if (previousNote == -1)
+			else if (previousNoteIndex == -1)
 			{
 				midiNote = mFingeredScale[RandomRange(0, scaleLength - 1)];
 			}
@@ -1175,7 +1182,7 @@ void Melodizer::GenerateNote( int tick,
 				mFingeredNotes.clear();
 				for (int i = 0; i < scaleLength; ++i)
 				{
-					if (mFingeredScale[i] != previousNote)
+					if (mFingeredScale[i] != previousNoteIndex)
 					{
 						mFingeredNotes.push_back(mFingeredScale[i]);
 					}
@@ -1187,7 +1194,7 @@ void Melodizer::GenerateNote( int tick,
 			}
 		}
 
-		previousNote = midiNote;
+		previousNoteIndex = midiNote;
 	}
 	// not pulling from midi notes, pull from a pre-defined Scale
 	else if ( scaleIdx < ScalesLength )
@@ -1195,10 +1202,10 @@ void Melodizer::GenerateNote( int tick,
 		// default to the root
 		int nextNote = 0;
 
-		if (previousNote != -1)
+		if (previousNoteIndex != -1)
 		{
 			int listLen = 0;
-			const int* nextNoteList = Scales[scaleIdx]->notes[previousNote];
+			const int* nextNoteList = Scales[scaleIdx]->notes[previousNoteIndex];
 			// look for the terminating 0 in this note list
 			while (listLen < 12 && nextNoteList[listLen] > 0)
 			{
@@ -1220,14 +1227,13 @@ void Melodizer::GenerateNote( int tick,
 		const int octave = RandomRange(lowOctave, hiOctave - 1);
 		midiNote = baseNote + octave * 12;
 
-		previousNote = nextNote;
+		previousNoteIndex = nextNote;
 	}
 
 	if (midiNote != -1)
 	{
 		const float pulseWidth = GetParam(kPulseWidth)->Value() / 100;
 		const float fromFreq = mTones[mActiveTone]->getFrequency();
-		const float toFreq = Frequency::ofMidiNote(midiNote).asHz();
 		const float glide = GetParam(kGlide)->Value();
 		const float amp = GetParam(kVelocityFirst + tick)->Value() / 100;
 		const float fromPan = mTones[mActiveTone]->getPan();
@@ -1245,7 +1251,11 @@ void Melodizer::GenerateNote( int tick,
 			mActiveTone = (mActiveTone + 1) % voices;
 		}
 		mTones[mActiveTone]->setPulseWidth(pulseWidth);
-		mTones[mActiveTone]->noteOn(mWaveforms[waveformIdx], tick, fromFreq, toFreq, glide, amp, attack, decay, sustain, release, fromPan, toPan, panDur);
+		mTones[mActiveTone]->noteOn(mWaveforms[waveformIdx], tick, fromFreq, midiNote, glide, amp, attack, decay, sustain, release, fromPan, toPan, panDur);
+
+		IMidiMsg msg;
+		msg.MakeNoteOnMsg(midiNote, (int)(amp * 127), offset);
+		SendMidiMsg(&msg);
 	}
 }
 

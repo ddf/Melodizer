@@ -23,7 +23,7 @@ class ADSR : public UGen
 public:
 	ADSR(UGen& out);
 
-	bool isOn() const { return mState != kOff; }
+	bool isOn() const { return mState == kAttack || mState == kDecay || mState == kSustain; }
 
 	void noteOn(float amp, float attack, float decay, float sustain, float release);
 	void noteOff();
@@ -63,10 +63,12 @@ public:
 	
 	void setPulseWidth(float pw);
        
-	void noteOn(Waveform* waveform, int tick, float fromFreq, float toFreq, float glide, float amp, float attack, float decay, float sustain, float release, float fromPan, float toPan, float panDur);
+	void noteOn(Waveform* waveform, int tick, float fromFreq, int toNote, float glide, float amp, float attack, float decay, float sustain, float release, float fromPan, float toPan, float panDur);
 	void noteOff();
 
+	bool isOn() const { return adsr.isOn(); }
     int  getTick() const { return tick; }
+	int  getMidiNote() const { return midiNote; }
 	float getFrequency() const { return oscil.frequency.getLastValue(); }
 	float getPan() const { return panner.pan.getLastValue(); }
     
@@ -99,6 +101,7 @@ private:
     Pan			panner;
 	Line		pan;
     int			tick;
+	int			midiNote;
 };
 
 #endif
