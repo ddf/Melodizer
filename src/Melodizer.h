@@ -87,6 +87,11 @@ private:
 	unsigned int mKeyIdx;
 	unsigned int mLowOctave;
 	unsigned int mHiOctave;
+
+	// keep track of the previous value of our randomizer params
+	// so that we can behave correctly under automation.
+	// (ie we should only randomize when the value changes from 0 to 1)
+	bool		 mRandomizers[8];
 	
 	// will be true if we automatically entered play mode in Reset
 	bool mAutoPlayed;

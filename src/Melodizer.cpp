@@ -88,6 +88,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	mFingeredNotes.reserve(32);
 
 	memset(mControlChangeForParam, 0, sizeof(mControlChangeForParam));
+	memset(mRandomizers, 0, sizeof(mRandomizers));
 	
 	// setup dsp chain
 	{
@@ -360,6 +361,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	}
 
 	// randomizers
+	InitRandomizerParam(kStepModeRandomize, "Randomize Step Modes");
 	InitRandomizerParam(kProbabilityRandomize, "Randomize Probabilities");
 	InitRandomizerParam(kPanRandomize, "Randomize Pans");
 	InitRandomizerParam(kVelocityRandomize, "Randomize Velocities");
@@ -821,6 +823,9 @@ void Melodizer::Reset()
 	}
 #endif
 
+	// clear these in case automation sets one to true when we play.
+	memset(mRandomizers, 0, sizeof(mRandomizers));
+
 	// reseed the random generator
 	OnParamChange(kSeed);
 
@@ -1113,6 +1118,7 @@ void Melodizer::OnParamChange(int paramIdx)
 	}
 	break;
 
+	case kStepModeRandomize:
 	case kProbabilityRandomize:
 	case kPanRandomize:
 	case kVelocityRandomize:
@@ -1120,7 +1126,11 @@ void Melodizer::OnParamChange(int paramIdx)
 	case kDecayRandomize:
 	case kSustainRandomize:
 	case kReleaseRandomize:
-		if (param->Int() == 1)
+	{
+		// translate paramIdx to a [0,8) index for our bool array
+		const int idx = (paramIdx - kStepModeRandomize) / (kProbabilityRandomize - kStepModeRandomize);
+		const bool paramVal = param->Bool();
+		if (mRandomizers[idx] == 0 && paramVal)
 		{
 			std::uniform_real_distribution<> dist(0, 1);
 			for (int i = 0; i < kSequencerSteps; ++i)
@@ -1134,7 +1144,9 @@ void Melodizer::OnParamChange(int paramIdx)
 				EndInformHostOfParamChange(pidx);
 			}
 		}
-		break;
+		mRandomizers[idx] = paramVal;
+	}
+	break;
 
 	default:
 		break;
