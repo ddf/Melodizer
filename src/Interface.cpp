@@ -21,6 +21,11 @@ enum ELayout
 	kLargeKnobSize = 30,
 	kSmallKnobSize = 20,
 
+	kPlugTitle_W = 200,
+	kPlugTitle_H = 15,
+	kPlugTitle_X = GUI_WIDTH - 10 - kPlugTitle_W,
+	kPlugTitle_Y = 5,
+
 	kPresetRestoreControl_X = 10,
 	kPresetRestoreControl_Y = 10,
 	kPresetRestoreControl_W = 205,
@@ -79,7 +84,7 @@ enum ELayout
 
 	kEffectsGroup_X = kEnvGroup_X + kEnvGroup_W + 10,
 	kEffectsGroup_Y = kEnvGroup_Y,
-	kEffectsGroup_W = 370,
+	kEffectsGroup_W = 385,
 	kEffectsGroup_H = kOscGroup_H,
 
 	kDelayDurationControl_X = 0,
@@ -98,7 +103,7 @@ enum ELayout
 	kDelayMixControl_H = kLargeKnobSize,
 
 	// flanger controls are just a bunch of knobs, so we only need one rect
-	kFlangerControl_X = 10,
+	kFlangerControl_X = 25,
 	kFlangerControl_Y = 15,
 	kFlangerControl_W = kLargeKnobSize,
 	kFlangerControl_H = kLargeKnobSize,
@@ -238,6 +243,8 @@ namespace Color
 
 	const IColor GroupOutline = KnobLine;
 	const IColor GroupLabel = Background;
+
+	const IColor Title = LedOff;
 }
 
 namespace TextStyles
@@ -256,6 +263,7 @@ namespace TextStyles
 	char * LabelFont = "Helvetica Neue";
 #endif
 	// can't be const because of stupid ITextControl constructor
+	IText  Title(LabelTextSize+8, &Color::Title, LabelFont, IText::kStyleBold, IText::kAlignFar);
 	IText  Label(LabelTextSize, &Color::Label, LabelFont, IText::kStyleBold, IText::kAlignCenter);
 	IText  GroupLabel(LabelTextSize, &Color::GroupLabel, LabelFont, IText::kStyleBold, IText::kAlignNear);
 	IText  Enum(ControlTextSize, &Color::Label, ControlFont, IText::kStyleNormal, IText::kAlignCenter, 0, IText::kQualityDefault, &Color::EnumBackground, &Color::EnumBorder);
@@ -267,6 +275,7 @@ namespace TextStyles
 
 namespace Strings
 {
+	const char * Title = PLUG_NAME " " VST3_VER_STR;
 	const char * OscLabel = "Oscil";
 	const char * EnvLabel = "Envelope";
 	const char * EffectsLabel = "Effects";
@@ -328,6 +337,8 @@ Interface::~Interface()
 void Interface::CreateControls(IGraphics* pGraphics)
 {
 	pGraphics->AttachPanelBackground(&Color::Background);
+
+	pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kPlugTitle), &TextStyles::Title, Strings::Title));
 
 	// Osc section
 	{
