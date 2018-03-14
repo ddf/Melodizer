@@ -69,6 +69,16 @@ void ADSR::noteOff()
 	}
 }
 
+void ADSR::stop()
+{
+	mState = kOff;
+	mAmp = 0;
+	if (isPatched())
+	{
+		unpatch(mOut);
+	}
+}
+
 void ADSR::uGenerate(float * channels, const int numChannels)
 {
 	// when we are off, our amplitude should be zero, so we start with that and don't bother handling that case
@@ -188,4 +198,9 @@ void Tone::noteOff()
 	{
 		adsr.noteOff();
 	}
+}
+
+void Tone::stop()
+{
+	adsr.stop();
 }

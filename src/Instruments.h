@@ -27,6 +27,9 @@ public:
 
 	void noteOn(float amp, float attack, float decay, float sustain, float release);
 	void noteOff();
+	
+	// jump right to the Off state and set mAmp to 0. unpatch if patched.
+	void stop();
 
 	UGenInput audio;
 
@@ -65,6 +68,9 @@ public:
        
 	void noteOn(Waveform* waveform, int tick, float fromFreq, int toNote, float glide, float amp, float attack, float decay, float sustain, float release, float fromPan, float toPan, float panDur);
 	void noteOff();
+
+	// this is a hard-stop that will totally silence the note
+	void stop();
 
 	bool isOn() const { return adsr.isOn(); }
     int  getTick() const { return tick; }

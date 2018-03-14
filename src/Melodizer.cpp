@@ -861,8 +861,12 @@ void Melodizer::StopSequencer()
 	mActiveTone = 0;
 	for (int i = 0; i < mTones.size(); ++i)
 	{
-		mTones[i]->noteOff();
+		mTones[i]->stop();
 	}
+
+	mDelayA.reset();
+	mDelayB.reset();
+	mFlanger.reset();
 }
 
 #ifndef SA_API
