@@ -862,6 +862,10 @@ void Melodizer::StopSequencer()
 	for (int i = 0; i < mTones.size(); ++i)
 	{
 		mTones[i]->stop();
+		// send note off!
+		IMidiMsg msg;
+		msg.MakeNoteOffMsg(mTones[i]->getMidiNote(), 0);
+		SendMidiMsg(&msg);
 	}
 
 	mDelayA.reset();
@@ -1285,6 +1289,9 @@ void Melodizer::ChangePlayState(PlayState toState)
 	else if ( toState == PS_Pause )
 	{
 		mTones[mActiveTone]->noteOff();
+		IMidiMsg msg;
+		msg.MakeNoteOffMsg(mTones[mActiveTone]->getMidiNote(), 0);
+		SendMidiMsg(&msg);
 	}
 	mPlayState = toState;
 }

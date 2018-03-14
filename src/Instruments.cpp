@@ -155,6 +155,7 @@ Tone::Tone( Summer& inSummer )
 , panner( 0 )
 , pan(0,0,0)
 , adsr(inSummer)
+, midiNote(0)
 {
 	frequency.patch( oscil.frequency );
 	pan.patch(panner.pan);
