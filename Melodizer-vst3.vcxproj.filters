@@ -109,6 +109,7 @@
     </ClCompile>
     <ClCompile Include="src\Instruments.cpp" />
     <ClCompile Include="src\Scales.cpp" />
+    <ClCompile Include="src\Presets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />

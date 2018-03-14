@@ -193,12 +193,13 @@ void Melodizer::MakePresets()
 		, 129, 84.415056 // Step 15 Decay
 	);
 
-	MakePresetFromNamedParams("meandering steel drum", 62
+	MakePresetFromNamedParams("meandering steel drum", 63
 		, 0, 0 // Waveform
 		, 1, 44.283333 // Pulse Width
 		, 5, 0.221125 // Decay
 		, 6, 49.748743 // Sustain
 		, 7, 0.832750 // Release
+		, 9, -8.999999 // Volume
 		, 10, 30.833333 // Width
 		, 13, 100.000000 // Tempo
 		, 14, 7 // Step Length
@@ -265,7 +266,7 @@ void Melodizer::MakePresets()
 		, 5, 0.221125 // Decay
 		, 6, 48.082079 // Sustain
 		, 7, 4.246000 // Release
-		, 9, -5.999999 // Volume
+		, 9, -8.999999 // Volume
 		, 13, 130.236216 // Tempo
 		, 18, 9 // Scale
 		, 19, 3 // Octave
@@ -474,7 +475,7 @@ void Melodizer::MakePresets()
 		, 5, 0.186213 // Decay
 		, 6, 10.000000 // Sustain
 		, 7, 0.213125 // Release
-		, 9, -5.999999 // Volume
+		, 9, -8.999999 // Volume
 		, 13, 132.000003 // Tempo
 		, 14, 7 // Step Length
 		, 17, 2 // Key
@@ -652,7 +653,7 @@ void Melodizer::MakePresets()
 	);
 
 
-	MakePresetFromNamedParams("fjords of canada", 49
+	MakePresetFromNamedParams("fjords of canada", 50
 		, 0, 0 // Waveform
 		, 1, 49.591667 // Pulse Width
 		, 3, 2.000000 // Movement
@@ -660,6 +661,7 @@ void Melodizer::MakePresets()
 		, 5, 2.000000 // Decay
 		, 6, 70.833333 // Sustain
 		, 7, 4.204375 // Release
+		, 9, -19.999999 // Volume
 		, 13, 60.000000 // Tempo
 		, 19, 3 // Octave
 		, 20, 2 // Range
@@ -704,13 +706,14 @@ void Melodizer::MakePresets()
 		, 146, 87.160677 // Step 15 Sustain
 	);
 
-	MakePresetFromNamedParams("deep sea signals", 64
+	MakePresetFromNamedParams("deep sea signals", 65
 		, 0, 7 // Waveform
 		, 2, 2.000000 // Glide
 		, 4, 0.586875 // Attack
 		, 5, 0.171250 // Decay
 		, 6, 7.500000 // Sustain
 		, 7, 0.499750 // Release
+		, 9, -8.999999 // Volume
 		, 13, 50.000000 // Tempo
 		, 18, 7 // Scale
 		, 19, -1 // Octave
@@ -771,13 +774,14 @@ void Melodizer::MakePresets()
 		, 146, 9.007126 // Step 15 Sustain
 	);
 
-	MakePresetFromNamedParams("swirling chord texture", 24
+	MakePresetFromNamedParams("swirling chord texture", 25
 		, 0, 0 // Waveform
 		, 1, 14.883333 // Pulse Width
 		, 3, 0.216667 // Movement
 		, 4, 0.453875 // Attack
 		, 5, 0.902750 // Decay
 		, 6, 25.833333 // Sustain
+		, 9, -19.999999 // Volume
 		, 14, 7 // Step Length
 		, 19, 3 // Octave
 		, 20, 2 // Range
