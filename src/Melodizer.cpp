@@ -547,10 +547,16 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		*out1 = result[0];
 		*out2 = result[1];
 
-		mBeatTime += mBeatInc;
-		while(mBeatTime >= 1)
+		// don't step time if we are using an internal clock
+		// and we are not playing. this can cause jenky timing 
+		// when entering Play after Stop or when unpausing.
+		if (mPlayState == PS_Play || GetParam(kClockSource)->Int() == CS_External)
 		{
-			mBeatTime -= 1;
+			mBeatTime += mBeatInc;
+			while (mBeatTime >= 1)
+			{
+				mBeatTime -= 1;
+			}
 		}
 	}
 
@@ -810,6 +816,12 @@ void Melodizer::Reset()
 
 	// reseed the random generator
 	OnParamChange(kSeed);
+
+	// since Reset will be called after sample rate changes,
+	// we clear the tempo here and call OnParamChange(kTempo)
+	// to recalcuate the beat increment
+	mTempo = 0;
+	OnParamChange(kTempo);
 
 	// initialize the sequencer
 	StopSequencer();
