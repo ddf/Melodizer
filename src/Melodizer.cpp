@@ -142,22 +142,22 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 			{
 			case WT_Sine:
 				param->SetDisplayText(i, "SIN");
-				mWaveforms[i] = Waves::SINE();
+				mWaveforms[i] = Waves::SINE(kWaveformLength);
 				break;
 			
 			case WT_Triangle:
 				param->SetDisplayText(i, "TRI");
-				mWaveforms[i] = Waves::TRIANGLE();
+				mWaveforms[i] = Waves::TRIANGLE(kWaveformLength);
 				break;
 			
 			case WT_Saw:
 				param->SetDisplayText(i, "SAW");
-				mWaveforms[i] = Waves::SAW();
+				mWaveforms[i] = Waves::SAW(kWaveformLength);
 				break;
 			
 			case WT_Square:
 				param->SetDisplayText(i, "SQR");
-				mWaveforms[i] = Waves::SQUARE();
+				mWaveforms[i] = Waves::SQUARE(kWaveformLength);
 				break;
 			
 			case WT_Sine4:
