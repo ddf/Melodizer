@@ -4,6 +4,10 @@
 
 enum EParamSettings
 {
+	// these are in dB
+	kVolumeMin = -48,
+	kVolumeMax = 6,
+
 	kTempoMin = 2,
 	kTempoMax = 960,
 	

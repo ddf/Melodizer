@@ -208,7 +208,8 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	{
 		GetParam(kPulseWidth)->InitDouble("Pulse Width", 50, 1, 50, kPercentStep, kPercentLabel);
 		GetParam(kVoices)->InitInt("Max Voices", 16, kVoicesMin, kVoicesMax);
-		GetParam(kVolume)->InitDouble("Volume", -6, -48, 6, 0.1, "db");
+		GetParam(kVolume)->InitDouble("Volume", -6, kVolumeMin, kVolumeMax, 0.1, "db");
+		GetParam(kVolume)->SetDisplayText(kVolumeMin, "-inf");
 		GetParam(kWidth)->InitDouble("Width", 100, 0, 100, kPercentStep, kPercentLabel);
 		GetParam(kGlide)->InitDouble("Glide", 0, 0, 2, kSecondsStep, kSecondsLabel);
 		GetParam(kMovement)->InitDouble("Movement", 0, 0, 2, kSecondsStep, kSecondsLabel);
@@ -897,7 +898,7 @@ void Melodizer::OnParamChange(int paramIdx)
 	{
 	case kVolume:
 	{
-		const float volume = GetParam(kVolume)->DBToAmp();
+		const float volume = GetParam(kVolume)->Value() > kVolumeMin + 0.001f ? GetParam(kVolume)->DBToAmp() : 0.0;
 		mMelodyVolumeLine.activate(0.001f, mMelodyVolume.amplitude.getLastValue(), volume);
 	}
 	break;
