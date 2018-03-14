@@ -119,8 +119,8 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	// setup Waveforms
 	{
 		const unsigned int kWaveformLength = 8192;
-		// seed the random gen with 0 so we always get the same harmonics
-		mRandomGen.seed(0);
+		// seed the random gen with a constant so we always get the same harmonics.
+		mRandomGen.seed(0x081679);
 		std::uniform_real_distribution<> dist(-0.5f, 0.5f);
 		// generate 32 harmonic amplitudes that will be used to generate some of our waveforms.
 		float harmonics[32];
@@ -143,36 +143,61 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 				param->SetDisplayText(i, "SIN");
 				mWaveforms[i] = Waves::SINE();
 				break;
+			
 			case WT_Triangle:
 				param->SetDisplayText(i, "TRI");
 				mWaveforms[i] = Waves::TRIANGLE();
 				break;
+			
 			case WT_Saw:
 				param->SetDisplayText(i, "SAW");
 				mWaveforms[i] = Waves::SAW();
 				break;
+			
 			case WT_Square:
 				param->SetDisplayText(i, "SQR");
 				mWaveforms[i] = Waves::SQUARE();
 				break;
+			
 			case WT_Sine4:
+			{
 				param->SetDisplayText(i, "SIN4");
-				mWaveforms[i] = Waves::gen10(kWaveformLength, harmonics, 4);
-				break;
+				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 4);
+				table->normalize();
+				mWaveforms[i] = table;
+			}
+			break;
+			
 			case WT_Sine8:
+			{
 				param->SetDisplayText(i, "SIN8");
-				mWaveforms[i] = Waves::gen10(kWaveformLength, harmonics, 8);
-				break;
+				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 8);
+				table->normalize();
+				mWaveforms[i] = table;
+			}
+			break;
+
 			case WT_Sine16:
+			{
 				param->SetDisplayText(i, "SIN16");
-				mWaveforms[i] = Waves::gen10(kWaveformLength, harmonics, 16);
-				break;
+				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 16);
+				table->normalize();
+				mWaveforms[i] = table;
+			}
+			break;
+			
 			case WT_Sine32:
+			{
 				param->SetDisplayText(i, "SIN32");
-				mWaveforms[i] = Waves::gen10(kWaveformLength, harmonics, 32);
-				break;
+				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 32);
+				table->normalize();
+				mWaveforms[i] = table;
+			}
+			break;
+			
 			case WT_Count:
 				break;
+			
 			default:
 				break;
 			}
