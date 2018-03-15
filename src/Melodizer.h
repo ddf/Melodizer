@@ -54,6 +54,7 @@ public:
 
   virtual void ProcessMidiMsg(IMidiMsg* pMsg) override;
   virtual void ProcessSysEx(ISysEx* pSysEx) override;
+  virtual bool HostRequestingAboutBox() override;
 
 private:
 	void MakePresets();

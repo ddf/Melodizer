@@ -12,6 +12,8 @@
 
 #if SA_API
 extern char * gINIPath;
+
+static const char * kAboutBoxText = "Version " VST3_VER_STR "\nCreated by Damien Quartz\nBuilt on " __DATE__;
 #endif
 
 using namespace Minim;
@@ -803,6 +805,22 @@ void Melodizer::ProcessSysEx(ISysEx* pSysEx)
 		case ISysEx::kStop: SetPlayStateFromMidi(PS_Stop); break;
 		}
 	}
+}
+
+bool Melodizer::HostRequestingAboutBox()
+{
+#if SA_API
+#ifdef OS_WIN
+	GetGUI()->ShowMessageBox(kAboutBoxText, BUNDLE_NAME, MB_OK);
+#else
+	// sadly, on osx, ShowMessageBox uses an alert style box that does not show the app icon,
+	// which is different from the default About window that is shown.
+	// *that* code uses swell's MessageBox, so we use that directly on mac.
+	MessageBox(0, kAboutBoxText, BUNDLE_NAME, MB_OK);
+#endif
+	return true;
+#endif
+	return false;
 }
 
 void Melodizer::Reset()
