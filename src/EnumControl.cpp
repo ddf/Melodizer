@@ -108,6 +108,7 @@ void EnumControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 				if (GetGUI()->CreateIPopupMenu(&menu, &mRECT))
 				{
 					mPlug->RestorePreset(menu.GetChosenItemIdx());
+					SetDirty(false);
 				}
 			}
 		}
