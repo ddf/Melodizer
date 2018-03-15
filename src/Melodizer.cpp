@@ -425,6 +425,8 @@ void Melodizer::InitRandomizerParam(const int paramIdx, const char *paramName)
 	GetParam(paramIdx)->InitEnum(paramName, 0, 2);
 	GetParam(paramIdx)->SetDisplayText(0, "Off");
 	GetParam(paramIdx)->SetDisplayText(1, "On");
+	// these are meta-parameters because they can change th values of other parameters
+	GetParam(paramIdx)->SetIsMeta(true);
 }
 
 void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
