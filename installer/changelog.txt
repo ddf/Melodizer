@@ -1,4 +1,4 @@
 Melodizer changelog
-www.olilarkin.co.uk
+https://damikyu.itch.io/melodizer
 
-00/00/00 - v1.00 initial release
+03/16/18 - v1.0.0 initial release

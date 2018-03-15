@@ -30,12 +30,19 @@ def main():
       
   
   FullVersionStr = MajorStr + "." + MinorStr + "." + BugfixStr
-  
+ 
   today = datetime.date.today()
-  CFBundleGetInfoString = FullVersionStr + ", Copyright compartmental, " + str(today.year)
+  CFBundleGetInfoString = FullVersionStr + ", Copyright Damien Quartz, " + str(today.year)
   CFBundleVersion = FullVersionStr
   
   print "update_version.py - setting version to " + FullVersionStr
+
+  print "updating version.txt"
+
+  version = open("version.txt", "w")
+  version.write(FullVersionStr)
+  version.close()
+
   print "Updating plist version info..."
   
   plistpath = scriptpath + "/resources/Melodizer-VST2-Info.plist"
@@ -70,22 +77,22 @@ def main():
   plistlib.writePlist(app, plistpath)
   replacestrs(plistpath, "//Apple//", "//Apple Computer//");
   
-  plistpath = scriptpath + "/resources/Melodizer-RTAS-Info.plist"
-  rtas = plistlib.readPlist(plistpath)
-  rtas['CFBundleGetInfoString'] = CFBundleGetInfoString
-  rtas['CFBundleVersion'] = CFBundleVersion
-  rtas['CFBundleShortVersionString'] = CFBundleVersion
-  plistlib.writePlist(rtas, plistpath)
-  replacestrs(plistpath, "//Apple//", "//Apple Computer//");
+#  plistpath = scriptpath + "/resources/Melodizer-RTAS-Info.plist"
+#  rtas = plistlib.readPlist(plistpath)
+#  rtas['CFBundleGetInfoString'] = CFBundleGetInfoString
+#  rtas['CFBundleVersion'] = CFBundleVersion
+#  rtas['CFBundleShortVersionString'] = CFBundleVersion
+#  plistlib.writePlist(rtas, plistpath)
+#  replacestrs(plistpath, "//Apple//", "//Apple Computer//");
   
-  plistpath = scriptpath + "/resources/Melodizer-AAX-Info.plist"
-  aax = plistlib.readPlist(plistpath)
-  aax['CFBundleGetInfoString'] = CFBundleGetInfoString
-  aax['CFBundleVersion'] = CFBundleVersion
-  aax['CFBundleShortVersionString'] = CFBundleVersion
-  plistlib.writePlist(aax, plistpath)
-  replacestrs(plistpath, "//Apple//", "//Apple Computer//");
-  
+#  plistpath = scriptpath + "/resources/Melodizer-AAX-Info.plist"
+#  aax = plistlib.readPlist(plistpath)
+#  aax['CFBundleGetInfoString'] = CFBundleGetInfoString
+#  aax['CFBundleVersion'] = CFBundleVersion
+#  aax['CFBundleShortVersionString'] = CFBundleVersion
+#  plistlib.writePlist(aax, plistpath)
+#  replacestrs(plistpath, "//Apple//", "//Apple Computer//");
+
 #   plistpath = scriptpath + "/resources/Melodizer-IOSAPP-Info.plist"
 #   iosapp = plistlib.readPlist(plistpath)
 #   iosapp['CFBundleGetInfoString'] = CFBundleGetInfoString
@@ -99,7 +106,7 @@ def main():
   plistpath = scriptpath + "/installer/Melodizer.pkgproj"
   installer = plistlib.readPlist(plistpath)
   
-  for x in range(0,6):
+  for x in range(0,4):
     installer['PACKAGES'][x]['PACKAGE_SETTINGS']['VERSION'] = FullVersionStr
   
   plistlib.writePlist(installer, plistpath)
