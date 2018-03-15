@@ -48,6 +48,8 @@ const double kDelayCrossfadeDuration = 0.1;
 
 const int kFingeredScale = ScalesLength;
 
+const IMidiMsg::EControlChangeMsg kUnmappedParam = (IMidiMsg::EControlChangeMsg)128;
+
 Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 	, mInterface(this)
@@ -89,7 +91,26 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	mFingeredScale.reserve(32);
 	mFingeredNotes.reserve(32);
 
-	memset(mControlChangeForParam, 0, sizeof(mControlChangeForParam));
+	// set all control change mappings to unmapped.
+	for(int i = 0; i < kNumParams; ++i)
+	{
+		mControlChangeForParam[i] = kUnmappedParam;
+	}
+	
+	// create default mappings for all the sequencer knobs in the standalone
+#if SA_API
+	for(int i = 0; i < kSequencerSteps; ++i)
+	{
+		SetControlChangeForParam((IMidiMsg::EControlChangeMsg)i, kProbabilityFirst+i);
+		SetControlChangeForParam((IMidiMsg::EControlChangeMsg)(i+kSequencerSteps), kPanFirst+i);
+		SetControlChangeForParam((IMidiMsg::EControlChangeMsg)(i+kSequencerSteps*2), kVelocityFirst+i);
+		SetControlChangeForParam((IMidiMsg::EControlChangeMsg)(i+kSequencerSteps*3), kAttackFirst+i);
+		SetControlChangeForParam((IMidiMsg::EControlChangeMsg)(i+kSequencerSteps*4), kDecayFirst+i);
+		SetControlChangeForParam((IMidiMsg::EControlChangeMsg)(i+kSequencerSteps*5), kSustainFirst+i);
+		SetControlChangeForParam((IMidiMsg::EControlChangeMsg)(i+kSequencerSteps*6), kReleaseFirst+i);
+	}
+#endif
+	
 	memset(mRandomizers, 0, sizeof(mRandomizers));
 	
 	// setup dsp chain
@@ -596,7 +617,7 @@ void Melodizer::BeginMIDILearn(int paramIdx1, int paramIdx2, int x, int y)
 		if (paramIdx1 != -1)
 		{
 			str.SetFormatted(64, "MIDI Learn: %s", GetParam(paramIdx1)->GetNameForHost());
-			int flags = mControlChangeForParam[paramIdx1] ? IPopupMenuItem::kChecked : IPopupMenuItem::kNoFlags;
+			int flags = mControlChangeForParam[paramIdx1] != kUnmappedParam ? IPopupMenuItem::kChecked : IPopupMenuItem::kNoFlags;
 			menu.AddItem(str.Get(), -1, flags);
 		}
 		if (paramIdx2 != -1)
@@ -612,7 +633,7 @@ void Melodizer::BeginMIDILearn(int paramIdx1, int paramIdx2, int x, int y)
 			{
 				if (menu.GetItem(chosen)->GetChecked())
 				{
-					SetControlChangeForParam((IMidiMsg::EControlChangeMsg)0, paramIdx1);
+					SetControlChangeForParam(kUnmappedParam, paramIdx1);
 				}
 				else
 				{
@@ -623,7 +644,7 @@ void Melodizer::BeginMIDILearn(int paramIdx1, int paramIdx2, int x, int y)
 			{
 				if (menu.GetItem(chosen)->GetChecked())
 				{
-					SetControlChangeForParam((IMidiMsg::EControlChangeMsg)0, paramIdx2);
+					SetControlChangeForParam(kUnmappedParam, paramIdx2);
 				}
 				else
 				{
@@ -689,9 +710,16 @@ void Melodizer::SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, c
 {
 	mControlChangeForParam[paramIdx] = cc;
 #if SA_API
-	char ccString[100];
-	sprintf(ccString, "%u", (unsigned)cc);
-	WritePrivateProfileString(kMidiControlIni, GetParam(paramIdx)->GetNameForHost(), ccString, gINIPath);
+	if ( cc == kUnmappedParam )
+	{
+		WritePrivateProfileString(kMidiControlIni, GetParam(paramIdx)->GetNameForHost(), 0, gINIPath);
+	}
+	else
+	{
+		char ccString[100];
+		sprintf(ccString, "%u", (unsigned)cc);
+		WritePrivateProfileString(kMidiControlIni, GetParam(paramIdx)->GetNameForHost(), ccString, gINIPath);
+	}
 #endif
 }
 
@@ -834,10 +862,14 @@ void Melodizer::Reset()
 	// clear the fingered scale because we might not get note offs?
 	mFingeredScale.clear();
 
+	// read control mappings from the INI if we are running standalone
 #if SA_API
 	for (int i = 0; i < kNumParams; ++i)
 	{
-		mControlChangeForParam[i] = (IMidiMsg::EControlChangeMsg)GetPrivateProfileInt(kMidiControlIni, GetParam(i)->GetNameForHost(), 0, gINIPath);
+		int defaultMapping = (int)mControlChangeForParam[i];
+		mControlChangeForParam[i] = (IMidiMsg::EControlChangeMsg)GetPrivateProfileInt(kMidiControlIni, GetParam(i)->GetNameForHost(), defaultMapping, gINIPath);
+		
+		BroadcastParamChange(i);
 	}
 #endif
 
@@ -924,7 +956,7 @@ void Melodizer::OnParamChange(int paramIdx)
 {
 	IMutexLock lock(this);
 
-	const IParam* param = GetParam(paramIdx);
+	IParam* param = GetParam(paramIdx);
 	switch (paramIdx)
 	{
 	case kVolume:
@@ -1160,6 +1192,7 @@ void Melodizer::OnParamChange(int paramIdx)
 				GetGUI()->SetParameterFromPlug(pidx, normValue, true);
 				InformHostOfParamChange(pidx, normValue);
 				EndInformHostOfParamChange(pidx);
+				BroadcastParamChange(pidx);
 			}
 		}
 		mRandomizers[idx] = paramVal;
@@ -1169,6 +1202,8 @@ void Melodizer::OnParamChange(int paramIdx)
 	default:
 		break;
 	}
+	
+	BroadcastParamChange(paramIdx);
 }
 
 void Melodizer::HandleMidiControlChange(IMidiMsg* pMsg)
@@ -1390,5 +1425,17 @@ void Melodizer::DumpPresetSrc()
 	}
 	fprintf(fp, "\n\t);\n");
 	fclose(fp);
+}
+
+void Melodizer::BroadcastParamChange(const int paramIdx)
+{
+	// send MIDI CC messages with current param values for any mapped params,
+	// which should enable some control surfaces to keep indicators in sync with the UI.
+	if ( mControlChangeForParam[paramIdx] != kUnmappedParam )
+	{
+		IMidiMsg msg;
+		msg.MakeControlChangeMsg(mControlChangeForParam[paramIdx], GetParam(paramIdx)->GetNormalized(), 0);
+		SendMidiMsg(&msg);
+	}
 }
 
