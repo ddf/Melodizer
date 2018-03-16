@@ -79,6 +79,15 @@ private:
 
 	Interface mInterface;
 
+	// in plugins we have to check Host play state every Process
+	// in order to keep track of when it enters and exits play mode.
+	// this allows us to reliably have auto-play and stop behavior
+#ifndef SA_API
+	bool mHostIsPlaying;
+	// will be true if we automatically entered play mode in Reset
+	bool mAutoPlayed;
+#endif
+
 	IMidiQueue mMidiQueue;
 	IMidiMsg::EControlChangeMsg mControlChangeForParam[kNumParams];
 	int mMidiLearnParamIdx;
@@ -98,9 +107,6 @@ private:
 	// so that we can behave correctly under automation.
 	// (ie we should only randomize when the value changes from 0 to 1)
 	bool		 mRandomizers[8];
-	
-	// will be true if we automatically entered play mode in Reset
-	bool mAutoPlayed;
 
 	// where are we in a "beat", which is two steps in the sequencer.
 	// this is [0,1]

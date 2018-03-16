@@ -56,7 +56,6 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mMidiLearnParamIdx(-1)
 	, mTempo(DEFAULT_TEMPO)
 	, mPlayState(PS_Stop)
-	, mAutoPlayed(false)
 	, mWaveFormIdx(0)
 	, mScaleIdx(0)
 	, mKeyIdx(0)
@@ -70,10 +69,10 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mCrossfadeDelays(false)
 	, mMelodyBus()
 	, mMelodyVolume(0)
-	, mMelodyVolumeLine(0,0,0)
+	, mMelodyVolumeLine(0, 0, 0)
 	, mDelayA(kDelayDurationMaxSeconds, 0.5f, true)
 	, mDelayB(kDelayDurationMaxSeconds, 0.5f, true)
-	, mDelayCrossfade(0,0,0)
+	, mDelayCrossfade(0, 0, 0)
 	, mDelayFeedback(0, 0.5f, 0.5f)
 	, mDelayDryMix(0, 1, 1)
 	, mDelayWetMix(0, 0, 0)
@@ -84,6 +83,10 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	, mRandomGen(0)
 	, mTones(kVoicesMax)
 	, mActiveTone(0)
+#ifndef SA_API
+	, mHostIsPlaying(false)
+	, mAutoPlayed(false)
+#endif
 {
 	TRACE;
 
@@ -442,18 +445,25 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		mCrossfadeDelays = false;
 	}
 	
-	// see if we should exit play mode automatically when the Host does
-	if ( mAutoPlayed )
+#ifndef SA_API
+	ITimeInfo time;
+	GetTime(&time);
+	const bool bHostIsPlaying = time.mTransportIsRunning || IsRenderingOffline();
+	if (!mHostIsPlaying && bHostIsPlaying)
 	{
-		ITimeInfo time;
-		GetTime(&time);
-		if (!time.mTransportIsRunning && !IsRenderingOffline())
-		{
-			ChangePlayState(PS_Stop);
-			GetGUI()->SetParameterFromPlug(kPlayState, PS_Stop, false);
-			mAutoPlayed = false;
-		}
+		ChangePlayState(PS_Play);
+		GetGUI()->SetParameterFromPlug(kPlayState, PS_Play, false);
+		mAutoPlayed = true;
 	}
+	// see if we should exit play mode automatically when the Host does
+	else if ( mAutoPlayed && !bHostIsPlaying )
+	{
+		ChangePlayState(PS_Stop);
+		GetGUI()->SetParameterFromPlug(kPlayState, PS_Stop, false);
+		mAutoPlayed = false;
+	}
+	mHostIsPlaying = bHostIsPlaying;
+#endif
 
 	// Mutex is already locked for us.
 	double* out1 = outputs[0];
@@ -890,16 +900,10 @@ void Melodizer::Reset()
 	// initialize the sequencer
 	StopSequencer();
 	
-	// in a plugin we should automatically enter Play Mode if the Host is playing
+	// reset autoplay related state
 #ifndef SA_API
-	ITimeInfo time;
-	GetTime(&time);
-	if ( time.mTransportIsRunning || IsRenderingOffline() )
-	{
-		ChangePlayState(PS_Play);
-		GetGUI()->SetParameterFromPlug(kPlayState, PS_Play, false);
-		mAutoPlayed = true;
-	}
+	mHostIsPlaying = false;
+	mAutoPlayed = false;
 #endif
 
 	mMelodyVolume.setAudioChannelCount(2);
