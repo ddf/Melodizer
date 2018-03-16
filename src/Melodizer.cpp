@@ -150,8 +150,9 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		mRandomGen.seed(0x081679);
 		std::uniform_real_distribution<> dist(-0.5f, 0.5f);
 		// generate 32 harmonic amplitudes that will be used to generate some of our waveforms.
-		float harmonics[32];
-		for (int i = 0; i < 32; ++i)
+		float harmonics[33];
+		harmonics[0] = 1.0;
+		for (int i = 1; i < 33; ++i)
 		{
 			harmonics[i] = dist(mRandomGen);
 		}
@@ -189,7 +190,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 			case WT_Sine4:
 			{
 				param->SetDisplayText(i, "SIN4");
-				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 4);
+				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 5);
 				table->normalize();
 				mWaveforms[i] = table;
 			}
@@ -198,7 +199,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 			case WT_Sine8:
 			{
 				param->SetDisplayText(i, "SIN8");
-				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 8);
+				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 9);
 				table->normalize();
 				mWaveforms[i] = table;
 			}
@@ -207,7 +208,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 			case WT_Sine16:
 			{
 				param->SetDisplayText(i, "SIN16");
-				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 16);
+				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 17);
 				table->normalize();
 				mWaveforms[i] = table;
 			}
@@ -216,7 +217,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 			case WT_Sine32:
 			{
 				param->SetDisplayText(i, "SIN32");
-				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 32);
+				Wavetable* table = Waves::gen10(kWaveformLength, harmonics, 33);
 				table->normalize();
 				mWaveforms[i] = table;
 			}
