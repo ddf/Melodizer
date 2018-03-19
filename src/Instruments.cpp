@@ -186,7 +186,15 @@ void Tone::noteOn( Waveform* waveform, int tick, float fromFreq, int toNote, flo
 {
 	wave->source = waveform;
 	midiNote = toNote;
-	frequency.activate(glide, fromFreq, Frequency::ofMidiNote(midiNote).asHz());
+	const float toFreq = Frequency::ofMidiNote(midiNote).asHz();
+	if (fromFreq == 0)
+	{
+		frequency.activate(0, toFreq, toFreq);
+	}
+	else
+	{
+		frequency.activate(glide, fromFreq, toFreq);
+	}
 	pan.activate(panDur, fromPan, toPan);
     tick = tick;
     
@@ -204,4 +212,9 @@ void Tone::noteOff()
 void Tone::stop()
 {
 	adsr.stop();
+	// reset frequency and pan so that Glide and Move behave as expected when Playing from Stopped state
+	frequency.activate(0, 0, 0);
+	oscil.frequency.setLastValue(0);
+	pan.activate(0, 0, 0);
+	panner.pan.setLastValue(0);
 }
