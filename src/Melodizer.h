@@ -17,7 +17,6 @@
 #include "IMidiQueue.h"
 
 class Tone;
-class Scale;
 
 namespace Minim
 {
