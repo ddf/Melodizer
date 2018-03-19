@@ -25,14 +25,22 @@ public:
 	void OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMod) override;
 	void OnMouseUp(int x, int y, IMouseMod* pMod) override;
 
-	void SetLabelControl(ITextControl* control);
+	void OnMouseOver(int x, int y, IMouseMod* pMod) override;
+	void OnMouseOut() override;	
+
+	void SetLabelControl(ITextControl* control, bool bShared = false);
 
 private:
+	void ShowLabel();
+	void HideLabel();
+	
+	float		  mCX, mCY;
+	bool		  mHasMouse;
 	IColor        mCoronaColor;
 	IChannelBlend mCoronaBlend;
 	ITextControl* mLabelControl;
 	WDL_String	  mLabelString;
-	bool		  mLabelHidden;
+	bool		  mSharedLabel;
 };
 
 #endif /* Controls_h */

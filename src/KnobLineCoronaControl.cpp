@@ -10,27 +10,33 @@ KnobLineCoronaControl::KnobLineCoronaControl(IPlugBase* pPlug, IRECT pR, int par
 											 double minAngle, double maxAngle,
 											 EDirection direction, double gearing)
 : IKnobLineControl(pPlug, pR, paramIdx, pColor, innerRadius, outerRadius, minAngle, maxAngle, direction, gearing)
+, mCX(mRECT.MW())
+, mCY(mRECT.MH())
 , mCoronaColor(*pCoronaColor)
 , mCoronaBlend(IChannelBlend::kBlendAdd, coronaThickness)
 , mLabelControl(nullptr)
-, mLabelHidden(false)
+, mSharedLabel(false)
+, mHasMouse(false)
 {
 }
 
 bool KnobLineCoronaControl::Draw(IGraphics* pGraphics)
 {
-	float cx = mRECT.MW(), cy = mRECT.MH();
 	float v = mMinAngle + (float)mValue * (mMaxAngle - mMinAngle);
 	for (int i = 0; i <= mCoronaBlend.mWeight; ++i)
 	{
 		IColor color = mCoronaColor;
-		pGraphics->DrawArc(&color, cx, cy, mOuterRadius - i, mMinAngle, v, nullptr, true);
+		pGraphics->DrawArc(&color, mCX, mCY, mOuterRadius - i, mMinAngle, v, nullptr, true);
 		color.R /= 2;
 		color.G /= 2;
 		color.B /= 2;
-		pGraphics->DrawArc(&color, cx, cy, mOuterRadius - i, v, mMaxAngle, nullptr, true);
+		pGraphics->DrawArc(&color, mCX, mCY, mOuterRadius - i, v, mMaxAngle, nullptr, true);
 	}
-	return IKnobLineControl::Draw(pGraphics);
+	float sinV = (float)sin(v);
+	float cosV = (float)cos(v);
+	float x1 = mCX + mInnerRadius * sinV, y1 = mCY - mInnerRadius * cosV;
+	float x2 = mCX + mOuterRadius * sinV, y2 = mCY - mOuterRadius * cosV;
+	return pGraphics->DrawLine(&mColor, x1, y1, x2, y2, &mBlend, true);
 }
 
 void KnobLineCoronaControl::OnMouseDown(int x, int y, IMouseMod* pMod)
@@ -43,20 +49,9 @@ void KnobLineCoronaControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 			plug->BeginMIDILearn(mParamIdx, -1, x, y);
 		}
 	}
-	else if ( mLabelControl != nullptr )
+	else
 	{
-		// if our label was hidden when we attached it, 
-		// that means we should reposition it below the knob before displaying it.
-		if (mLabelHidden)
-		{
-			IRECT targetRect = mRECT.GetPadded(-15, mRECT.H()-2, 15, 20);
-			IRECT& labelRect = *mLabelControl->GetRECT();
-			labelRect = targetRect;
-			mLabelControl->SetTargetArea(targetRect);
-			mLabelControl->Hide(false);
-		}
-		SetValDisplayControl(mLabelControl);
-		SetDirty();
+		mHasMouse = true;
 	}
 }
 
@@ -82,31 +77,78 @@ void KnobLineCoronaControl::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod*
 
 void KnobLineCoronaControl::OnMouseUp(int x, int y, IMouseMod* pMod)
 {
+	if (!mRECT.Contains(x, y))
+	{
+		HideLabel();
+	}
+
+	mHasMouse = false;
+}
+
+void KnobLineCoronaControl::OnMouseOver(int x, int y, IMouseMod* pMod)
+{
+	ShowLabel();
+}
+
+void KnobLineCoronaControl::OnMouseOut()
+{
+	if (!mHasMouse)
+	{
+		HideLabel();
+	}
+}
+
+void KnobLineCoronaControl::ShowLabel()
+{
+	if (mLabelControl != nullptr)
+	{
+		// if our label was hidden when we attached it, 
+		// that means we should reposition it below the knob before displaying it.
+		if (mSharedLabel)
+		{
+			IRECT targetRect = mRECT;
+			targetRect.T = targetRect.B - 16;
+			IRECT& labelRect = *mLabelControl->GetRECT();
+			labelRect = targetRect;
+			mLabelControl->SetTargetArea(targetRect);
+		}
+		SetValDisplayControl(mLabelControl);
+		SetDirty();
+	}
+}
+
+void KnobLineCoronaControl::HideLabel()
+{
 	SetValDisplayControl(nullptr);
 	if (mLabelControl != nullptr)
 	{
 		mLabelControl->SetTextFromPlug(mLabelString.Get());
-		if (mLabelHidden)
-		{
-			mLabelControl->Hide(true);
-		}
+		SetDirty(false);
 	}
 }
 
-void KnobLineCoronaControl::SetLabelControl(ITextControl* control)
+void KnobLineCoronaControl::SetLabelControl(ITextControl* control, bool bShared)
 {
 	mLabelControl = control;
+	mSharedLabel = bShared;
 	if (mLabelControl != nullptr)
 	{
 		mLabelString.Set(mLabelControl->GetTextForPlug());
-		mLabelHidden = mLabelControl->IsHidden();
 	}
 	else
 	{
 		mLabelString.Set("");
-		mLabelHidden = false;
+		mSharedLabel = false;
 	}
-	
+
+	// if our label control is shared, extend our rect to include where we will place the label when showing it.
+	// this ensures that the area the label draws in will be cleared when the labels is moved elsewhere.
+	if (mSharedLabel)
+	{
+		mRECT.L -= 15;
+		mRECT.R += 15;
+		mRECT.B += 15;
+	}
 }
 
 #pragma  endregion KnobLineCoronaControl

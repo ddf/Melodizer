@@ -337,6 +337,8 @@ Interface::~Interface()
 
 void Interface::CreateControls(IGraphics* pGraphics)
 {
+	pGraphics->HandleMouseOver(true);
+
 	pGraphics->AttachPanelBackground(&Color::Background);
 
 	pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kPlugTitle), &TextStyles::Title, Strings::Title));
@@ -510,8 +512,6 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		pGraphics->AttachControl(group);
 
 		mSequenceKnobValueControl = new ITextControl(mPlug, MakeIRect(kStepKnobLabel), &TextStyles::Label, "");
-		mSequenceKnobValueControl->Hide(true);
-		pGraphics->AttachControl(mSequenceKnobValueControl);
 
 		mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
 
@@ -536,26 +536,29 @@ void Interface::CreateControls(IGraphics* pGraphics)
 			pGraphics->AttachControl(led);
 			// probability
 			knob = AttachKnob(pGraphics, MakeIRectHOffset(kStepKnob, hoffset), kProbabilityFirst + i);
-			knob->SetLabelControl(mSequenceKnobValueControl);
+			knob->SetLabelControl(mSequenceKnobValueControl, true);
 			// pan
 			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 1), kPanFirst + i);
-			knob->SetLabelControl(mSequenceKnobValueControl);
+			knob->SetLabelControl(mSequenceKnobValueControl, true);
 			// velocity
 			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 2), kVelocityFirst + i);
-			knob->SetLabelControl(mSequenceKnobValueControl);
+			knob->SetLabelControl(mSequenceKnobValueControl, true);
 			// attack
 			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 3), kAttackFirst + i);
-			knob->SetLabelControl(mSequenceKnobValueControl);
+			knob->SetLabelControl(mSequenceKnobValueControl, true);
 			// decay
 			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 4), kDecayFirst + i);
-			knob->SetLabelControl(mSequenceKnobValueControl);
+			knob->SetLabelControl(mSequenceKnobValueControl, true);
 			// sustain
 			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 5), kSustainFirst + i);
-			knob->SetLabelControl(mSequenceKnobValueControl);
+			knob->SetLabelControl(mSequenceKnobValueControl, true);
 			// release
 			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 6), kReleaseFirst + i);
-			knob->SetLabelControl(mSequenceKnobValueControl);
+			knob->SetLabelControl(mSequenceKnobValueControl, true);
 		}
+
+		// attach last so it draws on top of the knobs
+		pGraphics->AttachControl(mSequenceKnobValueControl);
 	}
 
 	AttachStepRowLabel(pGraphics, 0, Strings::ProbabilityLabel);
