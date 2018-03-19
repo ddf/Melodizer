@@ -13,6 +13,7 @@ KnobLineCoronaControl::KnobLineCoronaControl(IPlugBase* pPlug, IRECT pR, int par
 , mCoronaColor(*pCoronaColor)
 , mCoronaBlend(IChannelBlend::kBlendAdd, coronaThickness)
 , mLabelControl(nullptr)
+, mLabelHidden(false)
 {
 }
 
@@ -44,6 +45,16 @@ void KnobLineCoronaControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 	}
 	else if ( mLabelControl != nullptr )
 	{
+		// if our label was hidden when we attached it, 
+		// that means we should reposition it below the knob before displaying it.
+		if (mLabelHidden)
+		{
+			IRECT targetRect = mRECT.GetPadded(-15, mRECT.H()-2, 15, 20);
+			IRECT& labelRect = *mLabelControl->GetRECT();
+			labelRect = targetRect;
+			mLabelControl->SetTargetArea(targetRect);
+			mLabelControl->Hide(false);
+		}
 		SetValDisplayControl(mLabelControl);
 		SetDirty();
 	}
@@ -75,7 +86,27 @@ void KnobLineCoronaControl::OnMouseUp(int x, int y, IMouseMod* pMod)
 	if (mLabelControl != nullptr)
 	{
 		mLabelControl->SetTextFromPlug(mLabelString.Get());
+		if (mLabelHidden)
+		{
+			mLabelControl->Hide(true);
+		}
 	}
+}
+
+void KnobLineCoronaControl::SetLabelControl(ITextControl* control)
+{
+	mLabelControl = control;
+	if (mLabelControl != nullptr)
+	{
+		mLabelString.Set(mLabelControl->GetTextForPlug());
+		mLabelHidden = mLabelControl->IsHidden();
+	}
+	else
+	{
+		mLabelString.Set("");
+		mLabelHidden = false;
+	}
+	
 }
 
 #pragma  endregion KnobLineCoronaControl

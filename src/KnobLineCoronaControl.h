@@ -25,13 +25,14 @@ public:
 	void OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMod) override;
 	void OnMouseUp(int x, int y, IMouseMod* pMod) override;
 
-	void SetLabelControl(ITextControl* control) { mLabelControl = control; mLabelString.Set(mLabelControl->GetTextForPlug()); }
+	void SetLabelControl(ITextControl* control);
 
 private:
 	IColor        mCoronaColor;
 	IChannelBlend mCoronaBlend;
 	ITextControl* mLabelControl;
 	WDL_String	  mLabelString;
+	bool		  mLabelHidden;
 };
 
 #endif /* Controls_h */

@@ -322,6 +322,7 @@ namespace Strings
 Interface::Interface(Melodizer* inPlug)
 	: mPlug(inPlug)
 	, mLEDs()
+	, mSequenceKnobValueControl(nullptr)
 	, mPresetControl(nullptr)
 	, mTempoControl(nullptr)
 	, mKeyControl(nullptr)
@@ -508,9 +509,14 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		ControlGroup* group = new ControlGroup(mPlug, MakeIRect(kSequenceGroup), &Color::GroupOutline, &TextStyles::GroupLabel, Strings::SequenceLabel);
 		pGraphics->AttachControl(group);
 
+		mSequenceKnobValueControl = new ITextControl(mPlug, MakeIRect(kStepKnobLabel), &TextStyles::Label, "");
+		mSequenceKnobValueControl->Hide(true);
+		pGraphics->AttachControl(mSequenceKnobValueControl);
+
 		mLEDs.reserve(kProbabilityLast - kProbabilityFirst + 1);
 
 		// all them knobs
+		KnobLineCoronaControl* knob;
 		for (int i = 0; i < kSequencerSteps; ++i)
 		{
 			const int hoffset = kStepKnobColumnSpacing*i;
@@ -529,19 +535,26 @@ void Interface::CreateControls(IGraphics* pGraphics)
 			mNoteOns.push_back(led);
 			pGraphics->AttachControl(led);
 			// probability
-			AttachKnob(pGraphics, MakeIRectHOffset(kStepKnob, hoffset), kProbabilityFirst + i);
+			knob = AttachKnob(pGraphics, MakeIRectHOffset(kStepKnob, hoffset), kProbabilityFirst + i);
+			knob->SetLabelControl(mSequenceKnobValueControl);
 			// pan
-			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 1), kPanFirst + i);
+			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 1), kPanFirst + i);
+			knob->SetLabelControl(mSequenceKnobValueControl);
 			// velocity
-			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 2), kVelocityFirst + i);
+			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 2), kVelocityFirst + i);
+			knob->SetLabelControl(mSequenceKnobValueControl);
 			// attack
-			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 3), kAttackFirst + i);
+			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 3), kAttackFirst + i);
+			knob->SetLabelControl(mSequenceKnobValueControl);
 			// decay
-			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 4), kDecayFirst + i);
+			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 4), kDecayFirst + i);
+			knob->SetLabelControl(mSequenceKnobValueControl);
 			// sustain
-			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 5), kSustainFirst + i);
+			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 5), kSustainFirst + i);
+			knob->SetLabelControl(mSequenceKnobValueControl);
 			// release
-			AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 6), kReleaseFirst + i);
+			knob = AttachKnob(pGraphics, MakeIRectHVOffset(kStepKnob, hoffset, kStepKnobRowSpacing * 6), kReleaseFirst + i);
+			knob->SetLabelControl(mSequenceKnobValueControl);
 		}
 	}
 
@@ -609,7 +622,7 @@ IControl* Interface::AttachTextBox(IGraphics* pGraphics, IRECT rect, const int p
 	return control;
 }
 
-void Interface::AttachKnob(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label)
+KnobLineCoronaControl* Interface::AttachKnob(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label /*= nullptr*/)
 {
 	KnobLineCoronaControl* knob = new KnobLineCoronaControl(mPlug, rect, paramIdx, &Color::KnobLine, &Color::KnobCorona);
 	pGraphics->AttachControl(knob);
@@ -624,6 +637,8 @@ void Interface::AttachKnob(IGraphics* pGraphics, IRECT rect, const int paramIdx,
 		pGraphics->AttachControl(labelControl);
 		knob->SetLabelControl(labelControl);
 	}
+
+	return knob;
 }
 
 void Interface::OnTick(const unsigned int tick, bool noteOn)
