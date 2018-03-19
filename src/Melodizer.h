@@ -73,9 +73,6 @@ private:
 	void SetDelayDuration(const double tempo, const double crossfade);
 	// helper to send Midi Messages when a midi-mapped parameter changes
 	void BroadcastParamChange(const int paramIdx);
-	// helper for sending CC messages that might make lights blink on a connected device
-	void BroadcastNoteOn(const int tick);
-	void BroadcastNoteOff(const int tick);
 
 	Interface mInterface;
 
