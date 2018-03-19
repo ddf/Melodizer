@@ -59,6 +59,7 @@ private:
 	void MakePresets();
 	void InitRandomizerParam(const int paramIdx, const char * paramName);
 	void GenerateNote(int tick, unsigned int waveformIdx, unsigned int scaleIdx, unsigned int key, int lowOctave, int hiOctave, unsigned int& previousNoteIndex, int offset);
+	void Reseed();
 	int RandomRange(int low, int hi);
 	float RandomRange(float low, float hi);
 

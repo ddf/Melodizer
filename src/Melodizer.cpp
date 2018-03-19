@@ -889,9 +889,6 @@ void Melodizer::Reset()
 	// clear these in case automation sets one to true when we play.
 	memset(mRandomizers, 0, sizeof(mRandomizers));
 
-	// reseed the random generator
-	OnParamChange(kSeed);
-
 	// since Reset will be called after sample rate changes,
 	// we clear the tempo here and call OnParamChange(kTempo)
 	// to recalcuate the beat increment
@@ -1134,22 +1131,8 @@ void Melodizer::OnParamChange(int paramIdx)
 
 	case kSeed:
 	{
-		// when Seed is zero, we use a random seed, other wise we seed with the param
-		const int seedParam = GetParam(kSeed)->Int();
-		if (seedParam == 0)
-		{
-			std::random_device rd;
-			mRandomGen.seed(rd());
-		}
-		else
-		{
-			mRandomGen.seed(seedParam);
-		}
+		Reseed();
 
-		// we want to have deterministic output,
-		// which means we should start from the beginning of the sequence.
-		mTick = -1;
-		mPreviousNote = -1;
 	}
 	break;
 	
@@ -1211,6 +1194,21 @@ void Melodizer::OnParamChange(int paramIdx)
 	}
 	
 	BroadcastParamChange(paramIdx);
+}
+
+void Melodizer::Reseed()
+{
+	// when Seed is zero, we use a random seed, other wise we seed with the param
+	const int seedParam = GetParam(kSeed)->Int();
+	if (seedParam == 0)
+	{
+		std::random_device rd;
+		mRandomGen.seed(rd());
+	}
+	else
+	{
+		mRandomGen.seed(seedParam);
+	}
 }
 
 void Melodizer::HandleMidiControlChange(IMidiMsg* pMsg)
@@ -1354,17 +1352,34 @@ float Melodizer::RandomRange(float low, float hi)
 
 void Melodizer::ChangePlayState(PlayState toState)
 {
-	if (toState == PS_Stop)
+	switch (toState)
 	{
+	case PS_Stop:
 		StopSequencer();
-	}
-	else if ( toState == PS_Pause )
+		break;
+
+	case PS_Pause:
 	{
 		mTones[mActiveTone]->noteOff();
 		IMidiMsg msg;
 		msg.MakeNoteOffMsg(mTones[mActiveTone]->getMidiNote(), 0);
 		SendMidiMsg(&msg);
 	}
+	break;
+
+	case PS_Play:
+		// when we start playing from a Stopped play state.
+		// we reseed the random number generator to ensure deterministic output.
+		if (mPlayState == PS_Stop)
+		{
+			Reseed();
+		}
+		break;
+
+	default:
+		break;
+	}
+
 	mPlayState = toState;
 }
 
