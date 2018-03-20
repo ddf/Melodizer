@@ -644,14 +644,30 @@ void Melodizer::BeginMIDILearn(int paramIdx1, int paramIdx2, int x, int y)
 		WDL_String str;
 		if (paramIdx1 != -1)
 		{
-			str.SetFormatted(64, "MIDI Learn: %s", GetParam(paramIdx1)->GetNameForHost());
-			int flags = mControlChangeForParam[paramIdx1] != kUnmappedParam ? IPopupMenuItem::kChecked : IPopupMenuItem::kNoFlags;
+			bool isMapped = mControlChangeForParam[paramIdx1] != kUnmappedParam;
+			int flags = isMapped ? IPopupMenuItem::kChecked : IPopupMenuItem::kNoFlags;
+			if (isMapped)
+			{
+				str.SetFormatted(64, "MIDI Learn: %s (CC %d)", GetParam(paramIdx1)->GetNameForHost(), (int)mControlChangeForParam[paramIdx1]);
+			}
+			else
+			{
+				str.SetFormatted(64, "MIDI Learn: %s", GetParam(paramIdx1)->GetNameForHost());
+			}
 			menu.AddItem(str.Get(), -1, flags);
 		}
 		if (paramIdx2 != -1)
 		{
-			str.SetFormatted(64, "MIDI Learn: %s", GetParam(paramIdx2)->GetNameForHost());
-			int flags = mControlChangeForParam[paramIdx2] ? IPopupMenuItem::kChecked : IPopupMenuItem::kNoFlags;
+			bool isMapped = mControlChangeForParam[paramIdx2] != kUnmappedParam;
+			int flags = isMapped ? IPopupMenuItem::kChecked : IPopupMenuItem::kNoFlags;
+			if (isMapped)
+			{
+				str.SetFormatted(64, "MIDI Learn: %s (CC %d)", GetParam(paramIdx2)->GetNameForHost(), (int)mControlChangeForParam[paramIdx2]);
+			}
+			else
+			{
+				str.SetFormatted(64, "MIDI Learn: %s", GetParam(paramIdx2)->GetNameForHost());
+			}			
 			menu.AddItem(str.Get(), -1, flags);
 		}
 		if (GetGUI()->CreateIPopupMenu(&menu, x, y))
