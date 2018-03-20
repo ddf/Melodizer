@@ -328,11 +328,22 @@ Interface::Interface(Melodizer* inPlug)
 	, mKeyControl(nullptr)
 	, mOctaveControl(nullptr)
 	, mRangeControl(nullptr)
+	, mPlayStateControl(nullptr)
 {
 }
 
 Interface::~Interface()
 {
+	mPlug = nullptr;
+	mLEDs.clear();
+	mSequenceKnobValueControl = nullptr;
+	mPresetControl = nullptr;
+	mTempoControl = nullptr;
+	mKeyControl = nullptr;
+	mKeyControl = nullptr;
+	mOctaveControl = nullptr;
+	mRangeControl = nullptr;
+	mPlayStateControl = nullptr;
 }
 
 void Interface::CreateControls(IGraphics* pGraphics)
@@ -472,7 +483,8 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		
 		hoff += rect.W() + 10;
 		rect = group->GetControlRect(MakeIRectHOffset(kPlayStateControl, hoff));
-		pGraphics->AttachControl(new PlayStateControl(mPlug, rect, Color::LedOff, Color::LedOn));
+		mPlayStateControl = new PlayStateControl(mPlug, rect, Color::LedOff, Color::LedOn);
+		pGraphics->AttachControl(mPlayStateControl);
 	}
 
 	// Pitch section
@@ -593,6 +605,14 @@ void Interface::AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, const 
 {
 	IRECT rect = MakeIRectVOffset(kStepRandomize, kStepKnobRowSpacing*rowNum);
 	pGraphics->AttachControl(new BangControl(mPlug, rect, param, Color::BangActive, Color::BangBackground, &TextStyles::RandLabel, Strings::RandomizeLabel));
+}
+
+void Interface::OnPlayStateChanged()
+{
+	if (mPlayStateControl != nullptr)
+	{
+		mPlayStateControl->SetDirty();
+	}
 }
 
 IControl* Interface::AttachEnum(IGraphics* pGraphics, IRECT rect, const int paramIdx, const char * label /*= nullptr*/)

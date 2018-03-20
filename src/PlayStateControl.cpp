@@ -1,7 +1,8 @@
 #include "PlayStateControl.h"
+#include "Melodizer.h"
 
 PlayStateControl::PlayStateControl(IPlugBase* pPlug, IRECT rect, const IColor& backgroundColor, const IColor& foregroundColor)
-: IControl(pPlug, rect, kPlayState)
+: IControl(pPlug, rect)
 , mBack(backgroundColor)
 , mFore(foregroundColor)
 {
@@ -11,14 +12,24 @@ PlayStateControl::PlayStateControl(IPlugBase* pPlug, IRECT rect, const IColor& b
 	mStopRect = rect.SubRectHorizontal(3, 2);
 }
 
-PlayState PlayStateControl::GetPlayState()
+PlayState PlayStateControl::GetPlayState() const
 {
-	return (PlayState)((int)GetParam()->GetNonNormalized(mValue));
+	const Melodizer* plug = static_cast<const Melodizer*>(mPlug);
+	if (plug != nullptr)
+	{
+		return plug->GetPlayState();
+	}
+
+	return PS_Stop;
 }
 
 void PlayStateControl::SetPlayState(PlayState state)
 {
-	SetValueFromUserInput(GetParam()->GetNormalized(state));
+	Melodizer* plug = static_cast<Melodizer*>(mPlug);
+	if (plug != nullptr)
+	{
+		plug->ChangePlayState(state);
+	}
 }
 
 bool PlayStateControl::Draw(IGraphics* pGraphics)

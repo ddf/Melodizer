@@ -28,6 +28,9 @@ public:
 	// called by the plug when a preset is loaded or saved
 	void OnPresetChanged();
 
+	// called by the plug whenever its play state changes
+	void OnPlayStateChanged();
+
 	// called by the plug when the Scale changes to indicate if the UI should change to Fingered mode
 	void SetFingeredMode(bool enabled);
 
@@ -38,7 +41,7 @@ private:
 	void AttachStepRowLabel(IGraphics* pGraphics, int rowNum, const char * name);
 	void AttachStepRowRandomizer(IGraphics* pGraphics, int rowNum, const int param);
 
-	Melodizer* const mPlug;
+	Melodizer* mPlug;
 
 	// control that is displayed under knobs in the sequence section while they are being manipulated by the mouse
 	ITextControl* mSequenceKnobValueControl;
@@ -51,9 +54,10 @@ private:
 	IControl* mOctaveControl;
 	IControl* mRangeControl;
 
+	IControl* mPlayStateControl;
+
 	// bank of LED graphics above all the knobs
 	std::vector<LED*> mLEDs;
 	std::vector<LED*> mNoteOns;	
-	
 };
 

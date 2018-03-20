@@ -30,14 +30,6 @@ public:
   ~Melodizer();
 
   void Reset() override;
-
-  // we override this method in plugins so that we can know when
-  // a user is trying to change play state from the UI.
-  // this is because we ignore parameter changes in OnParamChanged
-  // if the Host is not in play mode.
-#ifndef SA_API
-  void SetParameterFromGUI(int idx, double normalizedValue) override;
-#endif
 	
   void OnParamChange(int paramIdx) override;
   void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames) override;
@@ -50,10 +42,16 @@ public:
   void HandleSave(WDL_String* fileName);
   void HandleLoad(WDL_String* fileName);
 
+  // can be called directly by the UI transport control
+  void ChangePlayState(PlayState toState);
+  PlayState GetPlayState() const { return mPlayState; }
+
 
   virtual void ProcessMidiMsg(IMidiMsg* pMsg) override;
   virtual void ProcessSysEx(ISysEx* pSysEx) override;
   virtual bool HostRequestingAboutBox() override;
+  // called when the Host restores a preset, we want to stop in that case
+  virtual void PresetsChangedByHost() override { ChangePlayState(PS_Stop);  }
 
 private:
 	void MakePresets();
@@ -64,8 +62,7 @@ private:
 	float RandomRange(float low, float hi);
 
 	void StopSequencer();
-	void ChangePlayState(PlayState toState);
-	void SetPlayStateFromMidi(PlayState state);
+	
 	void HandleMidiControlChange(IMidiMsg* pMsg);
 	void SetControlChangeForParam(const IMidiMsg::EControlChangeMsg cc, const int paramIdx);
 	void SetBeatIncrement(const double tempo);

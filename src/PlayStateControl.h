@@ -16,7 +16,7 @@ public:
 	
 private:
 	
-	PlayState GetPlayState();
+	PlayState GetPlayState() const;
 	void SetPlayState(PlayState state);
 	
 	IRECT mPlayRect;

@@ -872,9 +872,9 @@ void Melodizer::ProcessSysEx(ISysEx* pSysEx)
 	{
 		switch (pSysEx->MMCCommand())
 		{
-		case ISysEx::kPlay: SetPlayStateFromMidi(PS_Play); break;
-		case ISysEx::kPause: SetPlayStateFromMidi(PS_Pause); break;
-		case ISysEx::kStop: SetPlayStateFromMidi(PS_Stop); break;
+		case ISysEx::kPlay: ChangePlayState(PS_Play); break;
+		case ISysEx::kPause: ChangePlayState(PS_Pause); break;
+		case ISysEx::kStop: ChangePlayState(PS_Stop); break;
 		}
 	}
 }
@@ -962,30 +962,6 @@ void Melodizer::StopSequencer()
 	mDelayB.reset();
 	mFlanger.reset();
 }
-
-#ifndef SA_API
-void Melodizer::SetParameterFromGUI(int idx, double normalizedValue)
-{
-	IMutexLock lock(this);
-
-	// if play state is changing from the UI,
-	// but the daw is not in play mode,
-	// we need to change play state here because OnParamChanged will ignore it.
-	if ( idx == kPlayState )
-	{
-		ITimeInfo time;
-		GetTime(&time);
-		if ( !time.mTransportIsRunning && !IsRenderingOffline() )
-		{
-			ChangePlayState((PlayState)(int)GetParam(kPlayState)->GetNonNormalized(normalizedValue));
-		}
-	}
-
-	// now update the actual parameter, which in the case of
-	// kPlayState will push our actual mPlayState back to the UI.
-	IPlug::SetParameterFromGUI(idx, normalizedValue);
-}
-#endif
 
 void Melodizer::OnParamChange(int paramIdx)
 {
@@ -1167,6 +1143,7 @@ void Melodizer::OnParamChange(int paramIdx)
 	}
 	break;
 	
+
 	case kPlayState:
 	{
 #if SA_API
@@ -1183,11 +1160,10 @@ void Melodizer::OnParamChange(int paramIdx)
 		{
 			ChangePlayState((PlayState)param->Int());
 		}
-		// keep UI in sync with our actual state
-		GetGUI()->SetParameterFromPlug(kPlayState, mPlayState, false);
 #endif
 	}
 	break;
+	
 
 	case kStepModeRandomize:
 	case kProbabilityRandomize:
@@ -1383,6 +1359,9 @@ float Melodizer::RandomRange(float low, float hi)
 
 void Melodizer::ChangePlayState(PlayState toState)
 {
+	// have to lock because this can be called from the UI thread :(
+	IMutexLock lock(this);
+
 	switch (toState)
 	{
 	case PS_Stop:
@@ -1411,19 +1390,10 @@ void Melodizer::ChangePlayState(PlayState toState)
 		break;
 	}
 
-	mPlayState = toState;
-}
-
-void Melodizer::SetPlayStateFromMidi(PlayState state)
-{
-	IParam* param = GetParam(kPlayState);
-	if ((PlayState)param->Int() != state)
+	if (mPlayState != toState)
 	{
-		const double normValue = param->GetNormalized(state);
-		BeginInformHostOfParamChange(kPlayState);		
-		SetParameterFromGUI(kPlayState, normValue);
-		EndInformHostOfParamChange(kPlayState);
-		GetGUI()->SetParameterFromPlug(kPlayState, normValue, true);
+		mPlayState = toState;
+		mInterface.OnPlayStateChanged();
 	}
 }
 
