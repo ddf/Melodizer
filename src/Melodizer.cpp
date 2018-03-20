@@ -50,6 +50,16 @@ const int kFingeredScale = ScalesLength;
 
 const IMidiMsg::EControlChangeMsg kUnmappedParam = (IMidiMsg::EControlChangeMsg)128;
 
+// play state is Stop by default in the Standalone so that the app doesn't start making sound immediately after opening.
+// play state is Play by default in Plugins so that when we check it's value when attempting to auto-play,
+// we will start auto-playing *only* it is set to Play. If it isn't, it means that the user is automating 
+// the parameter and we should respect that. 
+#if SA_API
+const PlayState kDefaultPlayState = PS_Stop;
+#else
+const PlayState kDefaultPlayState = PS_Play;
+#endif
+
 Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
 	, mInterface(this)
@@ -289,7 +299,7 @@ Melodizer::Melodizer(IPlugInstanceInfo instanceInfo)
 		}
 
 		param = GetParam(kPlayState);
-		param->InitEnum("Play State", PS_Stop, PS_Count);
+		param->InitEnum("Play State", kDefaultPlayState, PS_Count);
 		for(int i = 0; i < PS_Count; ++i)
 		{
 			switch(i)
@@ -450,10 +460,15 @@ void Melodizer::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	ITimeInfo time;
 	GetTime(&time);
 	const bool bHostIsPlaying = time.mTransportIsRunning || IsRenderingOffline();
+	// when the Host actually starts playing, we jump to the play state for the parameter,
+	// since we ignore this value when the Host is not playing.
+	// Since the default value of kPlayState is PS_Play for Plugins,
+	// this gives a kind of auto-play feature in the event that a user does not automate the parameter.
 	if (!mHostIsPlaying && bHostIsPlaying)
 	{
-		ChangePlayState(PS_Play);
-		GetGUI()->SetParameterFromPlug(kPlayState, PS_Play, false);
+		const PlayState paramState = (PlayState)GetParam(kPlayState)->Int();
+		ChangePlayState(paramState);
+		GetGUI()->SetParameterFromPlug(kPlayState, paramState, false);
 		mAutoPlayed = true;
 	}
 	// see if we should exit play mode automatically when the Host does
