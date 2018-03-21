@@ -703,6 +703,14 @@ void Melodizer::BeginMIDILearn(int paramIdx1, int paramIdx2, int x, int y)
 	}
 }
 
+void Melodizer::PresetsChangedByHost()
+{
+  // stop the sequencer to prevent audio from getting nasty if effects are way up
+  ChangePlayState(PS_Stop);
+  // tell the interface about it
+  mInterface.OnPresetChanged();
+}
+
 void Melodizer::HandleSave(WDL_String* fileName)
 {
 	const char * programName = fileName->get_filepart();

@@ -692,6 +692,7 @@ void Interface::OnPresetChanged()
 	if (mPresetControl != nullptr)
 	{
 		mPresetControl->SetDirty(false);
+		mPresetControl->Redraw();
 	}
 }
 

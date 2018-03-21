@@ -50,8 +50,8 @@ public:
   virtual void ProcessMidiMsg(IMidiMsg* pMsg) override;
   virtual void ProcessSysEx(ISysEx* pSysEx) override;
   virtual bool HostRequestingAboutBox() override;
-  // called when the Host restores a preset, we want to stop in that case
-  virtual void PresetsChangedByHost() override { ChangePlayState(PS_Stop);  }
+  // called when the Host restores a preset
+  virtual void PresetsChangedByHost() override;
 
 private:
 	void MakePresets();
