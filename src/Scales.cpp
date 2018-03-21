@@ -1,8 +1,3 @@
-//
-//  Scales.cpp
-//  Melodizer
-//
-
 #include "Scales.h"
 
 // this is defined simply to make our scale declarations easier to read

@@ -1,11 +1,3 @@
-//
-//  Instruments.cpp
-//  melodizer
-//
-//  Created by Damien Di Fede on 12/7/11.
-//  Copyright (c) 2011 Damien Di Fede. All rights reserved.
-//
-
 #include "Instruments.h"
 
 #include "Wavetable.h"

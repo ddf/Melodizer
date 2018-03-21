@@ -1,13 +1,4 @@
-//
-//  Scales.h
-//  melodizer
-//
-//  Created by Damien Di Fede on 12/9/11.
-//  Copyright (c) 2011 Damien Di Fede. All rights reserved.
-//
-
-#ifndef melodizer_Scales_h
-#define melodizer_Scales_h
+#pragma  once 
 
 struct Scale
 {    
@@ -26,4 +17,3 @@ struct Scale
 extern const Scale* const Scales[]; 
 extern const int		  ScalesLength; 
 
-#endif

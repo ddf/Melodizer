@@ -1,12 +1,4 @@
-//
-//  Controls.h
-//  SpectralHarp
-//
-//  Created by Damien Quartz on 2/16/18.
-//
-
-#ifndef Controls_h
-#define Controls_h
+#pragma  once
 
 #include "IControl.h"
 
@@ -42,5 +34,3 @@ private:
 	WDL_String	  mLabelString;
 	bool		  mSharedLabel;
 };
-
-#endif /* Controls_h */

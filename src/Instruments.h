@@ -1,13 +1,4 @@
-//
-//  Instruments.h
-//  melodizer
-//
-//  Created by Damien Di Fede on 12/7/11.
-//  Copyright (c) 2011 Damien Di Fede. All rights reserved.
-//
-
-#ifndef melodizer_Instruments_h
-#define melodizer_Instruments_h
+#pragma  once
 
 #include "Waveform.h"
 #include "Oscil.h"
@@ -110,4 +101,3 @@ private:
 	int			midiNote;
 };
 
-#endif
