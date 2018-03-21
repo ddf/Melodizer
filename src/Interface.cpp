@@ -611,7 +611,10 @@ void Interface::OnPlayStateChanged()
 {
 	if (mPlayStateControl != nullptr)
 	{
+		// have to call both SetDirty and Redraw because OnPlayStateChanged
+		// is called from the audio thread. see comment in LED::Blink.
 		mPlayStateControl->SetDirty();
+		mPlayStateControl->Redraw();
 	}
 }
 
