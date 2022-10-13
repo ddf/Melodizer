@@ -432,11 +432,11 @@ bool InitialiseAudio(unsigned int inId,
 
   RtAudio::StreamParameters iParams, oParams;
   iParams.deviceId = inId;
-  iParams.nChannels = chnls;
+  iParams.nChannels = gPluginInstance->NInChannels();
   iParams.firstChannel = inChanL;
 
   oParams.deviceId = outId;
-  oParams.nChannels = chnls;
+  oParams.nChannels = gPluginInstance->NOutChannels();
   oParams.firstChannel = outChanL;
 
   gIOVS = iovs; // gIOVS may get changed by stream
@@ -459,7 +459,7 @@ bool InitialiseAudio(unsigned int inId,
   try
   {
     TRACE;
-    gDAC->openStream( &oParams, &iParams, RTAUDIO_FLOAT64, sr, &gIOVS, &AudioCallback, NULL, &options);
+    gDAC->openStream( &oParams, iParams.nChannels > 0 ? &iParams : NULL, RTAUDIO_FLOAT64, sr, &gIOVS, &AudioCallback, NULL, &options);
     gDAC->startStream();
 
     memcpy(gActiveState, gState, sizeof(AppState)); // copy state to active state
