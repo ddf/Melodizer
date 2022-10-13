@@ -9,7 +9,7 @@ def replacestrs(filename, s, r):
   files = glob.glob(filename)
   
   for line in fileinput.input(files,inplace=1):
-    string.find(line, s)
+    #string.find(line, s)
     line = line.replace(s, r)
     sys.stdout.write(line)
 
@@ -21,7 +21,7 @@ def main():
 
   for line in fileinput.input(scriptpath + "/resource.h",inplace=0):
     if "#define PLUG_VER " in line:
-      FullVersion = int(string.lstrip(line, "#define PLUG_VER "), 16)
+      FullVersion = int(line.lstrip("#define PLUG_VER "), 16)
       major = FullVersion & 0xFFFF0000
       MajorStr = str(major >> 16)
       minor = FullVersion & 0x0000FF00
@@ -35,15 +35,15 @@ def main():
   CFBundleGetInfoString = FullVersionStr + ", Copyright Damien Quartz, " + str(today.year)
   CFBundleVersion = FullVersionStr
   
-  print "update_version.py - setting version to " + FullVersionStr
+  print ("update_version.py - setting version to " + FullVersionStr)
 
-  print "updating version.txt"
+  print ("updating version.txt")
 
   version = open("version.txt", "w")
   version.write(FullVersionStr)
   version.close()
 
-  print "Updating plist version info..."
+  print ("Updating plist version info...")
   
   plistpath = scriptpath + "/resources/Melodizer-VST2-Info.plist"
   vst2 = plistlib.readPlist(plistpath)
@@ -101,7 +101,7 @@ def main():
 #   plistlib.writePlist(iosapp, plistpath)
 #   replacestrs(plistpath, "//Apple//", "//Apple Computer//");
 
-  print "Updating Mac Installer version info..."
+  print ("Updating Mac Installer version info...")
   
   plistpath = scriptpath + "/installer/Melodizer.pkgproj"
   installer = plistlib.readPlist(plistpath)
@@ -112,7 +112,7 @@ def main():
   plistlib.writePlist(installer, plistpath)
   replacestrs(plistpath, "//Apple//", "//Apple Computer//");
   
-  print "Updating Windows Installer version info..."
+  print ("Updating Windows Installer version info...")
   
   for line in fileinput.input(scriptpath + "/installer/Melodizer.iss",inplace=1):
     if "AppVersion" in line:
