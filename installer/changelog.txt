@@ -1,4 +1,8 @@
 Melodizer changelog
 https://damikyu.itch.io/melodizer
 
+10/12/22 - v1.0.1
+
+Bug fix release that fixes possible audio thread hang when using DirectSound in the Windows version of the Standalone. Windows VSTs have also been updated to remove input channels, which were not being used.
+
 03/16/18 - v1.0.0 initial release
