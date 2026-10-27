@@ -1525,7 +1525,6 @@
 				4F3AE1A212C0E5E2001FD7A4 /* Sources */,
 				4F25BECE12C61F47005D51F7 /* Resources */,
 				4F3AE1D312C0E5E2001FD7A4 /* Frameworks */,
-				4F3AE1DA12C0E5E2001FD7A4 /* Rez */,
 				4F744D4C14005ADA002FAD90 /* ShellScript */,
 			);
 			buildRules = (
@@ -2060,7 +2059,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4FCF15AF133124D1009A6277 /* Melodizer.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				COPY_PHASE_STRIP = NO;
 				DEPLOYMENT_LOCATION = YES;
@@ -2100,7 +2099,7 @@
 				SKIP_INSTALL = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "build-mac";
-				VALID_ARCHS = "i386 x86_64";
+				VALID_ARCHS = "arm64 x86_64";
 				WRAPPER_EXTENSION = "";
 			};
 			name = Debug;
@@ -2109,7 +2108,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4FCF15AF133124D1009A6277 /* Melodizer.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_LOCATION = YES;
@@ -2148,7 +2147,7 @@
 				SDKROOT = "$(BASE_SDK)";
 				SKIP_INSTALL = NO;
 				SYMROOT = "build-mac";
-				VALID_ARCHS = "i386 x86_64";
+				VALID_ARCHS = "arm64 x86_64";
 				WRAPPER_EXTENSION = "";
 			};
 			name = Release;
@@ -2425,7 +2424,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4FCF15AF133124D1009A6277 /* Melodizer.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				DEPLOYMENT_LOCATION = YES;
 				EXECUTABLE_EXTENSION = "";
@@ -2461,7 +2460,7 @@
 				SDKROOT = "$(BASE_SDK)";
 				SKIP_INSTALL = NO;
 				SYMROOT = "build-mac";
-				VALID_ARCHS = "i386 x86_64";
+				VALID_ARCHS = "arm64 x86_64";
 				WRAPPER_EXTENSION = "";
 			};
 			name = Tracer;

@@ -9,6 +9,7 @@
 
 #define PLUG_ENTRY Melodizer_Entry
 #define PLUG_VIEW_ENTRY Melodizer_ViewEntry
+#define PLUG_FACTORY Melodizer_Factory
 
 #define PLUG_ENTRY_STR "Melodizer_Entry"
 #define PLUG_VIEW_ENTRY_STR "Melodizer_ViewEntry"

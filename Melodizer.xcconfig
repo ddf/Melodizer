@@ -15,7 +15,7 @@ ADDITIONAL_INCLUDES = $(SRCROOT)/../minim-cpp/src/**
 // Flags to pass to compiler for all builds
 GCC_CFLAGS = -Wno-write-strings
 
-MACOSX_DEPLOYMENT_TARGET = 10.8
+MACOSX_DEPLOYMENT_TARGET = 12.0
 
 //------------------------------
 // Preprocessor definitions
